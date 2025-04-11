@@ -43,4 +43,4 @@
 | Back end       | Java SpringBoot |
 | Deploy         | Github Pages    |
 | IDE            | IntelliJ        |
-| Sprints        | Discord         |
+| Sprints        | Discord + GitHub Projects |

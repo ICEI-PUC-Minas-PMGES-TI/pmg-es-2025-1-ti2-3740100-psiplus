@@ -4,6 +4,7 @@
 
 
 ![Modelo relacional](images/ModeloDedadosPsiPlus.jpeg "Modelo Relacional.")
+
 ---
 
 #### 4.2. Tecnologias

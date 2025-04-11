@@ -5,6 +5,9 @@
 
 ![Modelo relacional](images/ModeloDedadosPsiPlus.jpeg "Modelo Relacional.")
 
+#### Modelo Entidade Relacionamento
+![Modelo relacional](images/DadosPSI+.jpg "Modelo Entidade Relacionamento.")
+
 ---
 
 #### 4.2. Tecnologias

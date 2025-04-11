@@ -18,7 +18,7 @@ O processo permite que os profissionais consultem registros, informações impor
 
 | **Comandos** | **Destino** | **Tipo** |
 | --- | --- | --- |
-| Exbiir anotação  | Exibir anotações do paceinte | Area de texto  |
+| Exbir anotação  | Exibir anotações do paciente | Área de texto  |
 ---
 
 ### **Selecionar um dos resultados exibidos**  

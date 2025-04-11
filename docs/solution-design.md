@@ -6,7 +6,7 @@
 ![Modelo relacional](images/ModeloDedadosPsiPlus.jpeg "Modelo Relacional.")
 ---
 
-## 4.2. Tecnologias
+#### 4.2. Tecnologias
 
 🔧 **Frontend (Interface do Usuário)**
 

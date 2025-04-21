@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 
 interface BotaoPadraoProps {
-  caminho: string;
+  caminho?: string;
   texto: string;
   handleClick?: () => void;
   color?: string;
@@ -13,7 +13,7 @@ interface BotaoPadraoProps {
 export default function BotaoPadrao({ caminho, texto, handleClick, color, hoverColor, fullWidth, disabled }: BotaoPadraoProps) {
   const navigate = useNavigate();
 
-  const onClickHandler = handleClick || (() => navigate(caminho));
+  const onClickHandler = handleClick || (() => navigate(caminho || "/"));
 
   const buttonColor = color || "bg-cyan-700";
   const buttonHoverColor = hoverColor || "bg-cyan-500";

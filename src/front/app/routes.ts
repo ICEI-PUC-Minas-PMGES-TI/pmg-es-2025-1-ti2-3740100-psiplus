@@ -5,7 +5,10 @@ import {
   } from "@react-router/dev/routes";
 
   export default [
-    index("routes/home.tsx"),
-    route("login", "routes/login.tsx"),
-    route("dashboard", "routes/dashboard.tsx")
+    index("routes/inicioRoute.tsx"),
+    route("psicologo/login", "routes/psicologo/loginPsicologoRoute.tsx"),
+    route("psicologo/cadastro", "routes/psicologo/cadastroPsicologoRoute.tsx"),
+    route("dashboard", "routes/dashboard.tsx"),
+    // 404
+    route("*", "routes/Erro404Route.tsx"),
   ] satisfies RouteConfig;

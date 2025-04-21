@@ -1,4 +1,5 @@
-import { useNavigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
+import { useState } from "react";
 
 interface BotaoPadraoProps {
   caminho?: string;
@@ -8,12 +9,36 @@ interface BotaoPadraoProps {
   hoverColor?: string;
   fullWidth?: boolean;
   disabled?: boolean;
+  className?: string;
+  icone?: React.ReactNode; // Ícone opcional
 }
 
-export default function BotaoPadrao({ caminho, texto, handleClick, color, hoverColor, fullWidth, disabled }: BotaoPadraoProps) {
-  const navigate = useNavigate();
+export default function BotaoPadrao({
+  caminho,
+  texto,
+  handleClick,
+  color,
+  hoverColor,
+  fullWidth,
+  disabled,
+  className,
+  icone,
+}: BotaoPadraoProps) {
 
-  const onClickHandler = handleClick || (() => navigate(caminho || "/"));
+  const [redirecionar, setRedirecionar] = useState(false);
+
+  if (redirecionar) {
+    return <Navigate to={caminho || "/"} />;
+  }
+
+  const onClickHandler = () => {
+    if (disabled) return;
+    if (caminho) {
+      setRedirecionar(true);
+    } else if (handleClick) {
+      handleClick();
+    }
+  };
 
   const buttonColor = color || "bg-cyan-700";
   const buttonHoverColor = hoverColor || "bg-cyan-500";
@@ -23,8 +48,9 @@ export default function BotaoPadrao({ caminho, texto, handleClick, color, hoverC
   return (
     <button
       onClick={onClickHandler}
-      className={`${buttonColor} text-white py-2 px-4 rounded-lg transition-colors ${fullWidthClass} ${disabledClass}`}
+      className={`${buttonColor} text-white py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 ${fullWidthClass} ${disabledClass} ${className}`}
     >
+      {icone && <span>{icone}</span>}
       {texto}
     </button>
   );

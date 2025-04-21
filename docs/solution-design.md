@@ -47,3 +47,4 @@
 | Deploy         | Github Pages    |
 | IDE            | IntelliJ        |
 | Sprints        | Discord + GitHub Projects |
+| Icones        | Lucide: lucide.dev/icons/ |

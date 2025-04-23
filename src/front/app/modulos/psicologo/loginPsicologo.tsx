@@ -3,7 +3,6 @@ import { Mail, Lock } from "lucide-react";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import FormPadrao from "~/componentes/FormPadrao";
 import InputPadrao from "~/componentes/InputPadrao";
-  
 
 export function LoginPsicologo() {
   return (

@@ -35,6 +35,24 @@ export function CadastroPsicologo() {
     setEtapa(2);
   }
 
+  function salvarDadosPsicologo() {
+    const dadosPsicologo = {
+      nome,
+      email,
+      endereco,
+      dataNascimento,
+      sexo,
+      cpf,
+    };
+  
+    try {
+      localStorage.setItem("dadosPsicologo", JSON.stringify(dadosPsicologo));
+      alert("Dados salvos com sucesso!");
+    } catch (error) {
+      console.error("Erro ao salvar os dados no localStorage:", error);
+    }
+  }
+
   const podeContinuar =
     nome.trim() !== "" &&
     email.trim() !== "" &&
@@ -171,7 +189,7 @@ export function CadastroPsicologo() {
                 <BotaoPadrao
                   texto="Cadastrar"
                   fullWidth
-                  caminho="/psicologo/dashboard"
+                  handleClick={salvarDadosPsicologo}
                   disabled={!podeCadastrar}
                 />
                 <BotaoPadrao

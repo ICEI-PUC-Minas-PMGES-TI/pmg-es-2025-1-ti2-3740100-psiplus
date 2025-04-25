@@ -13,6 +13,7 @@ import BotaoPadrao from "~/componentes/BotaoPadrao";
 import FormPadrao from "~/componentes/FormPadrao";
 import InputPadrao from "~/componentes/InputPadrao";
 import { useState } from "react";
+import axios from "axios";
 
 export function CadastroPsicologo() {
   const [etapa, setEtapa] = useState(1);
@@ -45,12 +46,15 @@ export function CadastroPsicologo() {
       cpf,
     };
   
-    try {
-      localStorage.setItem("dadosPsicologo", JSON.stringify(dadosPsicologo));
-      alert("Dados salvos com sucesso!");
-    } catch (error) {
-      console.error("Erro ao salvar os dados no localStorage:", error);
-    }
+    axios
+      .post("http://localhost:8080/usuarios", dadosPsicologo) 
+      .then((response) => {
+        alert("Dados salvos com sucesso!");
+      })
+      .catch((error) => {
+        console.error("Erro ao salvar os dados no backend:", error);
+        alert("Houve um erro ao salvar os dados.");
+      });
   }
 
   const podeContinuar =

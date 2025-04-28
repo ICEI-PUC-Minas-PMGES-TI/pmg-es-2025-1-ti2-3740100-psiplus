@@ -1,15 +1,20 @@
 @import "tailwindcss";
 
-@theme {
-  --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif,
+@layer base {
+  :root {
+    --corprincipal: #01444F;
+    --corsecundaria: #2A96C7;
+
+    --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-}
+  }
 
-html,
-body {
-  @apply bg-white dark:bg-gray-950;
+  html,
+  body {
+    @apply bg-white dark:bg-gray-950;
 
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
+    @media (prefers-color-scheme: dark) {
+      color-scheme: dark;
+    }
   }
 }

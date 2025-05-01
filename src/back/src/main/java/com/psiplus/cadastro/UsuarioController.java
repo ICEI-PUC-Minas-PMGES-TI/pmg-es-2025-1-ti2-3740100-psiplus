@@ -1,5 +1,5 @@
 //Recebe a requisicao para cadastrar um usuario e chama o servico para salvar o usuario no banco de dados
-package com.julia.cadastro;
+package com.psiplus.cadastro;
 
 import java.util.List;
 
@@ -29,4 +29,3 @@ public class UsuarioController {
         return usuarios;
     }
 }
-

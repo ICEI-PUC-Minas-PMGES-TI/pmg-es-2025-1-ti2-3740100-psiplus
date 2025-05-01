@@ -1,5 +1,5 @@
 //Processa as informacoes do usuario, salva no banco e retorna a lista de usuarios
-package com.julia.cadastro;
+package com.psiplus.cadastro;
 
 import java.util.List;
 
@@ -20,4 +20,3 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
 }
-

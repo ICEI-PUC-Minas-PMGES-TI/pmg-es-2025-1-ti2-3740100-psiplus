@@ -41,6 +41,7 @@ export function CadastroPsicologo() {
     const dadosPsicologo = {
       nome,
       email,
+      senha,
       endereco,
       dataNascimento,
       sexo,

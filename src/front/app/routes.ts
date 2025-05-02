@@ -8,7 +8,7 @@ import {
     index("routes/inicioRoute.tsx"),
     route("psicologo/login", "routes/psicologo/loginPsicologoRoute.tsx"),
     route("psicologo/cadastro", "routes/psicologo/cadastroPsicologoRoute.tsx"),
-    route("dashboard", "routes/dashboard.tsx"),
+    route("dashboard", "routes/dashboardRoute.tsx"),
     // 404
     route("*", "routes/Erro404Route.tsx"),
   ] satisfies RouteConfig;

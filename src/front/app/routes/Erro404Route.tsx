@@ -1,5 +1,5 @@
 import { Erro404 } from "~/modulos/inicio/Erro404";
-import type { Route } from "./+types/dashboard";
+import type { Route } from "./+types/dashboardRoute";
 
 export function meta({}: Route.MetaArgs) {
   return [

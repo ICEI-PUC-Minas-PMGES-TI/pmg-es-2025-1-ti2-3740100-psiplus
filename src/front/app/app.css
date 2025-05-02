@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 @layer base {
   :root {
@@ -12,7 +13,7 @@
   html,
   body {
     @apply bg-white dark:bg-gray-950;
-
+    font-family: var(--font-sans);
     @media (prefers-color-scheme: dark) {
       color-scheme: dark;
     }

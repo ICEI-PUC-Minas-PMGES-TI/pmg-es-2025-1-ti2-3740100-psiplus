@@ -2,7 +2,6 @@
 
 ## Autores
 
-- **Nico Jobski Andrade, jobskiandrade@gmail.com**
 - **Júlia de Souza Ventura, juliavt403@gmail.com**
 - **Rafael Rocha Caldeira Brant, rafaelrbrant07@gmail.com**
 - **Ana Luiza de Freitas Rodrigues, analuizafreitas12@yahoo.com.br**

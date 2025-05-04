@@ -14,7 +14,6 @@ A gestão de práticas psicológicas enfrenta desafios como desorganização da 
 * Carlos Eduardo Sousa Santos
 * Júlia de Souza Ventura
 * Kayke Emanoel de Souza Santos
-* Nico Jobski Andrade
 * Rafael Rocha Caldeira Brant
 
 ## Professor

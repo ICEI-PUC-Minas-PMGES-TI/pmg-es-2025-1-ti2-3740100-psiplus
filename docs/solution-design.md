@@ -44,7 +44,7 @@
 | SGBD           | MySQL           |
 | Front end      | React + TailwindCSS |
 | Back end       | Java SpringBoot |
-| Deploy         | Github Pages    |
+| Deploy         | -    |
 | IDE            | IntelliJ        |
 | Sprints        | Discord + GitHub Projects |
 | Icones        | Lucide: lucide.dev/icons/ |

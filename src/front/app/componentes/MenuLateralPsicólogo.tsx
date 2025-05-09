@@ -32,6 +32,7 @@ export default function MenuLateralPsicologo({ telaAtiva }: MenuLateralPsicologo
                     <h1 className="text-[#BBC6D9]">Psicólogo</h1>
                 </div>
             </div>
+
             <hr className="border-t-2 border-[#DFE5F1] my-4 mx-4" />
 
             {/* Agenda */}
@@ -58,19 +59,20 @@ export default function MenuLateralPsicologo({ telaAtiva }: MenuLateralPsicologo
                 active={telaAtiva === "pacientes"}
             />
 
-
-            <BotaoPadrao
-                color="bg-[#034B57]"
-                className=" text-[16px] mt-[330px] mx-8"
-                texto="Novo paciente"
-                icone={<img className=" w-[29px] mr-1" src={BotaoAdd} alt="Icon +" />}
-            />
-            <BotaoPadrao
-                color="bg-[#0088A3]"
-                className=" text-[16px] mx-8 mt-[10px]"
-                texto="Nova consulta"
-                icone={<img className=" w-[29px] mr-1" src={BotaoAdd} alt="Icon +" />}
-            />
+            <div className="fixed bottom-8">
+                <BotaoPadrao
+                    color="bg-[#034B57]"
+                    className="text-[16px] mx-8 overflow-x-auto"
+                    texto="Novo paciente"
+                    icone={<img className=" w-[29px] mr-1" src={BotaoAdd} alt="Icon +"/>}
+                />
+                <BotaoPadrao
+                    color="bg-[#0088A3]"
+                    className=" text-[16px] mx-8 mt-[10px]"
+                    texto="Nova consulta"
+                    icone={<img className=" w-[29px] mr-1" src={BotaoAdd} alt="Icon +"/>}
+                />
+            </div>
         </div>
     );
 }

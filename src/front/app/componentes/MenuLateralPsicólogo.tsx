@@ -40,7 +40,7 @@ export default function MenuLateralPsicologo({ telaAtiva }: MenuLateralPsicologo
                 className={"!items-start text-[16px] !justify-start mt-[10px]"}
                 color="bg-white"
                 texto="Agenda"
-                textoColor={"text-black"}
+                textoColor="text-black"
                 icone={<CalendarDays />}
                 iconeColor={"text-black"}
                 active={telaAtiva === "agenda"}
@@ -52,8 +52,9 @@ export default function MenuLateralPsicologo({ telaAtiva }: MenuLateralPsicologo
                 className={"!items-start text-[16px] !justify-start mt-[10px]"}
                 color="bg-white"
                 texto="Pacientes"
+                textoColor="text-black"
                 icone={<Users />}
-                iconeColor={"text-black"}
+                iconeColor="text-black"
                 active={telaAtiva === "pacientes"}
             />
 

@@ -45,7 +45,7 @@ export default function BotaoPadrao({
   const buttonHoverColor = hoverColor || "bg-cyan-500";
   const fullWidthClass = fullWidth ? "w-full" : "w-auto";
   const disabledClass = disabled ? "opacity-50 cursor-not-allowed" : `hover:${buttonHoverColor} cursor-pointer`;
-
+  textoColor = textoColor || "text-white";
   const textoCor = active ? "!text-[#0088A3]" : textoColor;
   const iconeCor = active ? "!text-[#0088A3]" : iconeColor;
 

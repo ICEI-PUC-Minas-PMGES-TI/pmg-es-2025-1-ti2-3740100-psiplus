@@ -1,0 +1,96 @@
+ * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: #ffffff;
+      padding: 20px;
+    }
+
+    .sidebar {
+      width: 300px;
+      background-color: #fff;
+      border-radius: 16px;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+      padding: 20px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: #1c1c1c;
+    }
+
+    .profile {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .profile img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .profile h3 {
+      font-size: 16px;
+      margin-top: 12px;
+      font-weight: 600;
+      color: #1c1c1c;
+    }
+
+    .profile p {
+      font-size: 13px;
+      color: #777;
+    }
+
+    .profile p small {
+      color: #aaa;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background-color: #f4f6fa;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 14px;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .menu-item.active {
+      background-color: #0097a7;
+      color: white;
+      font-weight: 600;
+    }
+
+    .menu-item .icon {
+      width: 24px;
+      height: 24px;
+      background-color: #d3d9f3;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3a3a3a;
+      font-size: 14px;
+    }
+
+    .menu-item.active .icon {
+      background-color: white;
+      color: #0097a7;
+    }

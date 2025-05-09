@@ -4,8 +4,18 @@ import BotaoPadrao from "~/componentes/BotaoPadrao";
 import IconAgendas from "../../public/assets/IconAgenda.png";
 import IconPacientes from "../../public/assets/IconPacientes.png";
 import BotaoAdd from "../../public/assets/BotaoAdd.png";
+import { useEffect, useState } from "react";
 
 export default function MenuLateralPsicólogo() {
+
+    const [nome, setNome] = useState("");
+    useEffect(() => {
+        const nomeSalvo = localStorage.getItem("Nome");
+        if (nomeSalvo) {
+            setNome(nomeSalvo);
+        }
+    }, []);
+
     return (
         <div className="w-1/5 h-screen pl-[15px] text-black font-semibold flex flex-col bg-white">
             <div className="flex mt-[10px]">
@@ -15,8 +25,8 @@ export default function MenuLateralPsicólogo() {
             <div className="flex pt-[10px] mt-[10px]">
                 <img className="w-[36px] h-[36px] rounded-full" src={PerfilUser}/>
                 <div className="text-[14px] pl-[5px]">
-                    <h1>DR. </h1>
-                    <h1 className="text-[#BBC6D9]"> Psicólogo</h1>
+                    <h1> {nome} </h1>
+                    <h1 className="text-[#BBC6D9]"> Psicólogo </h1>
                 </div>
             </div>
             <hr className="border-t-2 border-[#DFE5F1] my-4 mx-4"/>

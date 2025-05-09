@@ -15,9 +15,10 @@ import InputPadrao from "~/componentes/InputPadrao";
 import { useState } from "react";
 import axios from "axios";
 import HomeLogo from "~/componentes/HomeLogo";
-
+import {useNavigate} from "react-router";
 export function CadastroPsicologo() {
   const [etapa, setEtapa] = useState(1);
+  const navigate = useNavigate();
 
   // Etapa 1
   const [nome, setNome] = useState("");
@@ -51,7 +52,9 @@ export function CadastroPsicologo() {
     axios
       .post("http://localhost:8080/usuarios", dadosPsicologo) 
       .then((response) => {
+        localStorage.setItem("Nome", dadosPsicologo.nome);
         alert("Dados salvos com sucesso!");
+        navigate("/dashboard");
       })
       .catch((error) => {
         console.error("Erro ao salvar os dados no backend:", error);

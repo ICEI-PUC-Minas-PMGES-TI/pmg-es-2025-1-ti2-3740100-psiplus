@@ -30,11 +30,12 @@
 
 🚀 **Deploy** 
 
-- **GitHub Pages:** O front-end da aplicação será disponibilizado através do GitHub Pages, facilitando o acesso dos usuários à plataforma e permitindo uma hospedagem prática e gratuita para a interface web.
+- 
 
 🧩 **Comunicação e Gestão de Sprints**
 
 - **Discord:** O time utilizará o Discord como ferramenta principal de comunicação durante o desenvolvimento do projeto. Além disso, o Discord será usado para acompanhamento das sprints, alinhamento das tarefas, troca de feedbacks e organização geral do time.
+
 - **GitHub Projects:** GitHub Projects será utilizado para o planejamento e gerenciamento das tarefas do projeto com a criação de quadros no estilo Kanban, facilitando a visualização do progresso de cada atividade. Através dela, será possível organizar as sprints, atribuir responsabilidades, acompanhar prazos e manter a equipe alinhada durante todo o desenvolvimento.
 
 ---
@@ -44,7 +45,6 @@
 | SGBD           | MySQL           |
 | Front end      | React + TailwindCSS |
 | Back end       | Java SpringBoot |
-| Deploy         | Github Pages    |
+| Deploy         | -    |
 | IDE            | IntelliJ        |
 | Sprints        | Discord + GitHub Projects |
-| Icones        | Lucide: lucide.dev/icons/ |

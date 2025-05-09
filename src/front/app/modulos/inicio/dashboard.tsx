@@ -12,7 +12,7 @@ export function Dashboard(){
         <Main>
             <div className="flex h-screen bg-white ">
                 {/* Lado esquerdo com menu do psicólogo*/}
-               <MenuLateralPsicólogo/>
+               <MenuLateralPsicólogo telaAtiva={"pacientes"}/>
                 <div className="w-px bg-gray-300"></div>
                 <div className="m-5 w-4/5">
                     <div className="flex">

@@ -16,20 +16,13 @@ Após realizar as alterações desejadas, o psicólogo deve clicar em Salvar par
 ![Modelo BPMN agendamento](images/processo1/Wireframe-Editar-Calendario-2.jpg)
 
 
-**Visualizar Agenda, Definir tempo do expediente, Definir horário de almoço, Definir tempo entre sessões, Definir tempo de consulta**
+**Visualizar Agenda, Definir tempo do expediente**
 
 | **Campo**       | **Tipo**         | **Restrições** | **Valor default** |
 | ---             | ---              | ---            | ---               |
 | [Nome do campo] | [tipo de dados]  |                |                   |
 | tempoExpediente       | Hora      |hh:mm|                   |
-| horarioAlmoco       | Hora      |hh:mm|                   |
-| tempoEntreSessoes       | Hora      |hh:mm|00:10        |
-| duracaoConsulta       | Hora      |hh:mm|01:00        |
 
-| **Comandos**         |  **Destino**                   | **Tipo**          |
-| ---                  | ---                            | ---               |
-| novoPaciente                | Enviar para Processo Cadastar Paciente| ---               |
-| novaConsulta                | Enviar para Processo Cadastar Consulta| ---               |
 
 
 **Selecionar Data e Horario, Pesquisar paciente, Cadastrar paciente, Selecionar paciente, Definir como horário disponível, Definir como horário indisponível**

@@ -3,7 +3,7 @@ import Sidebar from '~/componentes/Sidebar';
 import PatientInfoSidebar from '~/componentes/PatientInfoSidebar';
 import ConsultationHistory from '~/componentes/ConsultationHistory';
 import Header from '~/componentes/HeaderGesRes';
-import './styles/index.css';
+
 
 export function GestaoRegistros(){
   return (

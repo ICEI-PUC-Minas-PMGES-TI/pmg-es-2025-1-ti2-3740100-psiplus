@@ -5,7 +5,7 @@ const Sidebar: React.FC = () => {
     <aside className="main-sidebar">
       <div>
         <div className="logo">
-          <img src="https://via.placeholder.com/40" alt="Logo" />
+          <img src="../../docs/images/processo6/logo.png" alt="Logo" />
           <span>Psi+</span>
         </div>
 

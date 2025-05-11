@@ -1,6 +1,6 @@
 import React from "react";
 import { FiSearch, FiLogOut } from "react-icons/fi";
-import "./cssGest/header.css";
+import "~/cssGest/HeaderGesRes.css";
 
 
 const Header: React.FC = () => {

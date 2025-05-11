@@ -1,5 +1,5 @@
 import React from "react";
-import './cssGest/sidebar.css'; 
+import '~/cssGest/sidebar.css'; 
 const Sidebar: React.FC = () => {
   return (
     <aside className="main-sidebar">

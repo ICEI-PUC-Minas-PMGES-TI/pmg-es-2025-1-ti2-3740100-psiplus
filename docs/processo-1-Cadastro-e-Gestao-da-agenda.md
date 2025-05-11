@@ -7,9 +7,13 @@ Após realizar as alterações desejadas, o psicólogo deve clicar em Salvar par
 
 ![Modelo BPMN agendamento](images/Cadastro-da-Agenda-Diagram.png)
 
-![image](images/Wireframe-Editar-Calendário.jpg)
-![image](images/Wireframe-Editar-Calendário-2.jpg)
+---  
+## Detalhamento das atividades
 
+**Cadastro da agenda**
+
+![Wireframe Cadastro da Agenda](images/Wireframe-Editar-Calendário.jpg)
+![Wireframe Cadastro da Agenda](images/Wireframe-Editar-Calendário-2.jpg)
 
 
 **Visualizar Agenda, Definir tempo do expediente, Definir horário de almoço, Definir tempo entre sessões, Definir tempo de consulta**

@@ -2,7 +2,7 @@
 O processo de agendamento no Psi+ permite que psicólogos cadastrem horários como disponíveis, indisponíveis ou cadastrar um paciente à ele. O processo se inicia com a visualização da agenda de acordo com atualizações passadas, onde o paciente selecionará um horário e o definirá da forma que preferir, e, ao final do processo, a agenda estará atualizada.
 
 
-![Modelo BPMN agendamento](images/diagramaAgendamento4.png)
+![Modelo BPMN agendamento](images/Cadastro-da-Agenda-Diagram.png)
 
 ![image](https://github.com/user-attachments/assets/3f790060-b57a-4ac1-af62-78414a39f557)
 ![image](https://github.com/user-attachments/assets/15cffe71-542e-4424-bdab-7f0e5343c26d)

@@ -189,8 +189,8 @@ O psicólogo terá acesso a esses dados, além de gráficos e estatísticas que 
 
 ### 3.3. Modelagem dos processos
 
-📌 [Processo 1 - Cadastro da agenda](processo-1-Cadastro-e-Gestao-da-agenda.md "Detalhamento do Processo 1.")  
-📌 [Processo 2 - Gestão da agenda](processo-2-Agendamento-de-horário.md "Detalhamento do Processo 2.")  
+📌 [Processo 1 - Cadastro e gestão da agenda](processo-1-Cadastro-e-Gestao-da-agenda.md "Detalhamento do Processo 1.")  
+📌 [Processo 2 - Agendamento de Paciente](processo-2-Agendamento-de-horário.md "Detalhamento do Processo 2.")  
 📌 [Processo 3 - Cadastro e Gestão do paciente](processo-3-Cadastro-e-Gestao-do-paciente.md "Detalhamento do Processo 3.")   
 📌 [Processo 4 - Registro das consultas](processo-4-Registro-das-consultas.md "Detalhamento do Processo 4.")  
 📌 [Processo 5 - Gestão dos Registros das consultas](processo-5-Gestao-Dos-Registros-Consultas.md "Detalhamento do Processo 5.")    

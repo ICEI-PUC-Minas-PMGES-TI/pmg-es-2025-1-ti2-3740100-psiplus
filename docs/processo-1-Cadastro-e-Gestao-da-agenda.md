@@ -12,7 +12,6 @@ Após realizar as alterações desejadas, o psicólogo deve clicar em Salvar par
 
 **Cadastro da agenda**
 
-![Wireframe Cadastro da Agenda](images/Wireframe-Editar-Calendário.png)
 
 
 **Visualizar Agenda, Definir tempo do expediente, Definir horário de almoço, Definir tempo entre sessões, Definir tempo de consulta**

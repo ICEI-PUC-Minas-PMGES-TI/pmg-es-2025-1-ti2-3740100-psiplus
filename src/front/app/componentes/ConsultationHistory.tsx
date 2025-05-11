@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import './css';  
+import './cssGest/ConsultationHistory.css';  
 
 interface NoteProps {
   date: string;

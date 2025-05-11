@@ -1,6 +1,6 @@
 import React from "react";
 import Logo from "./FotoPerfil.png";
-import './infoPAciente.css'; 
+import './cssGest/PatientInfoSidebar.css'; 
 
 const PatientInfoSidebar: React.FC = () => {
   return (

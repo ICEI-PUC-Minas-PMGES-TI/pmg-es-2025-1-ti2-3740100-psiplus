@@ -11,6 +11,7 @@ import {
     route("dashboard", "routes/dashboardRoute.tsx"),
       route("psicologo/gestaoPacientes", "routes/psicologo/gestaoPacientesRoute.tsx"),
     route("psicologo/agenda", "routes/psicologo/agendaRoute.tsx"),
+    route("psicologo/gestaoRegistros", "routes/psicologo/gestaoRegistrosRoute.tsx"),
     // 404
     route("*", "routes/Erro404Route.tsx"),
   ] satisfies RouteConfig;

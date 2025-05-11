@@ -36,7 +36,6 @@ Após realizar as alterações desejadas, o psicólogo deve clicar em Salvar par
 
 | **Comandos**         |  **Destino**                   | **Tipo**          |
 | ---                  | ---                            | ---               |
-| criarPaciente       | Enviar para processo de criar paciente      ||                   |
 | salvar | Horário é atualizado | default|
 | cancelar| Processo é cancelado |cancel|
 
@@ -47,9 +46,7 @@ Após realizar as alterações desejadas, o psicólogo deve clicar em Salvar par
 | ---             | ---              | ---            | ---               |
 | [Nome do campo] | [tipo de dados]  |                |                   |
 | tempoExpediente       | Hora      |hh:mm|                   |
-| horarioAlmoco       | Hora      |hh:mm|                   |
-| tempoEntreSessoes       | Hora      |hh:mm|                   |
-| duracaoConsulta       | Hora      |hh:mm|                   |
+
 
 | **Comandos**         |  **Destino**                   | **Tipo**          |
 | ---                  | ---                            | ---               |

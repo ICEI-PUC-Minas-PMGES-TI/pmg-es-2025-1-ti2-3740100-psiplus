@@ -32,7 +32,11 @@ const consultations: NoteProps[] = [
 ];
 
 const ConsultationHistory: React.FC = () => {
-  const [showNotes, setShowNotes] = useState<number | null>(null);
+  const [showNotesIndex, setShowNotesIndex] = useState<number | null>(null);
+
+  const toggleNotes = (index: number) => {
+    setShowNotesIndex(prev => (prev === index ? null : index));
+  };
 
   return (
     <div className="max-w-[900px] mx-auto">
@@ -55,18 +59,18 @@ const ConsultationHistory: React.FC = () => {
                 <span className="block font-normal text-[#666]">{c.doctor}</span>
               </div>
             </div>
-            {c.notes && (
-              <button
-                className="text-sm font-semibold bg-[#f0f1f6] px-3 py-2 rounded-md text-[#333]"
-                onClick={() => setShowNotes(showNotes === index ? null : index)}
-              >
-                {showNotes === index ? "Ocultar anotações" : "Exibir anotações"}
-              </button>
-            )}
+
+            <button
+              className="text-sm font-semibold bg-[#f0f1f6] px-3 py-2 rounded-md text-[#333] cursor-pointer hover:bg-[#e0e2eb] transition-colors duration-200"
+              onClick={() => toggleNotes(index)}
+            >
+              {showNotesIndex === index ? "Ocultar anotações" : "Exibir anotações"}
+            </button>
           </div>
-          {showNotes === index && c.notes && (
+
+          {showNotesIndex === index && (
             <div className="mt-2 pt-2 border-t border-[#eee] text-sm leading-relaxed text-[#333] whitespace-pre-line">
-              {c.notes}
+              {c.notes ? c.notes : "Nenhuma anotação registrada."}
             </div>
           )}
         </div>

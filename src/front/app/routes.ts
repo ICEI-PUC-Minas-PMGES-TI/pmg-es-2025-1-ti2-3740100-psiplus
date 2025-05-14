@@ -9,8 +9,9 @@ import {
     route("psicologo/login", "routes/psicologo/loginPsicologoRoute.tsx"),
     route("psicologo/cadastro", "routes/psicologo/cadastroPsicologoRoute.tsx"),
     route("dashboard", "routes/dashboardRoute.tsx"),
-      route("psicologo/gestaoPacientes", "routes/psicologo/gestaoPacientesRoute.tsx"),
+    route("psicologo/gestaoPacientes", "routes/psicologo/gestaoPacientesRoute.tsx"),
     route("psicologo/agenda", "routes/psicologo/agendaRoute.tsx"),
+    route("psicologo/cadastroPacientes", "routes/psicologo/cadastroPacientesRoute.tsx"),
     // 404
     route("*", "routes/Erro404Route.tsx"),
   ] satisfies RouteConfig;

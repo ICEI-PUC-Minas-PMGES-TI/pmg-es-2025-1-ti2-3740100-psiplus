@@ -4,7 +4,7 @@ import InputPadrao from "~/componentes/InputPadrao";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import { useState } from "react";
 
-export default function CadastroPaciente() {
+export default function CadastroPacientes() {
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}

@@ -8,7 +8,7 @@ import BotaoAdd from "../../public/assets/BotaoAdd.png";
 import { CalendarDays, Users } from 'lucide-react';
 
 type MenuLateralPsicologoProps = {
-    telaAtiva: "agenda" | "pacientes";
+    telaAtiva: "agenda" | "pacientes" ;
 }
 
 export default function MenuLateralPsicologo({ telaAtiva }: MenuLateralPsicologoProps) {

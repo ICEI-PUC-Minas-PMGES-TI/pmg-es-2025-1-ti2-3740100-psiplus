@@ -17,8 +17,8 @@ export default function CadastroPacientes() {
           <p className="text-blue-600 font-semibold">Pacientes</p>
         </nav>
         <div className="mt-8 space-y-2">
-          <BotaoPadrao className="w-full">+ Novo Paciente</BotaoPadrao>
-          <BotaoPadrao className="w-full">+ Nova Consulta</BotaoPadrao>
+          <BotaoPadrao texto="+ Novo Paciente" className="w-full" />
+          <BotaoPadrao texto="+ Nova Consulta" className="w-full" />
         </div>
       </aside>
 
@@ -26,7 +26,7 @@ export default function CadastroPacientes() {
       <div className="flex-1 p-8">
         <header className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold">Cadastro de Paciente</h1>
-          <BotaoPadrao className="bg-teal-500">Salvar</BotaoPadrao>
+          <BotaoPadrao texto="Salvar" className="bg-teal-500" />
         </header>
 
         <div className="bg-white shadow-md rounded-lg p-6">

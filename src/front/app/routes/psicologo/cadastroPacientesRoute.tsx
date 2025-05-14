@@ -1,5 +1,5 @@
-import type { Route } from "./+types/CadastroPacientesRoute";
-import CadastroPacientes from './modulos/psicologo/CadastroPacientes.tsx';
+import type { Route } from "./+types/cadastroPsicologoRoute";
+import  CadastroPacientes  from "../../modulos/psicologo/cadastroPacientes";
 
 export function meta({}: Route.MetaArgs) {
   return [

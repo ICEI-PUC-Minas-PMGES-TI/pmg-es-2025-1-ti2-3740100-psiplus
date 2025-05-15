@@ -5,14 +5,6 @@ O processo de agendamento de horários por parte do paciente se inicia na visual
 
 ![Modelo BPMN agendamento](images/diagramaPaciente.png)
 
-![image](https://github.com/user-attachments/assets/43c3f381-9ee9-4376-ad13-da6bceca6519)
-![image](https://github.com/user-attachments/assets/0bf1b8e6-d9ca-46c7-bea1-16d2296b6584)
-![image](https://github.com/user-attachments/assets/5c5bd77a-ac20-427d-a987-e587cf79dfc9)
-![image](https://github.com/user-attachments/assets/3fad1d44-caee-4aba-8e90-185535c0ebb1)
-
-
-
-
 **Visualizar agenda**
 
 | **Comandos**         |  **Destino**                   | **Tipo**          |

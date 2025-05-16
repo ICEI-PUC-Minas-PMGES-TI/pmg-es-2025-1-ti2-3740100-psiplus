@@ -35,7 +35,7 @@ export default function InfoPaciente({
   const iconeColor = (ativo: boolean) => (ativo ? "#ffffff" : "#858EBD");
 
   return (
-    <div className="w-[280px] p-4 bg-white rounded-xl shadow-sm relative">
+    <div className="w-[280px] p-4 bg-white rounded-xl ">
       {/* Botão de três pontinhos */}
       <button className="absolute top-4 right-4 text-[#858EBD] hover:text-[#333]">
         <MoreVertIcon />
@@ -69,14 +69,14 @@ export default function InfoPaciente({
           <div className={iconeWrapperClasses(abaAtiva === "historico")}>
             <HistoryIcon style={{ color: iconeColor(abaAtiva === "historico") }} />
           </div>
-          <span className="text-sm text-[#2B2F42]">Histórico de Consultas</span>
+          <span className="">Histórico de Consultas</span>
         </button>
 
         <button className={botaoClasses(abaAtiva === "estatisticas")}>
           <div className={iconeWrapperClasses(abaAtiva === "estatisticas")}>
             <BarChartIcon style={{ color: iconeColor(abaAtiva === "estatisticas") }} />
           </div>
-          <span className="text-sm text-[#2B2F42]">Estatísticas das Emoções</span>
+          <span className="">Estatísticas das Emoções</span>
         </button>
 
         <button className={botaoClasses(abaAtiva === "emocional")}>

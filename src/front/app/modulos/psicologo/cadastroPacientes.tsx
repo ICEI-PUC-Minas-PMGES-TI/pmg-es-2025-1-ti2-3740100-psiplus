@@ -6,10 +6,10 @@ import { useState } from "react";
 
 export default function CadastroPacientes() {
   return (
+      <Main>
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar usando o componente MenuLateralPsicólogo */}
       <MenuLateralPsicólogo telaAtiva="pacientes"/>
-
       {/* Main Content */}
       <div className="flex-1 p-8">
         <header className="flex justify-between items-center mb-8">
@@ -43,5 +43,6 @@ export default function CadastroPacientes() {
         </div>
       </div>
     </div>
+      </Main>
   );
 }

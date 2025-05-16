@@ -6,6 +6,7 @@ import InputPadrao from "~/componentes/InputPadrao";
 import MenuLateralPsicólogo from "~/componentes/MenuLateralPsicólogo";
 import IconPesquisar from "../../../public/assets/IconPesquisar.png";
 import ExitIcon from "../../../public/assets/ExitIcon.png";
+import Main from "~/componentes/Main";
 
 export function RegistroAnotacoes() {
   const [dia, setDia] = useState("04");
@@ -21,6 +22,7 @@ export function RegistroAnotacoes() {
   };
 
   return (
+      <Main>
     <div className="flex min-h-screen bg-white">
       <MenuLateralPsicólogo telaAtiva="pacientes" />
       <div className="w-px bg-gray-200" />
@@ -127,5 +129,6 @@ export function RegistroAnotacoes() {
         </div>
       </div>
     </div>
+      </Main>
   );
 }

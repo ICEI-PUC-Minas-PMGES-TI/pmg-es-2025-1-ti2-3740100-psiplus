@@ -61,6 +61,7 @@ export default function MenuLateralPsicologo({ telaAtiva }: MenuLateralPsicologo
 
             <div className="fixed bottom-8">
                 <BotaoPadrao
+                    caminho={"/psicologo/cadastroPacientes"}
                     color="bg-[#034B57]"
                     className="text-[16px] mx-8 overflow-x-auto"
                     texto="Novo paciente"

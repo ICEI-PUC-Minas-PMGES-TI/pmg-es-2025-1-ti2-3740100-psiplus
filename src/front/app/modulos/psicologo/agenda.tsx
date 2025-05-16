@@ -50,7 +50,7 @@ export function Agenda() {
 
   return (
       <Main>
-        <div className="flex h-screen bg-white">
+        <div className="flex min-h-screen bg-white">
           <MenuLateralPsicólogo telaAtiva={"agenda"} />
           <div className="w-px bg-gray-300" />
           <div className="m-5 w-4/5">

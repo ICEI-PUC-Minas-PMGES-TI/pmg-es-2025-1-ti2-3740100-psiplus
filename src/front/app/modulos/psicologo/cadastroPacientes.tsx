@@ -7,20 +7,8 @@ import { useState } from "react";
 export default function CadastroPacientes() {
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-md p-4">
-        <div className="flex items-center gap-2 mb-8">
-          <div className="text-2xl font-bold text-blue-600">Psi+</div>
-        </div>
-        <nav>
-          <p className="text-gray-700 font-semibold mb-2">Agenda</p>
-          <p className="text-blue-600 font-semibold">Pacientes</p>
-        </nav>
-        <div className="mt-8 space-y-2">
-          <BotaoPadrao texto="+ Novo Paciente" className="w-full" />
-          <BotaoPadrao texto="+ Nova Consulta" className="w-full" />
-        </div>
-      </aside>
+      {/* Sidebar usando o componente MenuLateralPsicólogo */}
+      <MenuLateralPsicólogo />
 
       {/* Main Content */}
       <div className="flex-1 p-8">

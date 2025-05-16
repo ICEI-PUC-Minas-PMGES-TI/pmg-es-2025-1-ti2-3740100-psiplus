@@ -11,7 +11,7 @@ import BarChartIcon from "@mui/icons-material/BarChart";
 import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAlt";
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import { IoIosArrowDown } from "react-icons/io";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function GestaoPacientes() {
     const [modoEdicao, setModoEdicao] = useState(false);
@@ -19,6 +19,66 @@ export function GestaoPacientes() {
     const alternarModoEdicao = () => {
       setModoEdicao((prev) => !prev);
     };
+
+  const [dadosPaciente, setDadosPaciente] = useState({
+    nome: "",
+    cpf: "",
+    sexo: "",
+    dia: "",
+    mes: "",
+    ano: "",
+    email: "",
+    telefone: "",
+    ddd: "+55",
+    endereco: "",
+    cidade: "",
+    pais: "",
+    cep: "",
+    notas: ""
+  });
+
+  useEffect(() => {
+    const dadosExistentes = localStorage.getItem("dadosPaciente");
+    if (!dadosExistentes) {
+      localStorage.setItem("dadosPaciente", JSON.stringify({
+        nome: "Isabelle Stanley",
+        cpf: "123.456.789-00",
+        sexo: "Feminino",
+        dia: "12",
+        mes: "02",
+        ano: "2000",
+        email: "isabeleStanley@gmail.com",
+        telefone: "+55 31999999999",
+        endereco: "Rua das Flores, 123",
+        cidade: "Belo Horizonte",
+        pais: "Brasil",
+        cep: "30123-456",
+        notas: "Paciente tranquila, apresentou bons avanços."
+      }));
+    }
+  }, []);
+
+  // Carregar dados salvos no localStorage ao abrir a tela
+  useEffect(() => {
+    const pacienteSalvo = localStorage.getItem("dadosPaciente");
+    if (pacienteSalvo) {
+      setDadosPaciente(JSON.parse(pacienteSalvo));
+    }
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setDadosPaciente((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    localStorage.setItem("dadosPaciente", JSON.stringify(dadosPaciente));
+    setModoEdicao(false);
+  };
 
     return (
         <Main>
@@ -132,15 +192,28 @@ export function GestaoPacientes() {
                   <div className="grid grid-cols-2 gap-x-4 gap-y--3">
                     <div>
                       <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Nome Completo*</label>
-                      <InputPadrao placeholder="" classNameInput="border-[#DAE0F2] rounded-lg" disabled={!modoEdicao}/>
+                      <InputPadrao name="nome"
+                                   value={dadosPaciente.nome}
+                                   onChange={handleChange}
+                                   placeholder=""
+                                   classNameInput="border-[#DAE0F2] rounded-lg"
+                                   disabled={!modoEdicao}/>
                     </div>
                     <div>
                       <label className="block text-sm font-regular mb-1 text-[#3A3F63]">CPF</label>
-                      <InputPadrao placeholder="" classNameInput="border-[#DAE0F2] rounded-lg" disabled={!modoEdicao}/>
+                      <InputPadrao name="cpf"
+                                   value={dadosPaciente.cpf}
+                                   onChange={handleChange}
+                                   placeholder=""
+                                   classNameInput="border-[#DAE0F2] rounded-lg"
+                                   disabled={!modoEdicao}/>
                     </div>
                     <div className="relative">
                       <label className="block text-sm font-regular mb-1 text-slate-700">Sexo</label>
-                      <select disabled={!modoEdicao}
+                      <select name="sexo"
+                              value={dadosPaciente.sexo}
+                              onChange={handleChange}
+                              disabled={!modoEdicao}
                               className="w-full border border-[#DAE0F2] rounded-lg px-3 py-2.5 text-sm text-[#3A3F63] appearance-none pr-10">
                         <option value="">Selecione</option>
                         <option value="Feminino">Feminino</option>
@@ -153,29 +226,49 @@ export function GestaoPacientes() {
                     <div className="grid grid-cols-3 gap-2">
                       <div>
                         <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Dia</label>
-                        <InputPadrao placeholder="" classNameInput="border-[#DAE0F2] rounded-lg"
+                        <InputPadrao name="dia"
+                                     value={dadosPaciente.dia}
+                                     onChange={handleChange}
+                                     placeholder=""
+                                     classNameInput="border-[#DAE0F2] rounded-lg"
                                      disabled={!modoEdicao}/>
                       </div>
                       <div>
                         <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Mês</label>
-                        <InputPadrao placeholder="" classNameInput="border-[#DAE0F2] rounded-lg"
+                        <InputPadrao name="mes"
+                                     value={dadosPaciente.mes}
+                                     onChange={handleChange}
+                                     placeholder=""
+                                     classNameInput="border-[#DAE0F2] rounded-lg"
                                      disabled={!modoEdicao}/>
                       </div>
                       <div>
                         <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Ano</label>
-                        <InputPadrao placeholder="" classNameInput="border-[#DAE0F2] rounded-lg"
+                        <InputPadrao name="ano"
+                                     value={dadosPaciente.ano}
+                                     onChange={handleChange}
+                                     placeholder=""
+                                     classNameInput="border-[#DAE0F2] rounded-lg"
                                      disabled={!modoEdicao}/>
                       </div>
                     </div>
                     <div>
                       <label className="block text-sm font-regular mb-1 text-[#3A3F63]">E-mail*</label>
-                      <InputPadrao placeholder="" classNameInput="border-[#DAE0F2] rounded-lg" disabled={!modoEdicao}/>
+                      <InputPadrao name="email"
+                                   value={dadosPaciente.email}
+                                   onChange={handleChange}
+                                   placeholder=""
+                                   classNameInput="border-[#DAE0F2] rounded-lg"
+                                   disabled={!modoEdicao}/>
                     </div>
                     <div>
                       <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Telefone</label>
                       <div className="flex gap-2 items-end">
                         <div className="relative">
-                          <select disabled={!modoEdicao}
+                          <select name="ddd"
+                                  value={dadosPaciente.ddd}
+                                  onChange={handleChange}
+                                  disabled={!modoEdicao}
                                   className="w-[80px] h-[44px] border border-[#DAE0F2] rounded-lg px-3 py-2 text-sm text-[#3A3F63] appearance-none">
                             <option>+11</option>
                             <option>+21</option>
@@ -187,7 +280,11 @@ export function GestaoPacientes() {
                               className="absolute right-3 top-2/4 transform -translate-y-2/4 text-gray-500 text-xl pointer-events-none"/>
                         </div>
                         <div className="flex-1">
-                          <InputPadrao placeholder="" classNameInput="border-[#DAE0F2] rounded-lg"
+                          <InputPadrao name="telefone"
+                                       value={dadosPaciente.telefone}
+                                       onChange={handleChange}
+                                       placeholder=""
+                                       classNameInput="border-[#DAE0F2] rounded-lg"
                                        disabled={!modoEdicao}/>
                         </div>
                       </div>
@@ -198,19 +295,38 @@ export function GestaoPacientes() {
                   <div className="grid grid-cols-2 gap-x-4 gap-y--3">
                     <div>
                       <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Endereço</label>
-                      <InputPadrao placeholder="" classNameInput="border-[#DAE0F2] rounded-lg" disabled={!modoEdicao}/>
+                      <InputPadrao name="endereco"
+                                   value={dadosPaciente.endereco}
+                                   onChange={handleChange}
+                                   placeholder=""
+                                   classNameInput="border-[#DAE0F2] rounded-lg"
+                                   disabled={!modoEdicao}/>
                     </div>
                     <div>
                       <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Cidade</label>
-                      <InputPadrao placeholder="" classNameInput="border-[#DAE0F2] rounded-lg" disabled={!modoEdicao}/>
+                      <InputPadrao name="cidade"
+                                   value={dadosPaciente.cidade}
+                                   onChange={handleChange}
+                                   placeholder="" classNameInput="border-[#DAE0F2] rounded-lg"
+                                   disabled={!modoEdicao}/>
                     </div>
                     <div>
                       <label className="block text-sm font-regular mb-1 text-[#3A3F63]">País</label>
-                      <InputPadrao placeholder="" classNameInput="border-[#DAE0F2] rounded-lg" disabled={!modoEdicao}/>
+                      <InputPadrao name="pais"
+                                   value={dadosPaciente.pais}
+                                   onChange={handleChange}
+                                   placeholder=""
+                                   classNameInput="border-[#DAE0F2] rounded-lg"
+                                   disabled={!modoEdicao}/>
                     </div>
                     <div>
                       <label className="block text-sm font-regular mb-1 text-[#3A3F63]">CEP</label>
-                      <InputPadrao placeholder="" classNameInput="border-[#DAE0F2] rounded-lg" disabled={!modoEdicao}/>
+                      <InputPadrao name="cep"
+                                   value={dadosPaciente.cep}
+                                   onChange={handleChange}
+                                   placeholder=""
+                                   classNameInput="border-[#DAE0F2] rounded-lg"
+                                   disabled={!modoEdicao}/>
                     </div>
                   </div>
 
@@ -219,8 +335,11 @@ export function GestaoPacientes() {
                   <div>
                     <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Notas</label>
                     <textarea
+                        name="notas"
+                        value={dadosPaciente.notas}
+                        onChange={handleChange}
                         disabled={!modoEdicao}
-                        className="w-full border border-[#DAE0F2] rounded-lg px-3 py-2 text-sm text-[#858EBD]" rows={4}
+                        className="w-full border border-[#DAE0F2] rounded-lg px-3 py-2 text-sm text-[#3A3F63]" rows={4}
                         placeholder="Insira alguma nota sobre esse paciente"
                     ></textarea>
                   </div>

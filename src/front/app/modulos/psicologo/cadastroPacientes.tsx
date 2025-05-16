@@ -13,11 +13,11 @@ export default function CadastroPacientes() {
       {/* Main Content */}
       <div className="flex-1 p-8">
         <header className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold">Cadastro de Paciente</h1>
-          <BotaoPadrao texto="Salvar" className="bg-teal-500" />
+          <h1 className="text-black text-2xl font-bold">Cadastro de Paciente</h1>
+          <BotaoPadrao texto="Salvar" className="bg-[#0088A3]" />
         </header>
 
-        <div className="bg-white shadow-md rounded-lg p-6">
+        <div className="bg-white text-black shadow-md rounded-lg p-6">
           <h2 className="text-lg font-semibold mb-4">Informações Pessoais</h2>
           <div className="grid grid-cols-2 gap-4 mb-6">
             <InputPadrao placeholder="Nome Completo" />

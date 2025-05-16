@@ -65,13 +65,13 @@ export function RegistroAnotacoes() {
               <h2 className="text-[15px] font-bold text-gray-800 mb-6">REGISTRO DE SESSÃO</h2>
 
               {/* Campos de Data e Hora */}
-              <div className="flex justify-between mb-6">
+              <div className="flex justify-between mb-6 text-gray-500">
                 {/* Data */}
                 <div>
                   <label className="block text-sm text-gray-500 font-semibold mb-1">Data da Consulta</label>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 ">
                     <input
-                      className="w-[50px] p-2 rounded-md bg-gray-100 text-center"
+                      className="w-[50px] p-2 rounded-md bg-gray-100 text-center "
                       value={dia}
                       onChange={(e) => setDia(e.target.value)}
                     />
@@ -111,7 +111,7 @@ export function RegistroAnotacoes() {
               <div>
                 <label className="block text-sm text-gray-500 font-semibold mb-1">Notas</label>
                 <textarea
-                  className="w-full h-[300px] p-4 border rounded-md placeholder:text-sky-400"
+                  className="w-full h-[300px] p-4 border rounded-md placeholder:text-sky-400 text-gray-500"
                   placeholder="Insira alguma nota sobre esse paciente"
                   value={notas}
                   onChange={(e) => setNotas(e.target.value)}

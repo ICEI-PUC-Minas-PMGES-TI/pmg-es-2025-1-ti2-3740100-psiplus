@@ -20,7 +20,7 @@ export function GestaoPacientes(){
       <Main>
         <div className="flex h-screen bg-white ">
           {/* Lado esquerdo com menu do psicólogo*/}
-          <MenuLateralPsicólogo telaAtiva={"pacientes"} />
+          <MenuLateralPsicólogo telaAtiva= "pacientes" />
           <div className="w-px bg-gray-300"></div>
           <div className="m-5 w-4/5">
             <div className="flex">

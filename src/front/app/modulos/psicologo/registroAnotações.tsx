@@ -6,6 +6,7 @@ import InputPadrao from "~/componentes/InputPadrao";
 import MenuLateralPsicólogo from "~/componentes/MenuLateralPsicólogo";
 import IconPesquisar from "../../../public/assets/IconPesquisar.png";
 import ExitIcon from "../../../public/assets/ExitIcon.png";
+import Main from "~/componentes/Main";
 
 
 export function RegistroAnotacoes() {

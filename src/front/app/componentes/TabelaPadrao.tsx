@@ -15,7 +15,11 @@ interface RowData {
     [key: string]: string | number;
 }
 
-export default function TabelaPadrao() {
+interface TabelaPadraoProps {
+    data: RowData[];
+}
+
+export default function TabelaPadrao({ data }: TabelaPadraoProps) {
     const columns: Column[] = [
         { id: 'nome', label: 'Nome' },
         { id: 'CPF', label: 'CPF', align: 'left' },
@@ -24,7 +28,7 @@ export default function TabelaPadrao() {
         { id: 'nascimento', label: 'Nascimento', align: 'center' },
     ];
 
-    const data: RowData[] = []; // sem linhas por enquanto
+    // const data: RowData[] = []; // Dados Mockados
 
     const [search, setSearch] = useState('');
     const [orderBy, setOrderBy] = useState<string>('');

@@ -47,7 +47,7 @@ export function RegistroAnotacoes() {
             nome="Isabelle Stanley"
             email="isabeleStanley@gmail.com"
             ultimaConsulta="12/02/2025"
-            fotoPerfil="/path/to/foto.jpg"
+            fotoPerfil="../../public/assets/PerfilUser.jpg"
             abaAtiva="historico"
           />
 

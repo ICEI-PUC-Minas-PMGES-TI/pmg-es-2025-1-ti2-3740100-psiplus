@@ -6,7 +6,7 @@ import InputPadrao from "~/componentes/InputPadrao";
 import MenuLateralPsicólogo from "~/componentes/MenuLateralPsicólogo";
 import IconPesquisar from "../../../public/assets/IconPesquisar.png";
 import ExitIcon from "../../../public/assets/ExitIcon.png";
-import Main from "~/componentes/Main";
+
 
 export function RegistroAnotacoes() {
   const [dia, setDia] = useState("04");
@@ -17,12 +17,22 @@ export function RegistroAnotacoes() {
   const [notas, setNotas] = useState("");
 
   const handleSalvar = () => {
-    const data = `${dia}/${mes}/${ano}`;
-    console.log({ data, horaInicio, horaFim, notas });
+    const dataFormatada = `${dia.padStart(2, '0')}/${mes.padStart(2, '0')}/${ano}`;
+    const hora = `${horaInicio} - ${horaFim}`;
+    const novaAnotacao = {
+      date: `${dataFormatada} ${hora}`,
+      doctor: "Dr. Lucas Almeida",
+      notes: notas
+    };
+
+    const anotacoesExistentes = JSON.parse(localStorage.getItem("anotacoes") || "[]");
+    anotacoesExistentes.push(novaAnotacao);
+    localStorage.setItem("anotacoes", JSON.stringify(anotacoesExistentes));
+
+    alert("Anotação salva com sucesso!");
   };
 
   return (
-      <Main>
     <div className="flex min-h-screen bg-white">
       <MenuLateralPsicólogo telaAtiva="pacientes" />
       <div className="w-px bg-gray-200" />
@@ -65,13 +75,13 @@ export function RegistroAnotacoes() {
               <h2 className="text-[15px] font-bold text-gray-800 mb-6">REGISTRO DE SESSÃO</h2>
 
               {/* Campos de Data e Hora */}
-              <div className="flex justify-between mb-6 text-gray-500">
+              <div className="flex justify-between mb-6">
                 {/* Data */}
                 <div>
                   <label className="block text-sm text-gray-500 font-semibold mb-1">Data da Consulta</label>
-                  <div className="flex gap-2 ">
+                  <div className="flex gap-2">
                     <input
-                      className="w-[50px] p-2 rounded-md bg-gray-100 text-center "
+                      className="w-[50px] p-2 rounded-md bg-gray-100 text-center"
                       value={dia}
                       onChange={(e) => setDia(e.target.value)}
                     />
@@ -111,7 +121,7 @@ export function RegistroAnotacoes() {
               <div>
                 <label className="block text-sm text-gray-500 font-semibold mb-1">Notas</label>
                 <textarea
-                  className="w-full h-[300px] p-4 border rounded-md placeholder:text-sky-400 text-gray-500"
+                  className="w-full h-[300px] p-4 border rounded-md placeholder:text-sky-400"
                   placeholder="Insira alguma nota sobre esse paciente"
                   value={notas}
                   onChange={(e) => setNotas(e.target.value)}
@@ -129,6 +139,5 @@ export function RegistroAnotacoes() {
         </div>
       </div>
     </div>
-      </Main>
   );
 }

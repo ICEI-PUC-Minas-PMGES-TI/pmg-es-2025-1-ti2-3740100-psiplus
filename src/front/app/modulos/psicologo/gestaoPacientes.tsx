@@ -82,7 +82,7 @@ export function GestaoPacientes() {
 
     return (
         <Main>
-          <div className="flex h-screen bg-white ">
+          <div className="flex min-h-screen bg-white ">
             {/* Lado esquerdo com menu do psicólogo*/}
             <MenuLateralPsicólogo telaAtiva={"pacientes"}/>
             <div className="w-px bg-gray-300"></div>

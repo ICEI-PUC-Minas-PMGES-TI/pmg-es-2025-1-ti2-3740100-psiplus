@@ -20,7 +20,7 @@ export default function MenuLateralPsicologo({ telaAtiva }: MenuLateralPsicologo
     }, []);
 
     return (
-        <div className="w-1/5 h-screen pl-[15px] text-black font-semibold flex flex-col bg-white">
+        <div className="w-1/6 h-screen pl-[15px] text-black font-semibold flex flex-col bg-white">
             <div className="flex mt-[10px]">
                 <img className="w-[41px] h-[48px]" src={IconPsiPlus} alt="Logo" />
                 <h1 className=" text-[20px] pt-[15px] pl-[5px] font-bold">Psi+</h1>
@@ -59,17 +59,17 @@ export default function MenuLateralPsicologo({ telaAtiva }: MenuLateralPsicologo
                 active={telaAtiva === "pacientes"}
             />
 
-            <div className="fixed bottom-8">
+            <div className="mt-auto flex flex-col items-center px-4 mb-8">
                 <BotaoPadrao
                     caminho={"/psicologo/cadastroPacientes"}
                     color="bg-[#034B57]"
-                    className="text-[16px] mx-8 overflow-x-auto"
+                    className="text-[16px] w-full min-w-[180px] whitespace-nowrap hover:brightness-90"
                     texto="Novo paciente"
                     icone={<img className=" w-[29px] mr-1" src={BotaoAdd} alt="Icon +"/>}
                 />
                 <BotaoPadrao
                     color="bg-[#0088A3]"
-                    className=" text-[16px] mx-8 mt-[10px]"
+                    className=" text-[16px] w-full min-w-[180px] whitespace-nowrap mt-2 hover:brightness-90"
                     texto="Nova consulta"
                     icone={<img className=" w-[29px] mr-1" src={BotaoAdd} alt="Icon +"/>}
                 />

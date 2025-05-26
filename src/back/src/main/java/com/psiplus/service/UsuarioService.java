@@ -1,8 +1,10 @@
 //Processa as informacoes do usuario, salva no banco e retorna a lista de usuarios
-package com.psiplus.cadastro;
+package com.psiplus.service;
 
 import java.util.List;
 
+import com.psiplus.model.Usuario;
+import com.psiplus.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

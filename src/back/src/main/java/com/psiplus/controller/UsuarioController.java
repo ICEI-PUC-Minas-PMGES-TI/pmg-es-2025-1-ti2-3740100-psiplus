@@ -1,8 +1,9 @@
-//Recebe a requisicao para cadastrar um usuario e chama o servico para salvar o usuario no banco de dados
-package com.psiplus.cadastro;
+package com.psiplus.controller;
 
 import java.util.List;
 
+import com.psiplus.model.Usuario;
+import com.psiplus.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

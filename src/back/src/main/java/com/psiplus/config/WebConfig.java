@@ -1,5 +1,5 @@
 //Faz a comunicacao do back com o front controlando as permissoes de acesso
-package com.psiplus.cadastro;
+package com.psiplus.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

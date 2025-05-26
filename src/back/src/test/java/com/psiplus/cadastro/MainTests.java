@@ -1,10 +1,10 @@
-package com.julia.cadastro;
+package com.psiplus.cadastro;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CadastroBackendApplicationTests {
+class MainTests {
 
 	@Test
 	void contextLoads() {

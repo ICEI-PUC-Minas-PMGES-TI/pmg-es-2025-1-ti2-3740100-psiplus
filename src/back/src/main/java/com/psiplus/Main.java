@@ -1,13 +1,13 @@
-package com.psiplus.cadastro;
+package com.psiplus;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CadastroBackendApplication {
+public class Main {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CadastroBackendApplication.class, args);
+		SpringApplication.run(Main.class, args);
 	}
 
 }

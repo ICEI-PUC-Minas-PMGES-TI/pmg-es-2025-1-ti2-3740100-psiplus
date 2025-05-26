@@ -3,8 +3,10 @@ package com.psiplus.controller;
 import com.psiplus.model.Paciente;
 import com.psiplus.service.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -20,17 +22,28 @@ public class PacienteController {
     }
 
     @GetMapping("/{id}")
-    public Paciente buscar(@PathVariable Long id) {
-        return service.buscarPorId(id);
+    public ResponseEntity<Paciente> buscar(@PathVariable Long id) {
+        Paciente paciente = service.buscarPorId(id);
+        if (paciente == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(paciente);
     }
 
     @PostMapping
-    public Paciente salvar(@RequestBody Paciente paciente) {
-        return service.salvar(paciente);
+    public ResponseEntity<Paciente> salvar(@RequestBody Paciente paciente) {
+        Paciente salvo = service.salvar(paciente);
+        URI uri = URI.create(String.format("/pacientes/%s", salvo.getPacienteId()));
+        return ResponseEntity.created(uri).body(salvo);
     }
 
     @DeleteMapping("/{id}")
-    public void deletar(@PathVariable Long id) {
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        Paciente paciente = service.buscarPorId(id);
+        if (paciente == null) {
+            return ResponseEntity.notFound().build();
+        }
         service.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 }

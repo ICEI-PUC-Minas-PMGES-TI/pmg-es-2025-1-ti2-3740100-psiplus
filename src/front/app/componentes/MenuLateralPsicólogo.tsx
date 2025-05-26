@@ -52,7 +52,7 @@ export default function MenuLateralPsicologo({ telaAtiva }: MenuLateralPsicologo
 
             {/* Agenda */}
             <BotaoPadrao
-                caminho={"/psicologo/agenda"}
+                caminho={"/psicologo/paginaPrincipal"}
                 className={"!items-start text-[16px] !justify-start mt-[10px]"}
                 color="bg-white"
                 texto="Agenda"

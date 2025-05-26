@@ -1,5 +1,6 @@
 import type { Route } from "./+types/gestaoRegistrosRoute";
-import { GestaoRegistros } from "../../modulos/psicologo/gestaoRegistros";
+import { GestaoRegistros } from "~/modulos/psicologo/gestaoRegistros";
+import ProtectedRoute from "~/routes/ProtectedRoute";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -8,6 +9,10 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function gestaoRegistrosRoute() {
-  return <GestaoRegistros />;
+export default function GestaoRegistrosRoute() {
+  return (
+      <ProtectedRoute>
+        <GestaoRegistros />
+      </ProtectedRoute>
+  );
 }

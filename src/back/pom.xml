@@ -71,6 +71,12 @@
 			<version>8.0.30</version> 
 		</dependency>
 
+		<dependency>
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>mssql-jdbc</artifactId>
+			<version>12.4.2.jre11</version> <!-- ou a versão compatível com seu JDK -->
+		</dependency>
+
 	</dependencies>
 
 	<build>

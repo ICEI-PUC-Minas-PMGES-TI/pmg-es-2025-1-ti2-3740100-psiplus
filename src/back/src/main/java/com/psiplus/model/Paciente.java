@@ -8,16 +8,41 @@ public class Paciente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "paciente_id")
-    private Long id;
+    private Long pacienteId;
 
-    private String sexo;
-    private String dataNascimento;
-
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "usuario_id", referencedColumnName = "usuario_id")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "usuario_id", referencedColumnName = "usuarioId")
     private Usuario usuario;
 
+    @Column(length = 500)
+    private String historicoClinico;
+
+    @Column(length = 500)
+    private String observacoes;
+
     // Getters e Setters
+    public Long getPacienteId() {
+        return pacienteId;
+    }
+    public void setPacienteId(Long pacienteId) {
+        this.pacienteId = pacienteId;
+    }
+    public Usuario getUsuario() {
+        return usuario;
+    }
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+    public String getHistoricoClinico() {
+        return historicoClinico;
+    }
+    public void setHistoricoClinico(String historicoClinico) {
+        this.historicoClinico = historicoClinico;
+    }
+    public String getObservacoes() {
+        return observacoes;
+    }
+    public void setObservacoes(String observacoes) {
+        this.observacoes = observacoes;
+    }
 }

@@ -5,10 +5,9 @@ import java.util.List;
 import com.psiplus.model.Usuario;
 import com.psiplus.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UsuarioController {
@@ -28,5 +27,16 @@ public class UsuarioController {
         List<Usuario> usuarios = usuarioService.listarUsuarios();
         System.out.println("Lista de usuários: " + usuarios);
         return usuarios;
+    }
+
+    @PostMapping("/usuarios/login")
+    public ResponseEntity<String> login(@RequestBody Usuario credenciais) {
+        boolean autenticado = usuarioService.autenticar(credenciais.getEmail(), credenciais.getSenha());
+
+        if (autenticado) {
+            return ResponseEntity.ok("Login bem-sucedido");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
+        }
     }
 }

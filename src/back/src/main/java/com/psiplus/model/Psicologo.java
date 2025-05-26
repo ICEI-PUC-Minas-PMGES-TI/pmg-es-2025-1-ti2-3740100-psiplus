@@ -11,7 +11,7 @@ public class Psicologo {
     private Long psicologoId;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "usuario_id", referencedColumnName = "usuarioId")
+    @JoinColumn(name = "usuario_id", referencedColumnName = "usuario_id")
     private Usuario usuario;
 
     @Column(length = 100)
@@ -32,17 +32,5 @@ public class Psicologo {
     }
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
-    }
-    public String getRegistro() {
-        return registro;
-    }
-    public void setRegistro(String registro) {
-        this.registro = registro;
-    }
-    public String getEspecialidades() {
-        return especialidades;
-    }
-    public void setEspecialidades(String especialidades) {
-        this.especialidades = especialidades;
     }
 }

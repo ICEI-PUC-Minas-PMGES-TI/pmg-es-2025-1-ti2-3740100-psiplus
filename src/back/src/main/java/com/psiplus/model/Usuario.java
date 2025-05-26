@@ -9,7 +9,7 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long usuarioId;
+    private Long usuario_id;
 
     @Column(nullable = false, unique = true)
     private String cpfCnpj;
@@ -36,10 +36,10 @@ public class Usuario {
 
     // Getters e Setters
     public Long getUsuarioId() {
-        return usuarioId;
+        return usuario_id;
     }
     public void setUsuarioId(Long usuarioId) {
-        this.usuarioId = usuarioId;
+        this.usuario_id = usuarioId;
     }
     public String getCpfCnpj() {
         return cpfCnpj;

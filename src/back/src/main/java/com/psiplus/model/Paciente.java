@@ -11,7 +11,7 @@ public class Paciente {
     private Long pacienteId;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "usuario_id", referencedColumnName = "usuarioId")
+    @JoinColumn(name = "usuario_id", referencedColumnName = "usuario_id")
     private Usuario usuario;
 
     @Column(length = 500)

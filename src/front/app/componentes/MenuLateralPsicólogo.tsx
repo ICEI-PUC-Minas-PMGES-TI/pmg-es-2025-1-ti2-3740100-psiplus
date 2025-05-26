@@ -1,30 +1,45 @@
-import {useState, useEffect} from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import IconPsiPlus from "../../public/assets/IconPsiPlus.png";
 import PerfilUser from "../../public/assets/PerfilUser.jpg";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import IconAgendas from "../../public/assets/IconAgenda.png";
 import IconPacientes from "../../public/assets/IconPacientes.png";
 import BotaoAdd from "../../public/assets/BotaoAdd.png";
-import { CalendarDays, Users } from 'lucide-react';
+import { CalendarDays, Users } from "lucide-react";
 
 type MenuLateralPsicologoProps = {
-    telaAtiva: "agenda" | "pacientes" ;
-}
+    telaAtiva: "agenda" | "pacientes";
+};
 
 export default function MenuLateralPsicologo({ telaAtiva }: MenuLateralPsicologoProps) {
-    const [nome, setNome] = useState("");
+    const [nome, setNome] = useState("Carregando...");
 
     useEffect(() => {
-        const nomeSalvo = localStorage.getItem("Nome");
-        if (nomeSalvo) setNome(nomeSalvo);
+        const sessao = localStorage.getItem("sessaoPsicologo");
+        if (!sessao) return;
+
+        const { usuarioId } = JSON.parse(sessao);
+
+        axios
+            .get(`http://localhost:8080/psicologos/${usuarioId}`)
+            .then((res) => {
+                const nomeDoUsuario = res.data.usuario?.nome || "Nome não encontrado";
+                setNome(nomeDoUsuario);
+            })
+            .catch((err) => {
+                console.error("Erro ao buscar psicólogo:", err);
+                setNome("Erro ao carregar nome");
+            });
     }, []);
 
     return (
         <div className="w-1/6 h-screen pl-[15px] text-black font-semibold flex flex-col bg-white">
             <div className="flex mt-[10px]">
                 <img className="w-[41px] h-[48px]" src={IconPsiPlus} alt="Logo" />
-                <h1 className=" text-[20px] pt-[15px] pl-[5px] font-bold">Psi+</h1>
+                <h1 className="text-[20px] pt-[15px] pl-[5px] font-bold">Psi+</h1>
             </div>
+
             <div className="flex pt-[10px] mt-[10px]">
                 <img className="w-[36px] h-[36px] rounded-full" src={PerfilUser} />
                 <div className="text-[14px] pl-[5px]">
@@ -65,13 +80,13 @@ export default function MenuLateralPsicologo({ telaAtiva }: MenuLateralPsicologo
                     color="bg-[#034B57]"
                     className="text-[16px] w-full min-w-[180px] whitespace-nowrap hover:brightness-90"
                     texto="Novo paciente"
-                    icone={<img className=" w-[29px] mr-1" src={BotaoAdd} alt="Icon +"/>}
+                    icone={<img className="w-[29px] mr-1" src={BotaoAdd} alt="Icon +" />}
                 />
                 <BotaoPadrao
                     color="bg-[#0088A3]"
-                    className=" text-[16px] w-full min-w-[180px] whitespace-nowrap mt-2 hover:brightness-90"
+                    className="text-[16px] w-full min-w-[180px] whitespace-nowrap mt-2 hover:brightness-90"
                     texto="Nova consulta"
-                    icone={<img className=" w-[29px] mr-1" src={BotaoAdd} alt="Icon +"/>}
+                    icone={<img className="w-[29px] mr-1" src={BotaoAdd} alt="Icon +" />}
                 />
             </div>
         </div>

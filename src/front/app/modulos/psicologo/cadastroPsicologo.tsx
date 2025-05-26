@@ -39,22 +39,29 @@ export function CadastroPsicologo() {
   }
 
   function salvarDadosPsicologo() {
-    const dadosPsicologo = {
-      nome,
-      email,
-      senha,
-      endereco,
-      dataNascimento,
-      sexo,
-      cpf,
-    };
-  
-    axios
-      .post("http://localhost:8080/usuarios", dadosPsicologo) 
-      .then((response) => {
-        localStorage.setItem("Nome", dadosPsicologo.nome);
-        alert("Dados salvos com sucesso!");
-        navigate("/dashboard");
+
+      axios.post("http://localhost:8080/psicologos", {
+        usuario: {
+          nome,
+          email,
+          senha,
+          cpfCnpj: cpf,
+          telefone: "+5511999999999",
+          dataNascimento,
+          sexo,
+        },
+        endereco: null,
+      })
+        .then((response) => {
+          const tempoDeSessao = 30 * 60 * 1000; // 30 minutos
+
+          const dadosSessao = {
+            usuarioId: response.data.usuario.usuarioId,
+            expiraEm: Date.now() + tempoDeSessao,
+          };
+
+          localStorage.setItem("sessaoPsicologo", JSON.stringify(dadosSessao));
+          navigate("/dashboard");
       })
       .catch((error) => {
         console.error("Erro ao salvar os dados no backend:", error);

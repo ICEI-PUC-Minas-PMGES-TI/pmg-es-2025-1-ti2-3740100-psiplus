@@ -11,14 +11,8 @@ public class Psicologo {
     private Long psicologoId;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "usuario_id", referencedColumnName = "usuario_id")
+    @JoinColumn(name = "usuarioId", referencedColumnName = "usuarioId")
     private Usuario usuario;
-
-    @Column(length = 100)
-    private String registro;
-
-    @Column(length = 500)
-    private String especialidades;
 
     // Getters e Setters
     public Long getPsicologoId() {

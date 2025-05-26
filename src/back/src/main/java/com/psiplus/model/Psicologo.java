@@ -12,6 +12,7 @@ public class Psicologo {
     private Long id;
 
     @OneToOne
+    @MapsId
     @JoinColumn(name = "usuario_id", referencedColumnName = "usuario_id")
     private Usuario usuario;
 

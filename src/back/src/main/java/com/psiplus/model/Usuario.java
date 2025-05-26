@@ -29,6 +29,12 @@ public class Usuario {
     @JoinColumn(name = "endereco_id")
     private Endereco endereco;
 
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
+    private Psicologo psicologo;
+
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
+    private Paciente paciente;
+
     // Getters e Setters
 
     public Long getId() {

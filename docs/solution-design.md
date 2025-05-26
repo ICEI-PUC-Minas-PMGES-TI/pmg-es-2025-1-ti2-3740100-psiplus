@@ -26,7 +26,7 @@
 
 💾 **Banco de Dados**
 
-- **MySQL**: Utilizado como sistema de gerenciamento de banco de dados relacional, o MySQL será responsável pelo armazenamento seguro dos registros das emoções, dados dos pacientes, histórico de consultas e demais informações essenciais do sistema.
+- **Azure SQLServer**: Utilizado como sistema de gerenciamento de banco de dados relacional, ele será responsável pelo armazenamento seguro dos registros das emoções, dados dos pacientes, histórico de consultas e demais informações essenciais do sistema.
 
 🚀 **Deploy** 
 
@@ -42,7 +42,7 @@
 
 | **Dimensão**   | **Tecnologia**  |
 | ---            | ---             |
-| SGBD           | MySQL           |
+| SGBD           | Azure SQLServer           |
 | Front end      | React + TailwindCSS |
 | Back end       | Java SpringBoot |
 | Deploy         | -    |

@@ -1,0 +1,233 @@
+/* Fonte e Estrutura Geral */
+
+.rbc-calendar {
+    font-family: 'Montserrat', sans-serif;
+}
+
+.rbc-time-view,
+.rbc-time-header,
+.rbc-time-content {
+    border: none !important;
+}
+
+.rbc-time-view {
+    margin-top: -1px; /* cola a grade à linha de horários */
+}
+
+
+/* Cabeçalho (dias da semana) */
+
+.rbc-time-header-content {
+    display: flex;
+    margin-bottom: -30px !important; /* ajuste fino para alinhar */
+    padding-bottom: 0 !important;
+    padding-top: 10px;
+    height: auto !important;
+    border: none !important;
+}
+
+.rbc-time-header-content .rbc-header {
+    border: none !important;
+    min-height: 60px !important;
+    height: auto !important;
+    overflow: visible !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: #858585;
+}
+
+/* Remove a linha abaixo do cabeçalho (rbc-row-resource) */
+.rbc-time-header-content .rbc-row.rbc-row-resource {
+    display: none !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    border: none !important;
+}
+
+/* Remove bordas verticais logo abaixo do cabeçalho */
+.rbc-time-header-content + .rbc-row {
+    border: none !important;
+}
+
+.rbc-time-header-content + .rbc-row .rbc-day-bg {
+    border-right: none !important;
+}
+
+.rbc-time-header-content + .rbc-row .rbc-day-bg::before,
+.rbc-time-header-content + .rbc-row .rbc-day-bg::after {
+    display: none !important;
+}
+
+
+/* Grade da Tabela */
+
+.rbc-timeslot-group {
+    border-bottom: 1px solid #EFEFF1;
+    border-top: 1px solid #EFEFF1;
+}
+
+.rbc-day-bg,
+.rbc-time-content > .rbc-day-slot {
+    border-right: 1px solid #EFEFF1;
+}
+
+/* Primeira linha da grade (00:00) */
+.rbc-time-content .rbc-time-gutter .rbc-timeslot-group:first-of-type,
+.rbc-time-content .rbc-day-slot .rbc-time-slot:first-of-type {
+    border-top: 1px solid #EFEFF1;
+}
+
+/* Remove bordas superiores das demais linhas */
+.rbc-time-slot {
+    border: none !important;
+}
+
+/* Estilização de textos */
+
+.rbc-label {
+    color: #8C9BB0;
+    font-size: 0.85rem;
+}
+
+
+/* Estilo dos eventos */
+
+/* Força o container dos eventos a não limitar o tamanho */
+.rbc-day-slot {
+    padding: 0 !important;
+}
+
+/* Elimina espaço à direita dos eventos dentro do slot do dia */
+.rbc-day-slot .rbc-event {
+    right: 0 !important;
+    left: 0 !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    width: 100% !important;
+}
+
+.rbc-event {
+    background-color: #FFF4E9 !important;
+    border: none !important; /* Zera todas as bordas */
+    border-left: 4px solid #F79824 !important;
+    border-radius: 0 !important;
+    color: #F79824 !important;
+    font-weight: 500 !important;
+    padding: 6px 8px !important;
+    box-shadow: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+}
+
+.rbc-event-content {
+    white-space: normal !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis;
+    font-size: 0.875rem !important;
+    line-height: 1.3;
+}
+
+/* Remove qualquer margem lateral aplicada por contêiner */
+.rbc-event-container {
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    justify-content: stretch !important;
+}
+
+/* Oculta o horário dentro dos eventos (mas NÃO nas laterais do calendário) */
+.rbc-event-label {
+    display: none !important;
+}
+
+.rbc-event-content::after {
+    content: attr(data-time);
+    display: block;
+    color: #666666;
+    font-size: 0.75rem;
+    margin-top: 2px;
+}
+
+
+/* Header */
+.rbc-header {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #858585;
+    line-height: 1.4;
+    white-space: pre-line; /* permite quebra de linha */
+}
+
+.rbc-time-header-content,
+.rbc-time-view,
+.rbc-calendar {
+    overflow: visible !important;
+}
+
+.rbc-today {
+    position: relative;
+    z-index: 0 !important;
+    background-color: transparent !important;
+
+}
+
+.rbc-header {
+    position: relative;
+    z-index: 1 !important;
+}
+
+.rbc-current-time-indicator {
+    display: none !important;
+}
+
+.rbc-time-header-content .rbc-header {
+    min-height: 48px !important;
+    padding: 4px 2px !important;
+    line-height: 1.1 !important;
+    flex-direction: column !important;
+    overflow: visible !important;
+    white-space: pre-line !important;
+    font-size: 0.875rem !important;
+}
+
+/* Garante que o evento ocupa 100% da célula */
+.rbc-day-slot {
+    position: relative !important;
+    padding: 0 !important;
+}
+
+.rbc-event {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.rbc-event-container {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+}
+
+.rbc-day-slot > div {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.rbc-header.rbc-today {
+    color: #F79824 !important;
+    font-weight: 600;
+}
+

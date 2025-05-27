@@ -2,27 +2,100 @@ import Main from "~/componentes/Main";
 import MenuLateralPsicólogo from "~/componentes/MenuLateralPsicólogo";
 import ExitIcon from "../../../public/assets/ExitIcon.png";
 import { useState } from "react";
+
+//imports de icons
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import EditIcon from "@mui/icons-material/Edit";
 
+//Imports da agenda
+import localizer from "~/utils/calendarConfig";
+import { Calendar, Views, momentLocalizer } from "react-big-calendar";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import "~/estilos/customCalendar.css";
+import CustomToolbar from "~/componentes/CustomToolbar";
+import { format, startOfWeek, endOfWeek, isToday } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import type { HeaderProps } from './Header';
+import moment from 'moment';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+
+
 export default function Agenda() {
-    const [semanaAtual, setSemanaAtual] = useState(0);
-    const dias = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
-    const datas = ["02", "03", "04", "05", "06", "07"];
-    const horas = [
-        "09:00",
-        "10:00",
-        "11:00",
-        "12:00",
-        "13:00",
-        "14:00",
-        "15:00",
-        "16:00",
-        "17:00",
-        "18:00",
+    const [dataBase, setDataBase] = useState(new Date());
+
+    // Funções para mudar de semana
+    const proximaSemana = () => {
+        const novaData = new Date(dataBase);
+        novaData.setDate(novaData.getDate() + 7);
+        setDataBase(novaData);
+    };
+
+    const semanaAnterior = () => {
+        const novaData = new Date(dataBase);
+        novaData.setDate(novaData.getDate() - 7);
+        setDataBase(novaData);
+    };
+
+    function formatarIntervaloSemana(data: Date) {
+        const inicio = startOfWeek(data, { weekStartsOn: 1 });
+        const fim = endOfWeek(data, { weekStartsOn: 1 });
+
+        const diaInicio = format(inicio, "dd", { locale: ptBR });
+        const diaFim = format(fim, "dd", { locale: ptBR });
+        const mes = format(fim, "MMMM", { locale: ptBR });
+
+        const mesCapitalizado = mes.charAt(0).toUpperCase() + mes.slice(1);
+
+        return `${diaInicio} - ${diaFim} de ${mesCapitalizado}`;
+    }
+
+    // Eventos
+    const eventos = [
+        {
+            title: "Fernanda Oliveira",
+            start: new Date(2025, 4, 26, 9, 0),
+            end: new Date(2025, 4, 26, 10, 0),
+        },
+        {
+            title: "Diego Cardoso",
+            start: new Date(2025, 4, 30, 10, 0),
+            end: new Date(2025, 4, 30, 11, 0),
+        },
+        {
+            title: "Ana Carolina",
+            start: new Date(2025, 4, 27, 8, 0),
+            end: new Date(2025, 4, 27, 9, 0),
+        },
+        {
+            title: "Pedro Coimbra",
+            start: new Date(2025, 4, 27, 15, 0),
+            end: new Date(2025, 4, 27, 16, 0),
+        },
     ];
 
-    return (
+    // Componente interno para customizar header do calendário
+    const CustomHeader: React.FC<HeaderProps> = ({ date }) => {
+        const weekday = format(date, "EEE", { locale: ptBR }); // ex: seg
+        const dayNumber = format(date, "d", { locale: ptBR }); // ex: 27
+        const isCurrentDay = isToday(date);
+
+        const textColor = isCurrentDay ? "#F58020" : "#858585";
+
+        return (
+            <div style={{ textAlign: "center", lineHeight: 1.2 }}>
+                <div style={{ fontSize: "0.75rem", color: textColor, fontWeight: 600 }}>
+                    {weekday}
+                </div>
+                <div style={{ fontSize: "0.85rem", color: textColor, fontWeight: 600 }}>{dayNumber}</div>
+            </div>
+        );
+    };
+
+    const MeuEvento = ({ event }) => (
+        <div>{event.title}</div> // Exibe só o nome
+    );
+
+        return (
         <Main>
             <div className="flex min-h-screen bg-white">
                 <MenuLateralPsicólogo telaAtiva="agenda" />
@@ -36,19 +109,20 @@ export default function Agenda() {
 
                     {/* Navegação da semana */}
                     <div className="flex items-center justify-between mb-4">
-                        {/* Esquerda: Data + Setinhas */}
                         <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-[#8C9BB0] ml-2">02 - 08 Março</span>
+                            <span className="text-sm font-medium text-[#8C9BB0] ml-2">
+                                {formatarIntervaloSemana(dataBase)}
+                            </span>
 
                             <div className="flex gap-1">
                                 <button
-                                    onClick={() => setSemanaAtual((s) => s - 1)}
+                                    onClick={semanaAnterior}
                                     className="p-2 bg-[#F3F4F8] rounded-md cursor-pointer hover:brightness-95"
                                 >
                                     <ChevronLeft size={20} className="text-[#858585]" />
                                 </button>
                                 <button
-                                    onClick={() => setSemanaAtual((s) => s + 1)}
+                                    onClick={proximaSemana}
                                     className="p-2 bg-[#F3F4F8] rounded-md cursor-pointer hover:brightness-95"
                                 >
                                     <ChevronRight size={20} className="text-[#858585]" />
@@ -65,53 +139,32 @@ export default function Agenda() {
                     </div>
 
                     {/* Grade da agenda */}
-                    <div className="grid grid-cols-[60px_repeat(6,1fr)] gap-0 bg-[#FAFAFC] rounded-xl overflow-hidden text-xs pr-4 pb-4">
-                        {/* Cabeçalho dos dias */}
-                        <div className="bg-[#FAFAFC]"></div>
-                        {dias.map((dia, idx) => (
-                            <div
-                                key={`dia-${idx}`}
-                                className="bg-[#FAFAFC] py-2 text-center font-semibold text-[#858585] mt-2"
-                            >
-                                {dia}
-                            </div>
-                        ))}
-
-                        {/* Datas dos dias da semana */}
-                        <div className="bg-[#FAFAFC]"></div>
-                        {datas.map((data, idx) => (
-                            <div
-                                key={`data-${idx}`}
-                                className="bg-[#FAFAFC] pb-2 text-center text-sm font-medium text-[#161736]"
-                            >
-                                {data}
-                            </div>
-                        ))}
-
-                        {/* Linhas da grade */}
-                        {horas.map((hora, i) => (
-                            <>
-                                <div
-                                    key={`hora-${i}`}
-                                    className="text-xs font-medium text-[#161736] bg-[#FAFAFC] px-2 py-4 ml-1.5"
-                                >
-                                    {hora}
-                                </div>
-                                {dias.map((_, j) => (
-                                    <div
-                                        key={`${i}-${j}`}
-                                        className={`
-                        bg-[#FAFAFC] h-16 border-t border-l border-[#EFEFF1]
-                        hover:brightness-97 cursor-pointer p-2
-                        ${j === dias.length - 1 ? 'border-r' : ''}
-                        ${i === horas.length - 1 ? 'border-b' : ''}
-                    `}
-                                    >
-                                        {/* Aqui vão os agendamentos */}
-                                    </div>
-                                ))}
-                            </>
-                        ))}
+                    <div className="rounded-xl bg-[#FAFAFC] pb-7 pl-5 pr-6">
+                        <Calendar
+                            localizer={localizer}
+                            culture="pt-BR"
+                            events={eventos}
+                            startAccessor="start"
+                            endAccessor="end"
+                            defaultView={Views.WEEK}
+                            views={["week", "day", "agenda"]}
+                            style={{ height: "78vh" }}
+                            components={{
+                                toolbar: CustomToolbar,
+                                header: CustomHeader,
+                                event: MeuEvento
+                            }}
+                            messages={{
+                                week: "Semana",
+                                day: "Dia",
+                                agenda: "Agenda",
+                                today: "Hoje",
+                                previous: "Anterior",
+                                next: "Próxima",
+                            }}
+                            date={dataBase} //Controla a semana visível
+                            onNavigate={(novaData) => setDataBase(novaData)} //Sincroniza ao mover dentro do calendário
+                        />
                     </div>
                 </div>
 
@@ -132,10 +185,10 @@ export default function Agenda() {
                             {/* Setas de navegação alinhadas à direita */}
                             <div className="flex gap-1 mb-4">
                                 <button className="p-1 hover:text-[#161736] cursor-pointer">
-                                    <ChevronLeft size={24} />
+                                    <ChevronLeft onClick={semanaAnterior} size={24} />
                                 </button>
                                 <button className="p-1 hover:text-[#161736] cursor-pointer">
-                                    <ChevronRight size={24} />
+                                    <ChevronRight onClick={proximaSemana} size={24} />
                                 </button>
                             </div>
                         </div>

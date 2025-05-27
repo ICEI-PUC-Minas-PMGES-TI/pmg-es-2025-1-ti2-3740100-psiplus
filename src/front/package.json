@@ -16,11 +16,14 @@
     "@react-router/node": "^7.5.0",
     "@react-router/serve": "^7.5.0",
     "axios": "^1.9.0",
+    "date-fns": "^4.1.0",
     "isbot": "^5.1.17",
     "lucide-react": "^0.501.0",
     "react": "^19.0.0",
+    "react-big-calendar": "^1.18.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
+    "react-input-mask": "^3.0.0-alpha.2",
     "react-router": "^7.5.3"
   },
   "devDependencies": {
@@ -28,11 +31,13 @@
     "@tailwindcss/vite": "^4.0.0",
     "@types/node": "^20",
     "@types/react": "^19.0.1",
+    "@types/react-big-calendar": "^1.16.1",
     "@types/react-dom": "^19.0.1",
+    "@types/react-input-mask": "^3.0.6",
     "react-router-devtools": "^1.1.0",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.7.2",
-    "vite": "^5.4.11",
+    "vite": "^6.3.5",
     "vite-tsconfig-paths": "^5.1.4"
   }
 }

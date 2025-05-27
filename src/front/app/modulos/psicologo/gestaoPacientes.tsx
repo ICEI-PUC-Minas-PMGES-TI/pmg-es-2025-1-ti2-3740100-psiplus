@@ -1,7 +1,6 @@
 import Main from "~/componentes/Main";
 import MenuLateralPsicólogo from "~/componentes/MenuLateralPsicólogo";
 import InputPadrao from "~/componentes/InputPadrao";
-import IconPesquisar from "../../../public/assets/IconPesquisar.png"
 import ExitIcon from "../../../public/assets/ExitIcon.png"
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import PerfilUser from "../../../public/assets/PerfilUser.jpg";
@@ -20,66 +19,6 @@ export function GestaoPacientes() {
       setModoEdicao((prev) => !prev);
     };
 
-  const [dadosPaciente, setDadosPaciente] = useState({
-    nome: "",
-    cpf: "",
-    sexo: "",
-    dia: "",
-    mes: "",
-    ano: "",
-    email: "",
-    telefone: "",
-    ddd: "+55",
-    endereco: "",
-    cidade: "",
-    pais: "",
-    cep: "",
-    notas: ""
-  });
-
-  useEffect(() => {
-    const dadosExistentes = localStorage.getItem("dadosPaciente");
-    if (!dadosExistentes) {
-      localStorage.setItem("dadosPaciente", JSON.stringify({
-        nome: "Isabelle Stanley",
-        cpf: "123.456.789-00",
-        sexo: "Feminino",
-        dia: "12",
-        mes: "02",
-        ano: "2000",
-        email: "isabeleStanley@gmail.com",
-        telefone: "+55 31999999999",
-        endereco: "Rua das Flores, 123",
-        cidade: "Belo Horizonte",
-        pais: "Brasil",
-        cep: "30123-456",
-        notas: "Paciente tranquila, apresentou bons avanços."
-      }));
-    }
-  }, []);
-
-  // Carregar dados salvos no localStorage ao abrir a tela
-  useEffect(() => {
-    const pacienteSalvo = localStorage.getItem("dadosPaciente");
-    if (pacienteSalvo) {
-      setDadosPaciente(JSON.parse(pacienteSalvo));
-    }
-  }, []);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setDadosPaciente((prev) => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    localStorage.setItem("dadosPaciente", JSON.stringify(dadosPaciente));
-    setModoEdicao(false);
-  };
-
     return (
         <Main>
           <div className="flex min-h-screen bg-white ">
@@ -88,20 +27,16 @@ export function GestaoPacientes() {
             <div className="w-px bg-gray-300"></div>
             <div className="m-5 w-4/5">
               <div className="flex">
-                <InputPadrao
-                    placeholder="Pesquisar"
-                    classNameInput="border-0 font-semibold text-[14px]"
-                    icon={<img className="w-[25px]" src={IconPesquisar} alt="pesquisar"/>}
-                />
                 <BotaoPadrao
-                    color="bg-white"
-                    className="text-[16px] !font-medium  ml-auto !text-black "
                     texto="Sair"
-                    icone={<img className=" w-[26px] " src={ExitIcon} alt="Sair"/>}
+                    icone={<img className="w-[26px]" src={ExitIcon} alt="Sair" />}
+                    color="bg-white"
+                    textoColor="text-gray-600"
+                    className="ml-auto hover:text-black transition-colors duration-200 font-medium"
                 />
               </div>
-              <hr className="border-t-2 border-[#DFE5F1] my-5"/>
-              <h1 className="font-semibold text-black mx-4 text-[20px]">Gestão de Pacientes</h1>
+              <hr className="border-t-2 border-[#DFE5F1] my-2"/>
+              <h1 className="font-semibold text-black mx-4 text-[20px] mt-5">Gestão de Pacientes</h1>
 
               <div className="mx-1 mt-4 flex gap-7">
                 {/* Painel Lateral do Paciente */}
@@ -124,7 +59,7 @@ export function GestaoPacientes() {
 
                   <div className="mt-6 flex flex-col gap-3">
                     {/* Botão ativo */}
-                    <button className="flex items-center gap-3 px-4 py-2 rounded-lg bg-white shadow-md w-full">
+                    <button className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg bg-white shadow-md w-full">
                       <div className="bg-[#0088A3] rounded-md p-1">
                         <PersonIcon style={{color: "white"}}/>
                       </div>
@@ -132,8 +67,7 @@ export function GestaoPacientes() {
                     </button>
 
                     {/* Botões inativos */}
-                    <button
-                        className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-[#2B2F42] w-full">
+                    <button className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-[#2B2F42] w-full">
                       <div className="bg-[#F4F7FF] rounded-md p-1">
                         <HistoryIcon style={{color: "#858EBD"}}/>
                       </div>
@@ -141,7 +75,7 @@ export function GestaoPacientes() {
                     </button>
 
                     <button
-                        className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-[#2B2F42] w-full">
+                        className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-[#2B2F42] w-full">
                       <div className="bg-[#F4F7FF] rounded-md p-1">
                         <BarChartIcon style={{color: "#858EBD"}}/>
                       </div>
@@ -149,7 +83,7 @@ export function GestaoPacientes() {
                     </button>
 
                     <button
-                        className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-[#2B2F42] w-full">
+                        className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-[#2B2F42] w-full">
                       <div className="bg-[#F4F7FF] rounded-md p-1">
                         <SentimentSatisfiedAltIcon style={{color: "#858EBD"}}/>
                       </div>
@@ -193,8 +127,6 @@ export function GestaoPacientes() {
                     <div>
                       <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Nome Completo*</label>
                       <InputPadrao name="nome"
-                                   value={dadosPaciente.nome}
-                                   onChange={handleChange}
                                    placeholder=""
                                    classNameInput="border-[#DAE0F2] rounded-lg"
                                    disabled={!modoEdicao}/>
@@ -202,8 +134,6 @@ export function GestaoPacientes() {
                     <div>
                       <label className="block text-sm font-regular mb-1 text-[#3A3F63]">CPF</label>
                       <InputPadrao name="cpf"
-                                   value={dadosPaciente.cpf}
-                                   onChange={handleChange}
                                    placeholder=""
                                    classNameInput="border-[#DAE0F2] rounded-lg"
                                    disabled={!modoEdicao}/>
@@ -211,8 +141,6 @@ export function GestaoPacientes() {
                     <div className="relative">
                       <label className="block text-sm font-regular mb-1 text-slate-700">Sexo</label>
                       <select name="sexo"
-                              value={dadosPaciente.sexo}
-                              onChange={handleChange}
                               disabled={!modoEdicao}
                               className="w-full border border-[#DAE0F2] rounded-lg px-3 py-2.5 text-sm text-[#3A3F63] appearance-none pr-10">
                         <option value="">Selecione</option>
@@ -223,40 +151,12 @@ export function GestaoPacientes() {
                       <IoIosArrowDown
                           className="absolute right-3 top-2/4 transform -translate-y-1/4 text-2xl text-[#858EBD] pointer-events-none"/>
                     </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      <div>
-                        <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Dia</label>
-                        <InputPadrao name="dia"
-                                     value={dadosPaciente.dia}
-                                     onChange={handleChange}
-                                     placeholder=""
-                                     classNameInput="border-[#DAE0F2] rounded-lg"
-                                     disabled={!modoEdicao}/>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Mês</label>
-                        <InputPadrao name="mes"
-                                     value={dadosPaciente.mes}
-                                     onChange={handleChange}
-                                     placeholder=""
-                                     classNameInput="border-[#DAE0F2] rounded-lg"
-                                     disabled={!modoEdicao}/>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Ano</label>
-                        <InputPadrao name="ano"
-                                     value={dadosPaciente.ano}
-                                     onChange={handleChange}
-                                     placeholder=""
-                                     classNameInput="border-[#DAE0F2] rounded-lg"
-                                     disabled={!modoEdicao}/>
-                      </div>
+                    <div>
+                      <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Data de nascimento</label>
                     </div>
                     <div>
                       <label className="block text-sm font-regular mb-1 text-[#3A3F63]">E-mail*</label>
                       <InputPadrao name="email"
-                                   value={dadosPaciente.email}
-                                   onChange={handleChange}
                                    placeholder=""
                                    classNameInput="border-[#DAE0F2] rounded-lg"
                                    disabled={!modoEdicao}/>
@@ -266,8 +166,6 @@ export function GestaoPacientes() {
                       <div className="flex gap-2 items-end">
                         <div className="relative">
                           <select name="ddd"
-                                  value={dadosPaciente.ddd}
-                                  onChange={handleChange}
                                   disabled={!modoEdicao}
                                   className="w-[80px] h-[44px] border border-[#DAE0F2] rounded-lg px-3 py-2 text-sm text-[#3A3F63] appearance-none">
                             <option>+11</option>
@@ -281,8 +179,6 @@ export function GestaoPacientes() {
                         </div>
                         <div className="flex-1">
                           <InputPadrao name="telefone"
-                                       value={dadosPaciente.telefone}
-                                       onChange={handleChange}
                                        placeholder=""
                                        classNameInput="border-[#DAE0F2] rounded-lg"
                                        disabled={!modoEdicao}/>
@@ -296,8 +192,6 @@ export function GestaoPacientes() {
                     <div>
                       <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Endereço</label>
                       <InputPadrao name="endereco"
-                                   value={dadosPaciente.endereco}
-                                   onChange={handleChange}
                                    placeholder=""
                                    classNameInput="border-[#DAE0F2] rounded-lg"
                                    disabled={!modoEdicao}/>
@@ -305,16 +199,12 @@ export function GestaoPacientes() {
                     <div>
                       <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Cidade</label>
                       <InputPadrao name="cidade"
-                                   value={dadosPaciente.cidade}
-                                   onChange={handleChange}
                                    placeholder="" classNameInput="border-[#DAE0F2] rounded-lg"
                                    disabled={!modoEdicao}/>
                     </div>
                     <div>
                       <label className="block text-sm font-regular mb-1 text-[#3A3F63]">País</label>
                       <InputPadrao name="pais"
-                                   value={dadosPaciente.pais}
-                                   onChange={handleChange}
                                    placeholder=""
                                    classNameInput="border-[#DAE0F2] rounded-lg"
                                    disabled={!modoEdicao}/>
@@ -322,8 +212,6 @@ export function GestaoPacientes() {
                     <div>
                       <label className="block text-sm font-regular mb-1 text-[#3A3F63]">CEP</label>
                       <InputPadrao name="cep"
-                                   value={dadosPaciente.cep}
-                                   onChange={handleChange}
                                    placeholder=""
                                    classNameInput="border-[#DAE0F2] rounded-lg"
                                    disabled={!modoEdicao}/>
@@ -336,8 +224,6 @@ export function GestaoPacientes() {
                     <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Notas</label>
                     <textarea
                         name="notas"
-                        value={dadosPaciente.notas}
-                        onChange={handleChange}
                         disabled={!modoEdicao}
                         className="w-full border border-[#DAE0F2] rounded-lg px-3 py-2 text-sm text-[#3A3F63]" rows={4}
                         placeholder="Insira alguma nota sobre esse paciente"

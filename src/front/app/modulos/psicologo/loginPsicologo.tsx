@@ -4,8 +4,41 @@ import BotaoPadrao from "~/componentes/BotaoPadrao";
 import FormPadrao from "~/componentes/FormPadrao";
 import InputPadrao from "~/componentes/InputPadrao";
 import HomeLogo from "~/componentes/HomeLogo";
+import {useNavigate} from "react-router";
+import {useState} from "react";
+import axios from "axios";
 
 export function LoginPsicologo() {
+    const navigate = useNavigate();
+    const [email, setEmail] = useState("");
+    const [senha, setSenha] = useState("");
+    const [erro, setErro] = useState("");
+
+    function fazerLogin(e: React.FormEvent) {
+        e.preventDefault();
+        setErro(""); // limpa o erro antes de tentar de novo
+
+        axios
+            .post("http://localhost:8080/psicologos/login", {
+                email,
+                senha,
+            })
+            .then((response) => {
+                const tempoDeSessao = 30 * 60 * 1000; // 30 minutos
+
+                const dadosSessao = {
+                    usuarioId: response.data.psicologoId,
+                    expiraEm: Date.now() + tempoDeSessao,
+                };
+
+                localStorage.setItem("sessaoPsicologo", JSON.stringify(dadosSessao));
+                navigate("/psicologo/paginaPrincipal");
+            })
+            .catch((error) => {
+                console.error("Erro ao salvar os dados no backend:", error);
+                alert("Houve um erro ao salvar os dados.");
+            });
+    }
   return (
     <Main>
         <div className="flex h-screen">
@@ -21,10 +54,10 @@ export function LoginPsicologo() {
                 </div>
 
                 {/* Formulário de login */}
-                <FormPadrao>
-                    <InputPadrao type="email" placeholder="E-mail" name="email" icon={<Mail />} />
-                    <InputPadrao type="password" placeholder="Senha" name="senha" icon={<Lock />} />
-                    <BotaoPadrao caminho="/psicologo/dashboard" texto="Entrar" fullWidth />
+                <FormPadrao onSubmit={fazerLogin}>
+                    <InputPadrao type="email" placeholder="E-mail" name="email" icon={<Mail />} value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <InputPadrao type="password" placeholder="Senha" name="senha" icon={<Lock />} value={senha} onChange={(e) => setSenha(e.target.value)}/>
+                    <BotaoPadrao texto="Entrar" fullWidth type="submit" />
                     {/* Texto de cadastro */}
                     <div className="mt-6 text-center">
                         <p className="text-gray-600 mb-2">

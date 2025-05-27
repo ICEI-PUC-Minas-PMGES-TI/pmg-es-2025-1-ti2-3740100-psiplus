@@ -6,6 +6,7 @@ import com.psiplus.repository.PsicologoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.Optional;
 
 import java.util.List;
 
@@ -38,5 +39,16 @@ public class PsicologoService {
 
     public void deletar(Long id) {
         repository.deleteById(id);
+    }
+
+
+    public Optional<Psicologo> buscarPorEmail(String email) {
+        return repository.findByUsuarioEmail(email);
+    }
+
+    public Psicologo autenticar(String email, String senha) {
+        return repository.findByUsuarioEmail(email)
+                .filter(p -> passwordEncoder.matches(senha, p.getUsuario().getSenha()))
+                .orElse(null);
     }
 }

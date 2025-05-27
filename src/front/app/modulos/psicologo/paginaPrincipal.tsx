@@ -13,15 +13,17 @@ import { Calendar, Views, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "~/estilos/customCalendar.css";
 import CustomToolbar from "~/componentes/CustomToolbar";
-import { format, startOfWeek, endOfWeek, isToday } from "date-fns";
+import { format, startOfWeek, endOfWeek} from "date-fns";
 import { ptBR } from "date-fns/locale";
 import type { HeaderProps } from './Header';
-import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { eachDayOfInterval, startOfMonth, endOfMonth, isSameDay, isSameMonth, isToday } from "date-fns";
+import type { View } from "react-big-calendar";
 
 
 export default function Agenda() {
     const [dataBase, setDataBase] = useState(new Date());
+    const [mesLateral, setMesLateral] = useState(new Date()); // NOVO: controla o mês no calendário lateral
 
     // Funções para mudar de semana
     const proximaSemana = () => {
@@ -49,6 +51,7 @@ export default function Agenda() {
         return `${diaInicio} - ${diaFim} de ${mesCapitalizado}`;
     }
 
+
     // Eventos
     const eventos = [
         {
@@ -73,7 +76,8 @@ export default function Agenda() {
         },
     ];
 
-    // Componente interno para customizar header do calendário
+
+    // Componente interno para customizar header do calendário principal
     const CustomHeader: React.FC<HeaderProps> = ({ date }) => {
         const weekday = format(date, "EEE", { locale: ptBR }); // ex: seg
         const dayNumber = format(date, "d", { locale: ptBR }); // ex: 27
@@ -95,7 +99,24 @@ export default function Agenda() {
         <div>{event.title}</div> // Exibe só o nome
     );
 
-        return (
+
+    //Calendário lateral
+    const [dataSelecionada, setDataSelecionada] = useState(new Date());
+    const [visualizacao, setVisualizacao] = useState<View>("week");
+
+    const diasDoMes = eachDayOfInterval({
+        start: startOfWeek(startOfMonth(mesLateral), { weekStartsOn: 0 }), // Domingo anterior ou do dia 1
+        end: endOfWeek(endOfMonth(mesLateral), { weekStartsOn: 0 }), // Sábado após ou do último dia do mês
+    });
+
+    // Consultas do dia selecionado
+    const consultasDoDia = eventos.filter((evento) =>
+        isSameDay(evento.start, dataSelecionada)
+    );
+
+
+
+    return (
         <Main>
             <div className="flex min-h-screen bg-white">
                 <MenuLateralPsicólogo telaAtiva="agenda" />
@@ -140,6 +161,19 @@ export default function Agenda() {
 
                     {/* Grade da agenda */}
                     <div className="rounded-xl bg-[#FAFAFC] pb-7 pl-5 pr-6">
+                        {/* BOTÃO PARA VOLTAR À VISUALIZAÇÃO SEMANAL */}
+                        {visualizacao === "day" && (
+                            <button
+                                onClick={() => {
+                                    setVisualizacao("week");
+                                    setDataBase(new Date());
+                                }}
+                                className="mt-3 text-sm text-[#0088A3] hover:font-medium cursor-pointer transition"
+                            >
+                                ← Voltar para a semana
+                            </button>
+                        )}
+
                         <Calendar
                             localizer={localizer}
                             culture="pt-BR"
@@ -163,8 +197,11 @@ export default function Agenda() {
                                 next: "Próxima",
                             }}
                             date={dataBase} //Controla a semana visível
-                            onNavigate={(novaData) => setDataBase(novaData)} //Sincroniza ao mover dentro do calendário
+                            onNavigate={(novaData) => setDataBase(novaData)}
+                            view={visualizacao}
+                            onView={(view) => setVisualizacao(view)}
                         />
+
                     </div>
                 </div>
 
@@ -177,63 +214,89 @@ export default function Agenda() {
                         <span className="text-sm font-medium">Sair</span>
                     </button>
 
-                    {/* Calendário estático */}
+                    {/* Calendário dinâmico */}
                     <div className="mt-15">
                         <div className="flex items-center justify-between text-lg font-semibold text-[#7D8DA6] mb-4 px-1">
-                            {/* Mês alinhado à esquerda */}
-                            <span>Maio 2025</span>
-                            {/* Setas de navegação alinhadas à direita */}
+                            <span>{(() => {
+                                const mes = format(mesLateral, "MMMM yyyy", { locale: ptBR });
+                                return mes.charAt(0).toUpperCase() + mes.slice(1);
+                            })()}</span>
                             <div className="flex gap-1 mb-4">
-                                <button className="p-1 hover:text-[#161736] cursor-pointer">
-                                    <ChevronLeft onClick={semanaAnterior} size={24} />
+                                <button
+                                    className="p-1 hover:text-[#161736] cursor-pointer"
+                                    onClick={() => setMesLateral(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))}
+                                >
+                                    <ChevronLeft size={24} />
                                 </button>
-                                <button className="p-1 hover:text-[#161736] cursor-pointer">
-                                    <ChevronRight onClick={proximaSemana} size={24} />
+                                <button
+                                    className="p-1 hover:text-[#161736] cursor-pointer"
+                                    onClick={() => setMesLateral(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))}
+                                >
+                                    <ChevronRight size={24} />
                                 </button>
                             </div>
                         </div>
+
+                        {/* Dias da semana */}
                         <div className="grid grid-cols-7 gap-x-3 text-[12px] text-[#161736] font-semibold mb-1">
                             <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
                         </div>
+
+                        {/* Dias do mês */}
                         <div className="grid grid-cols-7 text-[13px] font-medium gap-y-1.5 text-[#161736]">
-                            {Array.from({ length: 31 }, (_, i) => {
-                                const dia = i + 1;
-                                const isSelected = dia >= 23 && dia <= 27;
+                            {diasDoMes.map((dia, idx) => {
+                                const isSelecionado = isSameDay(dia, dataSelecionada);
+                                const isHoje = isToday(dia);
+
                                 return (
-                                    <span
-                                        key={dia}
-                                        className={`py-1 w-8 h-8 rounded-full flex items-center justify-center mx-auto ${
-                                            isSelected ? 'bg-[#0088A3] text-white font-semibold' : ''
-                                        }`}>{dia}
-                                    </span>
+                                    <button
+                                        key={idx}
+                                        onClick={() => {
+                                            setDataSelecionada(dia);
+                                            setDataBase(dia); // também atualiza o calendário principal
+                                        }}
+                                        className={`py-1 w-8 h-8 rounded-full flex items-center justify-center mx-auto transition cursor-pointer
+                        ${isSelecionado ? 'bg-[#0088A3] text-white font-semibold' : isHoje ? 'text-[#F58020]' : ''}
+                        ${!isSameMonth(dia, mesLateral) ? 'text-gray-400' : ''}
+                    `}
+                                    >
+                                        {format(dia, 'd')}
+                                    </button>
                                 );
                             })}
                         </div>
                     </div>
 
                     {/* Consultas do dia */}
-                    <div className="mt-8">
-                        <h2 className="text-base font-bold text-[#161736] mb-4">Consultas do dia</h2>
+                        <div className="mt-8">
+                            <h2 className="text-base font-bold text-[#161736] mb-4">
+                                Consultas do dia
+                            </h2>
 
-                        {[
-                            { nome: "Fernanda Oliveira", hora: "09:00", img: "https://randomuser.me/api/portraits/women/1.jpg" },
-                            { nome: "Diego Cardoso", hora: "10:00", img: "https://randomuser.me/api/portraits/men/2.jpg" },
-                            { nome: "Rafael Nogueira", hora: "14:00", img: "https://randomuser.me/api/portraits/men/3.jpg" },
-                            { nome: "Tatiane Ribeiro", hora: "16:00", img: "https://randomuser.me/api/portraits/women/4.jpg" },
-                        ].map((cliente, idx) => (
-                            <div key={idx} className="flex items-center bg-[#EDF0F5] rounded-lg px-3 py-2 mb-2">
-                                <img src={cliente.img} alt={cliente.nome} className="w-10 h-10 rounded-full mr-3" />
-                                <div>
-                                    <p className="font-medium text-sm text-[#161736]">{cliente.nome}</p>
-                                    <p className="text-xs text-[#8C9BB0] flex items-center gap-1">
-                                        <span className="w-2 h-2 bg-[#F79824] rounded-full inline-block"></span> {cliente.hora}
-                                    </p>
-                                </div>
-                            </div>
-                        ))}
+                            {consultasDoDia.length === 0 ? (
+                                <p className="text-sm text-[#8C9BB0]">Nenhuma consulta</p>
+                            ) : (
+                                consultasDoDia.map((consulta, idx) => (
+                                    <div key={idx} className="flex items-center bg-[#EDF0F5] rounded-lg px-3 py-2 mb-2">
+                                        <div className="w-10 h-10 bg-[#ADD9E2] rounded-full mr-3 flex items-center justify-center font-bold text-[#0088A3]">
+                                            {consulta.title.charAt(0)}
+                                        </div>
+                                        <div>
+                                            <p className="font-medium text-sm text-[#161736]">
+                                                {consulta.title}
+                                            </p>
+                                            <p className="text-xs text-[#8C9BB0] flex items-center gap-1">
+                                                <span className="w-2 h-2 bg-[#F79824] rounded-full inline-block"></span>
+                                                {format(consulta.start, "HH:mm")}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
                     </div>
+
                 </div>
-            </div>
         </Main>
     );
 }

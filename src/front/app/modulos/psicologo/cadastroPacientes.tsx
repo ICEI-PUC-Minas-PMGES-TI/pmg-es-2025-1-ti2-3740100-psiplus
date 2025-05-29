@@ -3,10 +3,11 @@ import MenuLateralPsicólogo from "~/componentes/MenuLateralPsicólogo";
 import InputPadrao from "~/componentes/InputPadrao";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import ExitIcon from "../../../public/assets/ExitIcon.png";
-import { useNavigate } from "react-router"; // <-- Faltava isso
+import { useNavigate } from "react-router";
 import { useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import axios from "axios";
+import PopupCadastroSucesso from "../../componentes/PopupCadastroSucesso";
 
 export default function CadastroPacientes() {
   const navigate = useNavigate(); // <-- E isso
@@ -23,6 +24,7 @@ export default function CadastroPacientes() {
   const [cidade, setCidade] = useState("");
   const [estado, setEstado] = useState("");
   const [notas, setNotas] = useState("");
+  const [mostrarPopup, setMostrarPopup] = useState(false);
 
   const handleSubmit = async () => {
     const paciente = {
@@ -49,11 +51,12 @@ export default function CadastroPacientes() {
 
     try {
       await axios.post("http://localhost:8080/pacientes", paciente);
-      alert("Paciente cadastrado com sucesso!");
+      setMostrarPopup(true);
     } catch (error) {
       console.error("Erro ao cadastrar paciente:", error);
       alert("Erro ao cadastrar paciente.");
     }
+
   };
 
   const formatarParaISO = (data: string): string => {
@@ -143,7 +146,7 @@ export default function CadastroPacientes() {
                       name="cpf"
                       value={cpfCnpj}
                       onChange={(e) => setCpfCnpj(e.target.value)}
-                      classNameInput="!px-5 !pl-10 !py-2 rounded-lg !text-[#858EBD] !border-[#DAE0F2]"
+                      classNameInput="!px-5 !py-2 rounded-lg !text-[#858EBD] !border-[#DAE0F2]"
                   />
                 </div>
 
@@ -269,6 +272,16 @@ export default function CadastroPacientes() {
             </div>
           </div>
         </div>
+        {/* Popup */}
+        {mostrarPopup && (
+            <PopupCadastroSucesso
+                mensagem="Paciente cadastrado com sucesso!"
+                onClose={() => {
+                  setMostrarPopup(false);
+                  navigate("/psicologo/paginaPrincipal");
+                }}
+            />
+        )}
       </Main>
   );
 }

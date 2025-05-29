@@ -21,21 +21,22 @@ interface TabelaPadraoProps {
 
 export default function TabelaPadrao({ data }: TabelaPadraoProps) {
     const columns: Column[] = [
+        { id: 'check', label:'', align:'center'},
         { id: 'nome', label: 'Nome' },
-        { id: 'cpf', label: 'CPF', align: 'left' },
-        { id: 'email', label: 'E-mail', align: 'left' },
+        { id: 'cpf', label: 'CPF', align: 'center' },
+        { id: 'email', label: 'E-mail', align: 'center' },
         { id: 'telefone', label: 'Telefone', align: 'center' },
         { id: 'nascimento', label: 'Nascimento', align: 'center' },
     ];
 
-    // const data: RowData[] = []; // Dados Mockados
 
     const [search, setSearch] = useState('');
     const [orderBy, setOrderBy] = useState<string>('');
     const [orderAsc, setOrderAsc] = useState(true);
     const [page, setPage] = useState(0);
-    const rowsPerPage = 5;
-
+    const rowsPerPage = 10;
+    const [selectedRows, setSelectedRows] = useState<string[]>([]);
+    const isSelected = (cpf: string) => selectedRows.includes(cpf);
     const handleSort = (columnId: string) => {
         if (orderBy === columnId) {
             setOrderAsc(!orderAsc);
@@ -121,7 +122,22 @@ export default function TabelaPadrao({ data }: TabelaPadraoProps) {
                             <tr key={idx} className="hover:bg-gray-50">
                                 {columns.map((col) => (
                                     <td key={col.id} className={`px-4 py-3 text-${col.align || 'left'}`}>
-                                        {row[col.id] ?? '-'}
+                                        {col.id === 'check' ? (
+                                            <input
+                                                type="checkbox"
+                                                checked={isSelected(row['cpf'] as string)}
+                                                onChange={(e) => {
+                                                    const cpf = row['cpf'] as string;
+                                                    if (e.target.checked) {
+                                                        setSelectedRows([...selectedRows, cpf]);
+                                                    } else {
+                                                        setSelectedRows(selectedRows.filter((id) => id !== cpf));
+                                                    }
+                                                }}
+                                            />
+                                        ) : (
+                                            row[col.id] ?? '-'
+                                        )}
                                     </td>
                                 ))}
                             </tr>
@@ -157,6 +173,8 @@ export default function TabelaPadrao({ data }: TabelaPadraoProps) {
                 >
                     Próxima
                 </button>
+                <p className="text-sm text-gray-600 mt-2">
+                </p>
             </div>
         </div>
     );

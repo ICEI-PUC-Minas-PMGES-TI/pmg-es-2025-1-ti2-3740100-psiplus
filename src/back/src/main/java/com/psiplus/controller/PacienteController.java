@@ -46,4 +46,27 @@ public class PacienteController {
         service.deletar(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Paciente> atualizar(@PathVariable Long id, @RequestBody Paciente pacienteAtualizado) {
+        Paciente existente = service.buscarPorId(id);
+        if (existente == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Preserva os IDs do usuário e endereço existentes
+        if (existente.getUsuario() != null) {
+            pacienteAtualizado.getUsuario().setUsuarioId(existente.getUsuario().getUsuarioId());
+
+            if (existente.getUsuario().getEndereco() != null) {
+                pacienteAtualizado.getUsuario().getEndereco().setId(existente.getUsuario().getEndereco().getId());
+            }
+        }
+
+        pacienteAtualizado.setPacienteId(id);
+
+        Paciente salvo = service.salvar(pacienteAtualizado);
+        return ResponseEntity.ok(salvo);
+    }
+
 }

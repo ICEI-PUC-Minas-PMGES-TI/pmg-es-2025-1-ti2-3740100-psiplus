@@ -1,6 +1,6 @@
 package com.psiplus.controller;
 
-import back.src.main.java.com.psiplus.model.LoginRequest;
+import com.psiplus.model.LoginRequest;
 import com.psiplus.model.Psicologo;
 import com.psiplus.service.PsicologoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +47,7 @@ public class PsicologoController {
         service.deletar(id);
         return ResponseEntity.noContent().build();
     }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         Psicologo psicologo = service.autenticar(request.getEmail(), request.getSenha());

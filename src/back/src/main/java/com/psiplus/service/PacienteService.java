@@ -1,5 +1,6 @@
 package com.psiplus.service;
 
+import back.src.main.java.com.psiplus.DTO.PacienteDTO;
 import com.psiplus.model.Paciente;
 import com.psiplus.model.Usuario;
 import com.psiplus.model.Endereco;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PacienteService {
@@ -77,5 +79,12 @@ public class PacienteService {
 
     public void deletar(Long id) {
         repository.deleteById(id);
+    }
+
+    public List<PacienteDTO> listarResumo() {
+        return repository.findAll()
+                .stream()
+                .map(PacienteDTO::new)
+                .collect(Collectors.toList());
     }
 }

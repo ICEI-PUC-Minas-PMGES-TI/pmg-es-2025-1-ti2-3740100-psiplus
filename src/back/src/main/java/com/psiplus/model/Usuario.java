@@ -30,7 +30,7 @@ public class Usuario {
 
     private String sexo;
 
-    @ManyToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "endereco_id")
     private Endereco endereco;
 

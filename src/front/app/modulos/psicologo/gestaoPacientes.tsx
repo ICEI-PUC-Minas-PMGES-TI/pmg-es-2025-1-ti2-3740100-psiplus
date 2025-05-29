@@ -74,11 +74,11 @@ export default function GestaoPacientes() {
     }, [paciente]);
 
     useEffect(() => {
-        if (!id) return; // 🔥 Evita chamadas desnecessárias
+        if (!id) return;
 
-        console.log("Chamando API com ID:", id); // 🚀 Confirme se está entrando aqui
+        console.log("Chamando API com ID:", id);
 
-        carregarPaciente(id); // ✅ Chamando apenas uma vez
+        carregarPaciente(id);
     }, [id]);
 
     function carregarPaciente(pacienteId: string) {
@@ -156,9 +156,9 @@ export default function GestaoPacientes() {
         console.log("Enviando para o backend:", pacienteAtualizado);
 
         axios
-            .put(`http://localhost:8080/pacientes/${pacienteId}`, pacienteAtualizado)
+            .put(`http://localhost:8080/pacientes/${id}`, pacienteAtualizado)
             .then(() => {
-                carregarPaciente(); // atualiza e aplica máscara novamente
+                carregarPaciente(id); // atualiza e aplica máscara novamente
                 setModoEdicao(false);
             })
             .catch((err) => {
@@ -167,7 +167,7 @@ export default function GestaoPacientes() {
     };
 
     const cancelarEdicao = () => {
-        carregarPaciente(); // descarta alterações e recarrega do backend
+        carregarPaciente(id); // descarta alterações e recarrega do backend
         setModoEdicao(false);
     };
 

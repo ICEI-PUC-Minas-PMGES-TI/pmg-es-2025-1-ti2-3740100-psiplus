@@ -1,5 +1,6 @@
 package com.psiplus.controller;
 
+import back.src.main.java.com.psiplus.DTO.PacienteDTO;
 import com.psiplus.model.Paciente;
 import com.psiplus.service.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/pacientes")
 public class PacienteController {
@@ -67,6 +69,10 @@ public class PacienteController {
 
         Paciente salvo = service.salvar(pacienteAtualizado);
         return ResponseEntity.ok(salvo);
+    }
+    @GetMapping("/resumo")
+    public List<PacienteDTO> listarResumo() {
+        return service.listarResumo();
     }
 
 }

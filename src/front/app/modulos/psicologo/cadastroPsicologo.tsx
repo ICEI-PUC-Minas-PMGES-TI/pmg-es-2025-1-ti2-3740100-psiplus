@@ -193,9 +193,7 @@ export function CadastroPsicologo() {
                     <InputPadrao
                         label="Telefone *"
                         type="tel"
-                        value={dataNascimento}
                         required
-                        onChange={(e) => setDataNascimento(e.target.value)}
                     />
                   </div>
                 </div>
@@ -276,9 +274,9 @@ export function CadastroPsicologo() {
                   <div className="relative w-full">
                     <InputPadrao
                         label="Cidade *"
-                        value={dataNascimento}
+                        value={endereco}
                         required
-                        onChange={(e) => setDataNascimento(e.target.value)}
+                        onChange={(e) => setEndereco(e.target.value)}
                     />
                   </div>
                 </div>

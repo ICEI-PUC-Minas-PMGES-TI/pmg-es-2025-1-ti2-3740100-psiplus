@@ -22,8 +22,8 @@ interface TabelaPadraoProps {
 export default function TabelaPadrao({ data }: TabelaPadraoProps) {
     const columns: Column[] = [
         { id: 'nome', label: 'Nome' },
-        { id: 'CPF', label: 'CPF', align: 'left' },
-        { id: 'e-mail', label: 'E-mail', align: 'left' },
+        { id: 'cpf', label: 'CPF', align: 'left' },
+        { id: 'email', label: 'E-mail', align: 'left' },
         { id: 'telefone', label: 'Telefone', align: 'center' },
         { id: 'nascimento', label: 'Nascimento', align: 'center' },
     ];
@@ -101,7 +101,7 @@ export default function TabelaPadrao({ data }: TabelaPadraoProps) {
 
             <div className="overflow-x-auto rounded-xl shadow-md border border-gray-200">
                 <table className="min-w-full divide-y divide-gray-200 bg-white text-sm">
-                    <thead className="bg-gray-100">
+                    <thead className=" rounded-tl-lg bg-gray-100">
                     <tr>
                         {columns.map((col) => (
                             <th

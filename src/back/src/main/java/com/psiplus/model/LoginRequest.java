@@ -1,4 +1,4 @@
-package back.src.main.java.com.psiplus.model;
+package com.psiplus.model;
 
 public class LoginRequest{
     private String email;

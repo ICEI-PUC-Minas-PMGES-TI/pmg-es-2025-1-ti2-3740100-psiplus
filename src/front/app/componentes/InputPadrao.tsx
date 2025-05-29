@@ -1,4 +1,5 @@
 interface InputPadraoProps {
+    label?: string;
     type?: string;
     placeholder?: string;
     icon?: React.ReactNode;
@@ -7,6 +8,7 @@ interface InputPadraoProps {
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
     classNameInput?: string;
     disabled?: boolean;
+    required?: boolean;
   }
 
   export default function InputPadrao({
@@ -18,9 +20,19 @@ interface InputPadraoProps {
     onChange,
     classNameInput,
                                           disabled = false,
+      label,
+      required,
   }: InputPadraoProps) {
+
+    const paddingLeft = icon ? "pl-10" : "pl-3";
+
     return (
       <div className="mb-4">
+          {label && (
+              <label htmlFor={name} className="block text-sm font-medium text-[#7E7E7E] mb-2">
+                  {label}
+              </label>
+          )}
         <div className="relative">
           {icon && (
             <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
@@ -34,7 +46,8 @@ interface InputPadraoProps {
             value={value}
             onChange={onChange}
             disabled={disabled}
-            className= {`w-full pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-700 ${classNameInput}`}
+            required={required}
+            className= {`w-full ${paddingLeft} pr-4 py-2 border border-[#DAE0F2] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-700 ${classNameInput}`}
           />
         </div>
       </div>

@@ -16,6 +16,9 @@ import { useState } from "react";
 import axios from "axios";
 import HomeLogo from "~/componentes/HomeLogo";
 import {useNavigate} from "react-router";
+import HomeLogoCadastro from "~/componentes/HomeLogoCadastro";
+import SelectPadrao from "~/componentes/SelectPadrão";
+import {IoIosArrowDown} from "react-icons/io";
 export function CadastroPsicologo() {
   const [etapa, setEtapa] = useState(1);
   const navigate = useNavigate();
@@ -35,6 +38,10 @@ export function CadastroPsicologo() {
 
   function continuarCadastro(e?: React.MouseEvent<HTMLButtonElement>) {
     e?.preventDefault();
+    if (!email.includes("@")) {
+      alert("O e-mail deve conter um @ válido.");
+      return;
+    }
     setEtapa(2);
   }
 
@@ -85,23 +92,24 @@ export function CadastroPsicologo() {
 
   return (
     <Main>
+
       <div className="flex h-screen">
-        {/* Lado esquerdo com gradiente */}
-        <HomeLogo />
+      {/* Lado esquerdo com gradiente */}
+      {etapa === 1 ? <HomeLogo /> : <HomeLogoCadastro />}
         {/* Lado direito com formulário */}
-        <div className="w-1/2 flex flex-col justify-center items-center bg-white p-8">
-          <div className="text-center mb-6">
-            <h2 className="text-3xl font-bold text-cyan-700 mb-2">
+        <div className={`${etapa === 1 ? 'w-1/2' : 'w-3/4'} flex flex-col justify-center items-center bg-white p-8`}>
+          <div className={`text-center mb-6`}>
+            <h2 className="text-4xl font-bold text-[#034B57] mb-2 ">
               {etapa === 1 ? "Crie sua conta!" : "Informações básicas"}
             </h2>
             <p className="text-gray-600">
               {etapa === 1
                 ? "Gerencie seus pacientes gratuitamente"
-                : "Preencha os dados pessoais para continuar"}
+                : "Por favor, complete com suas informações básicas."}
             </p>
           </div>
 
-          <FormPadrao>
+          <FormPadrao className={etapa === 1 ? "max-w-sm" : "max-w-3xl"}>
             {etapa === 1 ? (
               <>
                 <InputPadrao
@@ -171,46 +179,129 @@ export function CadastroPsicologo() {
               </>
             ) : (
               <>
-                <InputPadrao
-                  placeholder="Endereço"
-                  icon={<MapPin />}
-                  value={endereco}
-                  onChange={(e) => setEndereco(e.target.value)}
-                />
-                <InputPadrao
-                  placeholder="Data de nascimento"
-                  type="date"
-                  icon={<Calendar />}
-                  value={dataNascimento}
-                  onChange={(e) => setDataNascimento(e.target.value)}
-                />
-                <InputPadrao
-                  placeholder="Sexo"
-                  icon={<VenetianMask />}
-                  value={sexo}
-                  onChange={(e) => setSexo(e.target.value)}
-                />
-                <InputPadrao
-                  placeholder="CPF"
-                  icon={<Fingerprint />}
-                  value={cpf}
-                  onChange={(e) => setCpf(e.target.value)}
-                />
-                <BotaoPadrao
-                  texto="Cadastrar"
-                  fullWidth
-                  handleClick={salvarDadosPsicologo}
-                  disabled={!podeCadastrar}
-                />
-                <BotaoPadrao
-                  texto="Voltar"
-                  fullWidth
-                  handleClick={() => setEtapa(1)}
-                  className="mt-4"
-                  icone={<ArrowLeft />}
-                  color="bg-slate-400"
-                  hoverColor="bg-slate-500"
-                />
+                <div className=" flex gap-4">
+                  <div className="relative w-full">
+                    <InputPadrao
+                        placeholder="CPF/CNPJ"
+                        label = "CPF/CNPJ *"
+                        value={cpf}
+                        required
+                        onChange={(e) => setCpf(e.target.value)}
+                    />
+                  </div>
+                  <div className="relative w-full">
+                    <InputPadrao
+                        label="Telefone *"
+                        type="tel"
+                        value={dataNascimento}
+                        required
+                        onChange={(e) => setDataNascimento(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-4 pb-4">
+                  <div className=" relative w-full">
+                    <InputPadrao
+                        placeholder="Data de nascimento"
+                        label="Data de Nascimento *"
+                        type="date"
+                        value={dataNascimento}
+                        required
+                        onChange={(e) => setDataNascimento(e.target.value)}
+                    />
+                  </div>
+                  <div className="relative w-full">
+                    <label className="block text-sm font-regular mb-1 text-slate-700">Sexo *</label>
+                    <select name="sexo"
+                            onChange={(e) => setSexo(e.target.value)}
+                            value={sexo}
+                            required
+                            className="w-full border border-[#DAE0F2] rounded-lg px-3 py-2.5 text-sm !text-[#858EBD] appearance-none pr-10">
+                      <option value="">Selecione</option>
+                      <option value="Feminino">Feminino</option>
+                      <option value="Masculino">Masculino</option>
+                      <option value="Outro">Outro</option>
+                    </select>
+                    <IoIosArrowDown
+                        className="absolute right-3 top-2/4 transform -translate-y-1/4 text-2xl !text-[#858EBD] pointer-events-none"/>
+                  </div>
+                </div>
+                <h3 className="block text-base font-semibold text-[#7E7E7E] mb-4">Endereço:</h3>
+                <div className=" flex gap-4">
+                  <div className="relative w-full">
+                    <InputPadrao
+                        label="Rua *"
+                        value={endereco}
+                        required
+                        onChange={(e) => setEndereco(e.target.value)}
+                    />
+                  </div>
+                  <div className="relative w-full">
+                    <InputPadrao
+                        label="Número *"
+                        required
+                        value={endereco}
+                        onChange={(e) => setEndereco(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className=" flex gap-4">
+                  <div className="relative w-full">
+                    <InputPadrao
+                        label="Bairro *"
+                        required
+                        value={endereco}
+                        onChange={(e) => setEndereco(e.target.value)}
+                    />
+                  </div>
+                  <div className="relative w-full">
+                    <InputPadrao
+                        label="Estado *"
+                        required
+                        value={endereco}
+                        onChange={(e) => setEndereco(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className=" flex gap-4">
+                  <div className="relative w-full">
+                    <InputPadrao
+                        label="CEP *"
+                        type="numeric"
+                        required
+                        value={endereco}
+                        onChange={(e) => setEndereco(e.target.value)}
+                    />
+                  </div>
+                  <div className="relative w-full">
+                    <InputPadrao
+                        label="Cidade *"
+                        value={dataNascimento}
+                        required
+                        onChange={(e) => setDataNascimento(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className=" flex gap-4 pt-5">
+                  <div className="relative w-full">
+                    <BotaoPadrao
+                        texto="Voltar"
+                        fullWidth
+                        handleClick={() => setEtapa(1)}
+                        icone={<ArrowLeft />}
+                        color="bg-slate-400"
+                        hoverColor="bg-slate-500"
+                    />
+                  </div>
+                  <div className="relative w-full">
+                    <BotaoPadrao
+                        texto="Cadastre-se"
+                        fullWidth
+                        handleClick={salvarDadosPsicologo}
+                        disabled={!podeCadastrar}
+                    />
+                  </div>
+                </div>
               </>
             )}
           </FormPadrao>

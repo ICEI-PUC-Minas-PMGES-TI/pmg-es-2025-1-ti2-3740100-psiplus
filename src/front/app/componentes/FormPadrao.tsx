@@ -1,12 +1,21 @@
+// componente: FormPadrao.tsx
 interface FormPadraoProps {
   children: React.ReactNode;
   onSubmit?: (e: React.FormEvent) => void;
+  className?: string;
 }
 
-export default function FormPadrao({ children, onSubmit }: FormPadraoProps) {
+export default function FormPadrao({
+                                     children,
+                                     onSubmit,
+                                     className = "max-w-sm", // valor padrão
+                                   }: FormPadraoProps) {
   return (
-    <form onSubmit={onSubmit} className="w-full max-w-sm p-8 rounded bg-transparent rounded shadow-md">
-      {children}
-    </form>
+      <form
+          onSubmit={onSubmit}
+          className={`w-full p-8 rounded bg-transparent ${className}`}
+      >
+        {children}
+      </form>
   );
 }

@@ -16,27 +16,27 @@ interface RowData {
 }
 
 interface TabelaPadraoProps {
-    data: RowData[];
+    data: any[];
+    onRowClick?: (paciente: any) => void;
 }
 
-export default function TabelaPadrao({ data }: TabelaPadraoProps) {
+export default function TabelaPadrao({ data, onRowClick }: TabelaPadraoProps) {
     const columns: Column[] = [
-        { id: 'check', label:'', align:'center'},
         { id: 'nome', label: 'Nome' },
-        { id: 'cpf', label: 'CPF', align: 'center' },
-        { id: 'email', label: 'E-mail', align: 'center' },
+        { id: 'cpf', label: 'CPF', align: 'left' },
+        { id: 'email', label: 'E-mail', align: 'left' },
         { id: 'telefone', label: 'Telefone', align: 'center' },
         { id: 'nascimento', label: 'Nascimento', align: 'center' },
     ];
 
+    // const data: RowData[] = []; // Dados Mockados
 
     const [search, setSearch] = useState('');
     const [orderBy, setOrderBy] = useState<string>('');
     const [orderAsc, setOrderAsc] = useState(true);
     const [page, setPage] = useState(0);
     const rowsPerPage = 10;
-    const [selectedRows, setSelectedRows] = useState<string[]>([]);
-    const isSelected = (cpf: string) => selectedRows.includes(cpf);
+
     const handleSort = (columnId: string) => {
         if (orderBy === columnId) {
             setOrderAsc(!orderAsc);
@@ -122,19 +122,16 @@ export default function TabelaPadrao({ data }: TabelaPadraoProps) {
                             <tr key={idx} className="hover:bg-gray-50">
                                 {columns.map((col) => (
                                     <td key={col.id} className={`px-4 py-3 text-${col.align || 'left'}`}>
-                                        {col.id === 'check' ? (
-                                            <input
-                                                type="checkbox"
-                                                checked={isSelected(row['cpf'] as string)}
-                                                onChange={(e) => {
-                                                    const cpf = row['cpf'] as string;
-                                                    if (e.target.checked) {
-                                                        setSelectedRows([...selectedRows, cpf]);
-                                                    } else {
-                                                        setSelectedRows(selectedRows.filter((id) => id !== cpf));
-                                                    }
+                                        {col.id === "nome" ? (
+                                            <button
+                                                className="hover:font-medium-mediam cursor-pointer"
+                                                onClick={() => {
+                                                    console.log("Paciente clicado:", row); // Verificando se `row` tem ID
+                                                    onRowClick?.(row.id);
                                                 }}
-                                            />
+                                            >
+                                                {row[col.id] ?? '-'}
+                                            </button>
                                         ) : (
                                             row[col.id] ?? '-'
                                         )}
@@ -173,8 +170,6 @@ export default function TabelaPadrao({ data }: TabelaPadraoProps) {
                 >
                     Próxima
                 </button>
-                <p className="text-sm text-gray-600 mt-2">
-                </p>
             </div>
         </div>
     );

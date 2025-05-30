@@ -12,7 +12,26 @@ import localizer from "~/utils/calendarConfig";
 import { Calendar, Views, type HeaderProps } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "~/estilos/customCalendar.css";
+import { buscarDisponibilidadesRecorrente, salvarDisponibilidadeRecorrente, deletarDisponibilidadeRecorrente } from '~/lib/disponibilidadeRecorrente';
+import { listarExcecoesDisponibilidade, salvarExcecaoDisponibilidade, deletarExcecaoDisponibilidade } from "~/lib/disponibilidadeExcecoes";
 import CustomToolbar from "~/componentes/CustomToolbar";
+
+interface ExcecaoDisponibilidade {
+    excecaoDisponibilidadeId?: number;
+    psicologoId: number;
+    dataHoraInicio: string;
+    dataHoraFim: string;
+    motivo?: string;
+    recorrenteRelacionadaId?: number;
+    start?: Date;
+    end?: Date;
+}
+
+type Sessao = {
+    nome: string;
+    expiraEm: number;
+};
+
 import {
     format,
     startOfWeek,
@@ -40,12 +59,53 @@ export default function EditarAgenda() {
     const [dataSelecionada, setDataSelecionada] = useState(new Date());
     const [visualizacao, setVisualizacao] = useState<View>("week");
     const [temAlteracoes, setTemAlteracoes] = useState(false);
-
-    const [disponibilidadesSelecionadas, setDisponibilidadesSelecionadas] = useState<any[]>([]);
+    const [excecoes, setExcecoes] = useState([]);
+    const [disponibilidades, setDisponibilidades] = useState<any[]>([]);
+    const [psicologoId, setPsicologoId] = useState(1);
 
     useEffect(() => {
-        setTemAlteracoes(disponibilidadesSelecionadas.length > 0);
-    }, [disponibilidadesSelecionadas]);
+        setTemAlteracoes(disponibilidades.length > 0);
+    }, [disponibilidades]);
+
+    useEffect(() => {
+        const psicologoId = JSON.parse(sessionStorage.getItem("sessaoPsicologo") || '{}')?.usuarioId || null;
+        setPsicologoId(psicologoId);
+
+    }, []);
+
+    useEffect(() => {
+        const carregarExcecoes = async () => {
+            try {
+                const data = await listarExcecoesDisponibilidade(psicologoId);
+                const excecoesFormatadas = data.map((excecao: any) => ({
+                    ...excecao,
+                    start: new Date(excecao.dataHoraInicio),
+                    end: new Date(excecao.dataHoraFim),
+                }));
+                setExcecoes(excecoesFormatadas);
+            } catch (error) {
+                console.error('Erro ao carregar exceções:', error);
+            }
+        };
+
+        async function carregarDisponibilidadesRecorrente() {
+            try {
+                const inicio = new Date();
+                const fim = new Date(inicio);
+                fim.setDate(fim.getDate() + 7);
+
+                const dados = await buscarDisponibilidadesRecorrente(psicologoId, inicio, fim);
+                setDisponibilidades(dados);
+            } catch (err) {
+                alert('Erro ao carregar disponibilidades');
+            }
+        }
+
+        if (psicologoId) {
+            carregarExcecoes();
+            carregarDisponibilidadesRecorrente();
+        }
+    }, [psicologoId]);
 
 
     const proximaSemana = () => {
@@ -83,7 +143,6 @@ export default function EditarAgenda() {
         return unidos;
     }
 
-
     function formatarIntervaloSemana(data: Date) {
         const inicio = startOfWeek(data, { weekStartsOn: 1 });
         const fim = endOfWeek(data, { weekStartsOn: 1 });
@@ -108,13 +167,8 @@ export default function EditarAgenda() {
         { title: "Pedro Coimbra", start: new Date(2025, 4, 29, 15, 0), end: new Date(2025, 4, 29, 16, 0) },
     ];
 
-    const excecoes = [
-        { data: "2025-05-27", motivo: "Feriado", horaInicio: "00:00", horaFim: "23:59" },
-        { data: "2025-05-28", motivo: "Folga", horaInicio: "14:00", horaFim: "18:00" },
-    ];
-
     const gerarEventosClicados = () => {
-        const unidos = unirDisponibilidadesEventos(disponibilidadesSelecionadas);
+        const unidos = unirDisponibilidadesEventos(disponibilidades);
 
         return unidos.map((event) => ({
             ...event,
@@ -143,6 +197,68 @@ export default function EditarAgenda() {
             </div>
         );
     };
+
+    async function salvarRecorrenteSemanal() {
+        try {
+            const psicologoId = JSON.parse(sessionStorage.getItem("sessaoPsicologo") || '{}')?.usuarioId;
+            if (!psicologoId) {
+                alert("Sessão expirada. Faça login novamente.");
+                return;
+            }
+
+            for (const disp of disponibilidades) {
+                await salvarDisponibilidadeRecorrente({
+                    psicologoId,
+                    start: disp.start,
+                    end: disp.end,
+                });
+            }
+
+            alert("Recorrente semanal salvo com sucesso!");
+            setTemAlteracoes(false);
+        } catch (error) {
+            console.error("Erro ao salvar Recorrente semanal:", error);
+            alert("Erro ao salvar o Recorrente semanal.");
+        }
+    }
+
+    const salvarAlteracoes = async () => {
+        try {
+            const excecoesParaSalvar = excecoes.map((excecao) => ({
+                psicologoId,
+                dataHoraInicio: excecao.start.toISOString(),
+                dataHoraFim: excecao.end.toISOString(),
+                motivo: excecao.motivo ?? null,
+                recorrenteRelacionadaId: excecao.recorrenteRelacionadaId ?? null,
+            }));
+
+            await Promise.all(
+                excecoesParaSalvar.map((excecao) => salvarExcecaoDisponibilidade(excecao))
+            );
+
+            const resposta = await listarExcecoesDisponibilidade(psicologoId);
+
+            setExcecoes(
+                resposta.map((excecao: any) => ({
+                    id: excecao.excecaoDisponibilidadeId,
+                    psicologoId,
+                    start: new Date(excecao.dataHoraInicio),
+                    end: new Date(excecao.dataHoraFim),
+                    motivo: excecao.motivo ?? null,
+                    recorrenteRelacionadaId: excecao.recorrenteRelacionada
+                        ? excecao.recorrenteRelacionada.recorrenteId
+                        : null,
+                }))
+            );
+
+            alert('Alterações salvas com sucesso!');
+        } catch (error) {
+            console.error('Erro ao salvar exceções:', error);
+            alert('Erro ao salvar alterações.');
+        }
+    };
+
+
 
     const MeuEvento = ({ event }) => <div>{event.title}</div>;
 
@@ -185,17 +301,18 @@ export default function EditarAgenda() {
                         </div>
                         <div className={"flex gap-3"}>
                             <button
-                                disabled={!temAlteracoes}
-                                onClick={editaragenda}
+                                //disabled={!temAlteracoes}
+                                disabled={true}
+                                onClick={salvarRecorrenteSemanal}
                                 className={`px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1 transition
         ${temAlteracoes ? 'bg-[#ADD9E2] text-[#0088A3] hover:brightness-95 cursor-pointer' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}>
                                 <Copy style={{ fontSize: 18, color: temAlteracoes ? "#0088A3" : "#A0A0A0" }} />
-                                Salvar modelo semanal
+                                Salvar Modelo semanal
                             </button>
 
                             <button
                                 disabled={!temAlteracoes}
-                                onClick={editaragenda}
+                                onClick={salvarAlteracoes}
                                 className={`px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1 transition
         ${temAlteracoes ? 'bg-[#a5e8ad] text-[#056912] hover:brightness-95 cursor-pointer' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}>
                                 <Save style={{ fontSize: 18, color: temAlteracoes ? "#056912" : "#A0A0A0" }} />
@@ -252,10 +369,10 @@ export default function EditarAgenda() {
                             onNavigate={(date) => setDataBase(date)}
                             onSelectEvent={(event) => {
                                 if(event.tipo === "disponivel-manual") {
-                                    const novoArray = disponibilidadesSelecionadas.filter(disp => {
+                                    const novoArray = disponibilidades.filter(disp => {
                                         return disp.end.getTime() <= event.start.getTime() || disp.start.getTime() >= event.end.getTime();
                                     });
-                                    setDisponibilidadesSelecionadas(novoArray);
+                                    setDisponibilidades(novoArray);
                                 }
                             }}
                             onSelectSlot={({ start, end }) => {
@@ -273,7 +390,7 @@ export default function EditarAgenda() {
                                 setDataSelecionada(start);
                                 const conflito = consultas.some((c) => start < c.end && end > c.start);
                                 if (!conflito) {
-                                    setDisponibilidadesSelecionadas((prev) => [...prev, { start, end }]);
+                                    setDisponibilidades((prev) => [...prev, { start, end }]);
                                 }
                             }}
                             selectable

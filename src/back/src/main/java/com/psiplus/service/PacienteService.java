@@ -1,6 +1,6 @@
 package com.psiplus.service;
 
-import back.src.main.java.com.psiplus.DTO.PacienteDTO;
+import com.psiplus.DTO.PacienteDTO;
 import com.psiplus.model.Paciente;
 import com.psiplus.model.Usuario;
 import com.psiplus.model.Endereco;

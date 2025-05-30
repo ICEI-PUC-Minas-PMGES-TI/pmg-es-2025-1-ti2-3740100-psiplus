@@ -1,4 +1,4 @@
-package back.src.main.java.com.psiplus.DTO;
+package com.psiplus.DTO;
 
 import com.psiplus.model.Paciente;
 import com.psiplus.model.Usuario;

@@ -1,4 +1,3 @@
-//Faz a comunicacao do back com o front controlando as permissoes de acesso
 package com.psiplus.config;
 
 import org.springframework.context.annotation.Configuration;

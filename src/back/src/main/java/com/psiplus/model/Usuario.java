@@ -31,7 +31,7 @@ public class Usuario {
     private String sexo;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "endereco_id")
+    @JoinColumn(name = "endereco_id", referencedColumnName = "endereco_id")
     private Endereco endereco;
 
     // Getters e Setters

@@ -8,14 +8,52 @@ import Filtro from "../../../public/assets/Filtro.png"
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import TabelaPadrao from "~/componentes/TabelaPadrao";
 import { useEffect, useState } from "react";
+import { useMemo } from "react";
+import { useNavigate } from "react-router";
+import GestaoPacientes from "../psicologo/GestaoPacientes";
+
 export function Dashboard() {
+    const navigate = useNavigate();
     const [pacientes, setPacientes] = useState([]);
+    const [search, setSearch] = useState("");
+    const [data, setData] = useState([]);
+    const columns = [
+        { id: "nome", label: "Nome" },
+        { id: "email", label: "Email" },
+        { id: "telefone", label: "Telefone" }
+    ];
+
+
     useEffect(() => {
         fetch("http://localhost:8080/pacientes/resumo")
             .then((res) => res.json())
-            .then((data) => setPacientes(data))
+            .then((data) => {
+                console.log("Dados recebidos:", data);
+                setPacientes(data.map((paciente) => ({
+                    id: paciente.pacienteId,
+                    ...paciente
+                })));
+            })
             .catch((err) => console.error("Erro ao buscar pacientes:", err));
     }, []);
+
+
+    const irParaGestaoPaciente = (idPaciente: number) => {
+        navigate(`/psicologo/gestaoPacientes/${idPaciente}`);
+    };
+
+    const filteredData = useMemo(() => {
+        if (!data) {
+            console.error("Erro: `data` está indefinido!");
+            return [];
+        }
+
+        return data.filter((row) =>
+            columns.some((col) =>
+                row[col.id]?.toString().toLowerCase().includes(search.toLowerCase())
+            )
+        );
+    }, [search, data, columns]);
 
     return (
         <Main>
@@ -32,8 +70,27 @@ export function Dashboard() {
                             icone={<img className=" w-[26px] " src={ExitIcon} alt="Sair" />}
                         />
                     </div>
-                    <h1 className="font-semibold text-black mx-2 text-[20px]">Pacientes</h1>
-                    <TabelaPadrao data={pacientes}/>
+                    <hr className="border-t-2 border-[#DFE5F1] my-2"/>
+                    <h1 className="pt-4 font-semibold text-black mx-2 text-[20px]">Pacientes</h1>
+                    <TabelaPadrao
+                        data={pacientes}
+                        columns={columns}
+                        onRowClick={irParaGestaoPaciente}
+                        renderItem={(paciente) => (
+                            <tr key={paciente.id} className="hover:bg-gray-50">
+                                <td>
+                                    <button
+                                        className="hover:font-medium-mediam cursor-pointer"
+                                        onClick={() => console.log("Paciente clicado:", paciente.id)}
+                                    >
+                                        {paciente.nome}
+                                    </button>
+                                </td>
+                                <td>{paciente.email}</td>
+                                <td>{paciente.telefone}</td>
+                            </tr>
+                        )}
+                    />
                 </div>
             </div>
         </Main>

@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 
 public class PacienteDTO {
 
+    private Long pacienteId;
     private String nome;
     private String cpf;
     private String email;
@@ -14,8 +15,9 @@ public class PacienteDTO {
     private String nascimento;
 
     public PacienteDTO(Paciente paciente) {
-        Usuario usuario = paciente.getUsuario();
+        this.pacienteId = paciente.getPacienteId();
 
+        Usuario usuario = paciente.getUsuario();
         this.nome = usuario.getNome();
         this.cpf = usuario.getCpfCnpj();
         this.email = usuario.getEmail();
@@ -26,6 +28,9 @@ public class PacienteDTO {
     }
 
     // Getters e Setters
+    public Long getPacienteId() { return pacienteId; }
+    public void setPacienteId(Long pacienteId) { this.pacienteId = pacienteId; }
+
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
 

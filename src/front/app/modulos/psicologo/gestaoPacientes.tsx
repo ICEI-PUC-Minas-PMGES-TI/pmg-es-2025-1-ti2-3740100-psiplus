@@ -14,7 +14,7 @@ import { useState, useEffect } from "react";
 import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from "@mui/icons-material/Lock";
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import axios from "axios";
 
 
@@ -43,8 +43,10 @@ interface Paciente {
     usuario: Usuario;
 }
 
-export function GestaoPacientes() {
-  const [modoEdicao, setModoEdicao] = useState(false);
+export default function GestaoPacientes() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [modoEdicao, setModoEdicao] = useState(false);
 
     const [paciente, setPaciente] = useState<Paciente>({
         usuario: {
@@ -67,11 +69,53 @@ export function GestaoPacientes() {
         },
     });
 
-    const pacienteId = 2;
-    const navigate = useNavigate();
+    useEffect(() => {
+        console.log("Paciente atualizado no estado:", JSON.stringify(paciente, null, 2));
+    }, [paciente]);
+
+    useEffect(() => {
+        if (!id) return;
+
+        console.log("Chamando API com ID:", id);
+
+        carregarPaciente(id);
+    }, [id]);
+
+    function carregarPaciente(pacienteId: string) {
+        axios.get(`http://localhost:8080/pacientes/${pacienteId}`)
+            .then((res) => {
+                const data = res.data;
+
+                setPaciente({
+                    usuario: {
+                        id: data.usuario?.usuarioId ?? undefined,
+                        nome: data.usuario?.nome || "",
+                        cpfCnpj: data.usuario?.cpfCnpj || "",
+                        email: data.usuario?.email || "",
+                        sexo: data.usuario?.sexo || "",
+                        telefone: formatarTelefone(data.usuario?.telefone || ""),
+                        dataNascimento: data.usuario?.dataNascimento
+                            ? formatarDataParaBrasileira(data.usuario.dataNascimento)
+                            : "",
+                        endereco: {
+                            id: data.usuario?.endereco?.id ?? undefined,
+                            rua: data.usuario?.endereco?.rua || "",
+                            numero: data.usuario?.endereco?.numero?.toString() || "",
+                            bairro: data.usuario?.endereco?.bairro || "",
+                            cep: data.usuario?.endereco?.cep || "",
+                            cidade: data.usuario?.endereco?.cidade || "",
+                            estado: data.usuario?.endereco?.estado || "",
+                        },
+                    },
+                });
+            })
+            .catch((err) => {
+                console.error("Erro ao buscar paciente:", err);
+            });
+    }
 
     const alternarModoEdicao = () => {
-      setModoEdicao((prev) => !prev);
+        setModoEdicao((prev) => !prev);
     };
 
     const formatarTelefone = (valor: string) => {
@@ -98,40 +142,6 @@ export function GestaoPacientes() {
         return `${dia}/${mes}/${ano}`;
     };
 
-    const carregarPaciente = () => {
-        axios.get(`http://localhost:8080/pacientes/${pacienteId}`)
-            .then((res) => {
-                const data = res.data;
-                console.log("Dados do paciente recebidos:", data);
-
-                setPaciente({
-                    usuario: {
-                        id: data.usuario?.usuarioId ?? undefined,
-                        nome: data.usuario?.nome || "",
-                        cpfCnpj: data.usuario?.cpfCnpj || "",
-                        email: data.usuario?.email || "",
-                        sexo: data.usuario?.sexo || "",
-                        telefone: formatarTelefone(data.usuario?.telefone || ""),
-                        dataNascimento: data.usuario?.dataNascimento
-                            ? formatarDataParaBrasileira(data.usuario.dataNascimento)
-                            : "",
-                        endereco: {
-                            id: data.usuario?.endereco?.id ?? undefined,  
-                            rua: data.usuario?.endereco?.rua || "",
-                            numero: data.usuario?.endereco?.numero || "",
-                            bairro: data.usuario?.endereco?.bairro || "",
-                            cep: data.usuario?.endereco?.cep || "",
-                            cidade: data.usuario?.endereco?.cidade || "",
-                            estado: data.usuario?.endereco?.estado || "",
-                        },
-                    },
-                });
-            })
-            .catch((err) => {
-                console.error("Erro ao buscar paciente:", err);
-            });
-    };
-
     const salvarEdicao = () => {
         const pacienteAtualizado = {
             ...paciente,
@@ -146,9 +156,9 @@ export function GestaoPacientes() {
         console.log("Enviando para o backend:", pacienteAtualizado);
 
         axios
-            .put(`http://localhost:8080/pacientes/${pacienteId}`, pacienteAtualizado)
+            .put(`http://localhost:8080/pacientes/${id}`, pacienteAtualizado)
             .then(() => {
-                carregarPaciente(); // atualiza e aplica máscara novamente
+                carregarPaciente(id); // atualiza e aplica máscara novamente
                 setModoEdicao(false);
             })
             .catch((err) => {
@@ -157,7 +167,7 @@ export function GestaoPacientes() {
     };
 
     const cancelarEdicao = () => {
-        carregarPaciente(); // descarta alterações e recarrega do backend
+        carregarPaciente(id); // descarta alterações e recarrega do backend
         setModoEdicao(false);
     };
 
@@ -197,10 +207,6 @@ export function GestaoPacientes() {
         }));
     };
 
-    useEffect(() => {
-        carregarPaciente();
-    }, []);
-
     function leave() {
         sessionStorage.removeItem("sessaoPsicologo");
         sessionStorage.removeItem("sessaoPaciente");
@@ -221,7 +227,7 @@ export function GestaoPacientes() {
                     icone={<img className="w-[26px]" src={ExitIcon} alt="Sair" />}
                     color="bg-white"
                     textoColor="text-gray-600"
-                    className="ml-auto hover:text-black transition-colors duration-200 font-medium"
+                    className="ml-auto hover:text-black transition-colors duration-200 font-medium cursor-pointer"
                     handleClick={leave}
                 />
 
@@ -229,7 +235,7 @@ export function GestaoPacientes() {
               <hr className="border-t-2 border-[#DFE5F1] my-2"/>
               <h1 className="font-semibold text-black mx-4 text-[20px] mt-5">Gestão de Pacientes</h1>
 
-              <div className="mx-1 mt-4 flex gap-7">
+                <div className="mx-1 mt-4 flex gap-7">
                 {/* Painel Lateral do Paciente */}
                 <div className="w-1/4 px-2 py-3">
                   <div className="flex flex-col items-center text-center">
@@ -337,7 +343,7 @@ export function GestaoPacientes() {
                       <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Nome Completo*</label>
                       <InputPadrao
                           name="nome"
-                          value={paciente.usuario.nome}
+                          value={paciente?.usuario?.nome ?? ""}
                           onChange={handleInputChange}
                           classNameInput="!px-5 !py-2 rounded-lg !text-[#858EBD] !border-[#DAE0F2]"
                           disabled={!modoEdicao}
@@ -349,7 +355,7 @@ export function GestaoPacientes() {
                       <label className="block text-sm font-regular mb-1 text-[#3A3F63]">CPF</label>
                       <InputPadrao
                           name="cpfCnpj"
-                          value={paciente.usuario.cpfCnpj}
+                          value={paciente.usuario.cpfCnpj ?? ""}
                           onChange={handleInputChange}
                           icon={<LockIcon style={{ color: "#BBC6D9" }} />}
                           classNameInput="!px-5 !pl-10 !py-2 rounded-lg !text-[#858EBD] !border-[#DAE0F2]"
@@ -443,7 +449,7 @@ export function GestaoPacientes() {
                       <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Rua</label>
                       <InputPadrao
                           name="endereco"
-                          value={paciente.usuario.endereco.rua}
+                          value={paciente?.usuario?.endereco?.rua ?? ""}
                           onChange={handleEnderecoChange}
                           classNameInput="!px-5 !py-2 border-[#DAE0F2] rounded-lg !text-[#858EBD] !border-[#DAE0F2]"
                           disabled={!modoEdicao}
@@ -453,7 +459,7 @@ export function GestaoPacientes() {
                       <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Número</label>
                       <InputPadrao
                           name="numero"
-                          value={paciente.usuario.endereco.numero}
+                          value={paciente?.usuario?.endereco?.numero ?? ""}
                           onChange={handleEnderecoChange}
                           classNameInput="!px-5 !py-2 border-[#DAE0F2] rounded-lg !text-[#858EBD] !border-[#DAE0F2]"
                           disabled={!modoEdicao}
@@ -463,7 +469,7 @@ export function GestaoPacientes() {
                       <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Bairro</label>
                       <InputPadrao
                           name="bairro"
-                          value={paciente.usuario.endereco.bairro}
+                          value={paciente?.usuario?.endereco?.bairro ?? ""}
                           onChange={handleEnderecoChange}
                           classNameInput="!px-5 !py-2 border-[#DAE0F2] rounded-lg !text-[#858EBD] !border-[#DAE0F2]"
                           disabled={!modoEdicao}
@@ -473,7 +479,7 @@ export function GestaoPacientes() {
                       <label className="block text-sm font-regular mb-1 text-[#3A3F63]">CEP</label>
                       <InputPadrao
                           name="cep"
-                          value={paciente.usuario.endereco.cep}
+                          value={paciente?.usuario?.endereco?.cep ?? ""}
                           onChange={handleEnderecoChange}
                           classNameInput="!px-5 !py-2 border-[#DAE0F2] rounded-lg !text-[#858EBD] !border-[#DAE0F2]"
                           disabled={!modoEdicao}
@@ -483,7 +489,7 @@ export function GestaoPacientes() {
                       <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Cidade</label>
                       <InputPadrao
                           name="cidade"
-                          value={paciente.usuario.endereco.cidade}
+                          value={paciente?.usuario?.endereco?.cidade ?? ""}
                           onChange={handleEnderecoChange}
                           classNameInput="!px-5 !py-2 border-[#DAE0F2] rounded-lg !text-[#858EBD] !border-[#DAE0F2]"
                           disabled={!modoEdicao}
@@ -493,7 +499,7 @@ export function GestaoPacientes() {
                       <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Estado</label>
                       <InputPadrao
                           name="estado"
-                          value={paciente.usuario.endereco.estado}
+                          value={paciente?.usuario?.endereco?.estado ?? ""}
                           onChange={handleEnderecoChange}
                           classNameInput="!px-5 !py-2 border-[#DAE0F2] rounded-lg !text-[#858EBD] !border-[#DAE0F2]"
                           disabled={!modoEdicao}

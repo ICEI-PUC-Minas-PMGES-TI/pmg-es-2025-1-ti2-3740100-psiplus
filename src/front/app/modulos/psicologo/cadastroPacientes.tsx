@@ -7,7 +7,7 @@ import { useNavigate } from "react-router";
 import { useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import axios from "axios";
-import PopupCadastroSucesso from "../../componentes/PopupCadastroSucesso";
+import Popup from "../../componentes/Popup";
 
 export default function CadastroPacientes() {
   const navigate = useNavigate(); // <-- E isso
@@ -274,8 +274,9 @@ export default function CadastroPacientes() {
         </div>
         {/* Popup */}
         {mostrarPopup && (
-            <PopupCadastroSucesso
-                mensagem="Paciente cadastrado com sucesso!"
+            <Popup
+                titulo="Paciente cadastrado com sucesso!"
+                mensagem="Um e-mail será enviado automaticamente ao paciente com seu usuário e senha."
                 onClose={() => {
                   setMostrarPopup(false);
                   navigate("/psicologo/agenda");

@@ -18,9 +18,13 @@ import HomeLogo from "~/componentes/HomeLogo";
 import {useNavigate} from "react-router";
 import HomeLogoCadastro from "~/componentes/HomeLogoCadastro";
 import SelectPadrao from "~/componentes/SelectPadrão";
+import Popup from "../../componentes/Popup";
 import {IoIosArrowDown} from "react-icons/io";
 export function CadastroPsicologo() {
   const [etapa, setEtapa] = useState(1);
+  const [mostrarPopup, setMostrarPopup] = useState(false);
+  const [mensagemPopup, setMensagemPopup] = useState("");
+
   const navigate = useNavigate();
 
   // Etapa 1
@@ -83,10 +87,20 @@ export function CadastroPsicologo() {
           localStorage.setItem("sessaoPsicologo", JSON.stringify(dadosSessao));
           navigate("/psicologo/agenda");
       })
-      .catch((error) => {
-        console.error("Erro ao salvar os dados no backend:", error);
-        alert("Houve um erro ao salvar os dados.");
-      });
+          .catch((error) => {
+            console.error("Erro ao salvar os dados no backend:", error);
+
+            if (error.response?.data?.erro) {
+              setMensagemPopup(error.response.data.erro);
+            } else {
+              setMensagemPopup("Houve um erro ao salvar os dados. Tente novamente mais tarde.");
+            }
+
+
+
+            setMostrarPopup(true);
+          });
+
   }
 
   const podeContinuar =
@@ -336,8 +350,20 @@ export function CadastroPsicologo() {
               </>
             )}
           </FormPadrao>
+
         </div>
       </div>
+      {mostrarPopup && (
+          <Popup
+              titulo="Erro no cadastro"
+              mensagem={mensagemPopup}
+              onClose={() => {
+                setMostrarPopup(false);
+                navigate("/psicologo/login");
+              }}
+          />
+      )}
+
     </Main>
   );
 }

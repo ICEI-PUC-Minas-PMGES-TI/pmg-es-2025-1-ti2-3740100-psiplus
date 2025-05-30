@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface PsicologoRepository extends JpaRepository<Psicologo, Long> {
     Optional<Psicologo> findByUsuarioEmail(String email);
+
 }

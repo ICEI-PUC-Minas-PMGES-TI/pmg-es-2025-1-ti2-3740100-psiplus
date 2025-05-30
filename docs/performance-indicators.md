@@ -10,6 +10,6 @@ _Usar o seguinte modelo:_
 | Registros de emoções por paciente | Monitorar o engajamento emocional | Mede o uso do recurso de monitoramento de emoções | Tabela Emocoes, Paciente | Contagem de Emoções / Paciente |
 | Número médio de anotações por consulta | Avaliar detalhamento do prontuário | Mede a quantidade média de anotações registradas por consulta | Tabela Anotacoes, Consulta | Total de Anotações / Total de Consultas |
 | Número de Consultas Mensais | Acompanhar volume de atendimentos mensais | Mede quantas consultas foram realizadas em cada mês | Tabela Consulta | Número de pacientes onde MÊS(DataCadastro) = mês analisado |
-| Quantidade de Pacientes Mensal | Acompanhar o crescimento do número de pacientes | Mede quantos pacientes foram cadastrados (ou atendidos) em cada mês | Tabelas Paciente, Usuario, Consulta | Número de pacientes distintos com consultas realizadas no mês analisado |
+| Quantidade de Pacientes Mensal com agendamento | Acompanhar o crescimento do número de pacientes | Mede quantos pacientes foram cadastrados (ou atendidos) em cada mês | Tabelas Paciente, Usuario, Consulta | Número de pacientes distintos com consultas realizadas no mês analisado |
 
 

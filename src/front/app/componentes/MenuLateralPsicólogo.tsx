@@ -8,6 +8,7 @@ import IconPacientes from "../../public/assets/IconPacientes.png";
 import BotaoAdd from "../../public/assets/BotaoAdd.png";
 import { CalendarDays, Users } from "lucide-react";
 
+
 type MenuLateralPsicologoProps = {
     telaAtiva: "agenda" | "pacientes";
 };
@@ -98,6 +99,7 @@ export default function MenuLateralPsicologo({ telaAtiva }: MenuLateralPsicologo
                     icone={<img className="w-[29px] mr-1" src={BotaoAdd} alt="Icon +" />}
                 />
                 <BotaoPadrao
+                    caminho={"/psicologo/agendarConsulta"}
                     color="bg-[#0088A3]"
                     className="text-[16px] w-full min-w-[180px] whitespace-nowrap mt-2 hover:brightness-90"
                     texto="Nova consulta"

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import InputPadrao from "~/componentes/InputPadrao";
 import IconPesquisar from "../../public/assets/IconPesquisar.png";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
@@ -9,10 +9,6 @@ interface Column {
     id: string;
     label: string;
     align?: 'left' | 'center' | 'right';
-}
-
-interface RowData {
-    [key: string]: string | number;
 }
 
 interface TabelaPadraoProps {
@@ -29,13 +25,31 @@ export default function TabelaPadrao({ data, onRowClick }: TabelaPadraoProps) {
         { id: 'nascimento', label: 'Nascimento', align: 'center' },
     ];
 
-    // const data: RowData[] = []; // Dados Mockados
-
+    const [tabelaData, setTabelaData] = useState<any[]>([]);
     const [search, setSearch] = useState('');
-    const [orderBy, setOrderBy] = useState<string>('');
-    const [orderAsc, setOrderAsc] = useState(true);
+    const [orderBy, setOrderBy] = useState<string>('pacienteId');
+    const [orderAsc, setOrderAsc] = useState(false);
     const [page, setPage] = useState(0);
     const rowsPerPage = 10;
+    const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
+    const [ordenacaoRecente, setOrdenacaoRecente] = useState(true);
+    const [arquivados, setArquivados] = useState<any[]>([]);
+    const [mostrandoArquivados, setMostrandoArquivados] = useState(false);
+
+    useEffect(() => {
+        setTabelaData(data);
+    }, [data]);
+
+    const alternarOrdenacao = () => {
+        if (ordenacaoRecente) {
+            setOrderBy("nome");
+            setOrderAsc(true);
+        } else {
+            setOrderBy("pacienteId");
+            setOrderAsc(false);
+        }
+        setOrdenacaoRecente(!ordenacaoRecente);
+    };
 
     const handleSort = (columnId: string) => {
         if (orderBy === columnId) {
@@ -46,22 +60,30 @@ export default function TabelaPadrao({ data, onRowClick }: TabelaPadraoProps) {
         }
     };
 
+    const dadosVisiveis = mostrandoArquivados ? arquivados : tabelaData;
+
     const filteredData = useMemo(() => {
-        return data.filter((row) =>
-            columns.some((col) =>
-                row[col.id]?.toString().toLowerCase().includes(search.toLowerCase())
+        return dadosVisiveis.filter((row) =>
+            ['pacienteId', ...columns.map(c => c.id)].some((colId) =>
+                row[colId]?.toString().toLowerCase().includes(search.toLowerCase())
             )
         );
-    }, [search, data, columns]);
+    }, [search, dadosVisiveis, columns]);
 
     const sortedData = useMemo(() => {
         if (!orderBy) return filteredData;
         return [...filteredData].sort((a, b) => {
             const aVal = a[orderBy];
             const bVal = b[orderBy];
+
             if (aVal === bVal) return 0;
             if (aVal === undefined) return 1;
             if (bVal === undefined) return -1;
+
+            if (typeof aVal === 'number' && typeof bVal === 'number') {
+                return orderAsc ? aVal - bVal : bVal - aVal;
+            }
+
             return orderAsc
                 ? aVal.toString().localeCompare(bVal.toString())
                 : bVal.toString().localeCompare(aVal.toString());
@@ -74,6 +96,29 @@ export default function TabelaPadrao({ data, onRowClick }: TabelaPadraoProps) {
     }, [sortedData, page]);
 
     const pageCount = Math.ceil(filteredData.length / rowsPerPage);
+    const pacientesSize = filteredData.length;
+
+    const getSelectedRows = () => {
+        return Array.from(selectedRows).map(i => sortedData[i]);
+    };
+
+    const arquivarPaciente = () => {
+        const pacientesParaArquivar = getSelectedRows();
+        const idsArquivados = new Set(pacientesParaArquivar.map(p => p.pacienteId));
+
+        const novosDados = tabelaData.filter(p => !idsArquivados.has(p.pacienteId));
+        setTabelaData(novosDados);
+        setArquivados(prev => [...prev, ...pacientesParaArquivar]);
+        setSelectedRows(new Set());
+        setPage(0);
+    };
+
+    const toggleArquivados = () => {
+        setMostrandoArquivados(!mostrandoArquivados);
+        setSelectedRows(new Set());
+        setSearch('');
+        setPage(0);
+    };
 
     return (
         <div className="w-full p-4">
@@ -86,24 +131,35 @@ export default function TabelaPadrao({ data, onRowClick }: TabelaPadraoProps) {
                         icon={<img className="w-[25px]" src={IconPesquisar} alt="pesquisar" />}
                     />
                 </div>
-                    <BotaoPadrao
-                        color="bg-white"
-                        className="text-[14px] !font-normal  ml-5 !text-[#6A74A5] "
-                        texto="Mais Recentes"
-                        icone={<img className=" w-[21px] " src={Filtro} alt="MaisRecentes" />}
-                    />
-                    <BotaoPadrao
-                        color="bg-white"
-                        className="text-[14px] !font-normal ml-1 !text-[#6A74A5] "
-                        texto="Arquivados"
-                        icone={<img className=" w-[21px] " src={IconArquivado} alt="Arquivados" />}
-                    />
+                <BotaoPadrao
+                    color="bg-white"
+                    className="text-[14px] !font-normal ml-5 !text-[#6A74A5]"
+                    texto={ordenacaoRecente ? "Ordem Alfabética" : "Mais Recentes"}
+                    icone={<img className="w-[21px]" src={Filtro} alt="Ordenar" />}
+                    handleClick={alternarOrdenacao}
+                />
+                <BotaoPadrao
+                    color="bg-white"
+                    className="text-[14px] !font-normal ml-1 !text-[#6A74A5]"
+                    texto={
+                        mostrandoArquivados
+                            ? "Voltar"
+                            : selectedRows.size > 0
+                                ? "Arquivar"
+                                : "Arquivados"
+                    }
+                    icone={<img className="w-[21px]" src={IconArquivado} alt="Arquivados" />}
+                    handleClick={
+                        selectedRows.size > 0 ? arquivarPaciente : toggleArquivados
+                    }
+                />
             </div>
 
             <div className="overflow-x-auto rounded-xl shadow-md border border-gray-200">
                 <table className="min-w-full divide-y divide-gray-200 bg-white text-sm">
-                    <thead className=" rounded-tl-lg bg-gray-100">
+                    <thead className="bg-gray-100">
                     <tr>
+                        {!mostrandoArquivados && <th className="px-4 py-3 w-4"></th>}
                         {columns.map((col) => (
                             <th
                                 key={col.id}
@@ -118,33 +174,46 @@ export default function TabelaPadrao({ data, onRowClick }: TabelaPadraoProps) {
                     </thead>
                     <tbody className="text-gray-700">
                     {paginatedData.length > 0 ? (
-                        paginatedData.map((row, idx) => (
-                            <tr key={idx} className="hover:bg-gray-50">
-                                {columns.map((col) => (
-                                    <td key={col.id} className={`px-4 py-3 text-${col.align || 'left'}`}>
-                                        {col.id === "nome" ? (
-                                            <button
-                                                className="hover:font-medium-mediam cursor-pointer"
-                                                onClick={() => {
-                                                    console.log("Paciente clicado:", row); // Verificando se `row` tem ID
-                                                    onRowClick?.(row.id);
+                        paginatedData.map((row, idx) => {
+                            const rowIndex = page * rowsPerPage + idx;
+                            const isChecked = selectedRows.has(rowIndex);
+
+                            return (
+                                <tr key={rowIndex} className="hover:bg-gray-50">
+                                    {!mostrandoArquivados && (
+                                        <td className="px-4 py-3">
+                                            <input
+                                                type="checkbox"
+                                                checked={isChecked}
+                                                onChange={(e) => {
+                                                    const updated = new Set(selectedRows);
+                                                    if (e.target.checked) updated.add(rowIndex);
+                                                    else updated.delete(rowIndex);
+                                                    setSelectedRows(updated);
                                                 }}
-                                            >
-                                                {row[col.id] ?? '-'}
-                                            </button>
-                                        ) : (
-                                            row[col.id] ?? '-'
-                                        )}
-                                    </td>
-                                ))}
-                            </tr>
-                        ))
+                                            />
+                                        </td>
+                                    )}
+                                    {columns.map((col) => (
+                                        <td key={col.id} className={`px-4 py-3 text-${col.align || 'left'}`}>
+                                            {col.id === "nome" ? (
+                                                <button
+                                                    className="hover:font-medium cursor-pointer"
+                                                    onClick={() => onRowClick?.(row.pacienteId)}
+                                                >
+                                                    {row[col.id] ?? '-'}
+                                                </button>
+                                            ) : (
+                                                row[col.id] ?? '-'
+                                            )}
+                                        </td>
+                                    ))}
+                                </tr>
+                            );
+                        })
                     ) : (
                         <tr>
-                            <td
-                                colSpan={columns.length}
-                                className="px-4 py-6 text-center text-gray-400 italic"
-                            >
+                            <td colSpan={columns.length + (mostrandoArquivados ? 0 : 1)} className="px-4 py-6 text-center text-gray-400 italic">
                                 Nenhum dado disponível.
                             </td>
                         </tr>
@@ -152,9 +221,16 @@ export default function TabelaPadrao({ data, onRowClick }: TabelaPadraoProps) {
                     </tbody>
                 </table>
             </div>
-            <div className="text-sm text-gray-500">
-                Página {page + 1} de {pageCount || 1}
+
+            <div className="flex place-content-between">
+                <div className="text-sm text-gray-500 m-3">
+                    Página {page + 1} de {pageCount || 1}
+                </div>
+                <div className="text-sm text-gray-500 m-3 mr-6">
+                    {pacientesSize} Resultados
+                </div>
             </div>
+
             <div className="mt-4 flex justify-end items-center gap-2">
                 <button
                     onClick={() => setPage((prev) => Math.max(prev - 1, 0))}

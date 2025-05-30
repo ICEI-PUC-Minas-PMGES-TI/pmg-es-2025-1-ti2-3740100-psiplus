@@ -31,10 +31,16 @@ export function CadastroPsicologo() {
   const [aceitouTermos, setAceitouTermos] = useState(false);
 
   // Etapa 2
-  const [endereco, setEndereco] = useState("");
+  const [telefone, setTelefone] = useState("");
   const [dataNascimento, setDataNascimento] = useState("");
   const [sexo, setSexo] = useState("");
   const [cpf, setCpf] = useState("");
+  const [rua, setRua] = useState("");
+  const [numero, setNumero] = useState("");
+  const [bairro, setBairro] = useState("");
+  const [cep, setCep] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [estado, setEstado] = useState("");
 
   function continuarCadastro(e?: React.MouseEvent<HTMLButtonElement>) {
     e?.preventDefault();
@@ -53,11 +59,18 @@ export function CadastroPsicologo() {
           email,
           senha,
           cpfCnpj: cpf,
-          telefone: "+5511999999999",
+          telefone: telefone.replace(/\D/g, ""), // remove máscara
           dataNascimento,
           sexo,
+          endereco: {
+            rua: rua,
+            numero: parseInt(numero),
+            bairro: bairro,
+            cep: cep,
+            cidade: cidade,
+            estado: estado
+          }
         },
-        endereco: null,
       })
         .then((response) => {
           const tempoDeSessao = 30 * 60 * 1000; // 30 minutos
@@ -85,10 +98,27 @@ export function CadastroPsicologo() {
     aceitouTermos;
 
   const podeCadastrar =
-    endereco.trim() !== "" &&
+      rua.trim() !== "" &&
+      numero.trim() !== "" &&
+      bairro.trim() !== "" &&
+      estado.trim() !== "" &&
+      cep.trim() !== "" &&
+      cidade.trim() !== "" &&
     dataNascimento.trim() !== "" &&
     sexo.trim() !== "" &&
     cpf.trim() !== "";
+
+  function formatTelefone(value: string) {
+    const cleaned = value.replace(/\D/g, "").slice(0, 11);
+    const match = cleaned.match(/^(\d{0,2})(\d{0,5})(\d{0,4})$/);
+    if (!match) return value;
+    let result = "";
+    if (match[1]) result += `(${match[1]}`;
+    if (match[1] && match[1].length === 2) result += `) `;
+    if (match[2]) result += match[2];
+    if (match[3]) result += `-${match[3]}`;
+    return result;
+  }
 
   return (
     <Main>
@@ -191,8 +221,11 @@ export function CadastroPsicologo() {
                   </div>
                   <div className="relative w-full">
                     <InputPadrao
+                        type="text"
                         label="Telefone *"
-                        type="tel"
+                        placeholder="(00) 00000-0000"
+                        value={telefone}
+                        onChange={(e) => setTelefone(formatTelefone(e.target.value))}
                         required
                     />
                   </div>
@@ -229,17 +262,17 @@ export function CadastroPsicologo() {
                   <div className="relative w-full">
                     <InputPadrao
                         label="Rua *"
-                        value={endereco}
+                        value={rua}
                         required
-                        onChange={(e) => setEndereco(e.target.value)}
+                        onChange={(e) => setRua(e.target.value)}
                     />
                   </div>
                   <div className="relative w-full">
                     <InputPadrao
                         label="Número *"
                         required
-                        value={endereco}
-                        onChange={(e) => setEndereco(e.target.value)}
+                        value={numero}
+                        onChange={(e) => setNumero(e.target.value)}
                     />
                   </div>
                 </div>
@@ -248,16 +281,16 @@ export function CadastroPsicologo() {
                     <InputPadrao
                         label="Bairro *"
                         required
-                        value={endereco}
-                        onChange={(e) => setEndereco(e.target.value)}
+                        value={bairro}
+                        onChange={(e) => setBairro(e.target.value)}
                     />
                   </div>
                   <div className="relative w-full">
                     <InputPadrao
                         label="Estado *"
                         required
-                        value={endereco}
-                        onChange={(e) => setEndereco(e.target.value)}
+                        value={estado}
+                        onChange={(e) => setEstado(e.target.value)}
                     />
                   </div>
                 </div>
@@ -267,16 +300,16 @@ export function CadastroPsicologo() {
                         label="CEP *"
                         type="numeric"
                         required
-                        value={endereco}
-                        onChange={(e) => setEndereco(e.target.value)}
+                        value={cep}
+                        onChange={(e) => setCep(e.target.value)}
                     />
                   </div>
                   <div className="relative w-full">
                     <InputPadrao
                         label="Cidade *"
-                        value={endereco}
+                        value={cidade}
                         required
-                        onChange={(e) => setEndereco(e.target.value)}
+                        onChange={(e) => setCidade(e.target.value)}
                     />
                   </div>
                 </div>

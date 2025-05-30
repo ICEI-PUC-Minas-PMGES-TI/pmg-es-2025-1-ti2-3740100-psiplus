@@ -19,6 +19,12 @@ public class PsicologoService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private com.psiplus.repository.UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private com.psiplus.repository.EnderecoRepository enderecoRepository;
+
     public List<Psicologo> listarTodos() {
         return repository.findAll();
     }
@@ -29,13 +35,39 @@ public class PsicologoService {
 
     public Psicologo salvar(Psicologo psicologo) {
         Usuario usuario = psicologo.getUsuario();
-        if (usuario != null && usuario.getSenha() != null) {
-            String senhaCriptografada = passwordEncoder.encode(usuario.getSenha());
-            usuario.setSenha(senhaCriptografada);
+
+        if (usuario != null) {
+            if(psicologo.getPsicologoId() != null) {
+                Psicologo existente = buscarPorId(psicologo.getPsicologoId());
+
+                if (existente != null && existente.getUsuario() != null) {
+                    usuario.setUsuarioId(existente.getUsuario().getUsuarioId());
+                    if (usuario.getEndereco() != null && existente.getUsuario().getEndereco() != null) {
+                        usuario.getEndereco().setId(existente.getUsuario().getEndereco().getId());
+                    }
+                }
+            }else {
+                if (usuarioRepository.existsByCpfCnpj(usuario.getCpfCnpj())) {
+                    throw new RuntimeException("CPF já cadastrado!");
+                }
+            }
+
+            // **Salvar o endereço antes do usuário**
+            if (usuario.getEndereco() != null) {
+                com.psiplus.model.Endereco enderecoPersistido = enderecoRepository.save(usuario.getEndereco()); // <-- Correto!
+                usuario.setEndereco(enderecoPersistido);
+            }
+
+            // **Criptografar a senha antes de salvar**
+            if (usuario.getSenha() != null && !usuario.getSenha().isBlank()) {
+                usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
+            }
+
+            usuario = usuarioRepository.save(usuario);
             psicologo.setUsuario(usuario);
         }
         return repository.save(psicologo);
-    }
+        }
 
     public void deletar(Long id) {
         repository.deleteById(id);

@@ -3,8 +3,6 @@ import MenuLateralPsicólogo from "~/componentes/MenuLateralPsicólogo";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import TimeSlotSelector from "~/componentes/TimeSlotSelector"; 
-
 export default function AgendarConsulta() {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [patients, setPatients] = useState([]);

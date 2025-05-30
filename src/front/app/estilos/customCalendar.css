@@ -126,6 +126,20 @@
     justify-content: center !important;
 }
 
+.rbc-event-disponivel {
+    background-color: #e0faff !important;
+    border: none !important; /* Zera todas as bordas */
+    border-left: 4px solid #0088a3 !important;
+    border-radius: 0 !important;
+    color: #0088a3 !important;
+    font-weight: 500 !important;
+    padding: 6px 8px !important;
+    box-shadow: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+}
+
 .rbc-event-content {
     white-space: normal !important;
     overflow: hidden !important;

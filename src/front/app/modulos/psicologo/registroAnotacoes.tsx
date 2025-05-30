@@ -7,8 +7,10 @@ import MenuLateralPsicólogo from "~/componentes/MenuLateralPsicólogo";
 import IconPesquisar from "../../../public/assets/IconPesquisar.png";
 import ExitIcon from "../../../public/assets/ExitIcon.png";
 import Main from "~/componentes/Main";
+import {useNavigate} from "react-router";
 
 export function RegistroAnotacoes() {
+  const navigate = useNavigate();
   const [dia, setDia] = useState("04");
   const [mes, setMes] = useState("01");
   const [ano, setAno] = useState("2025");
@@ -20,6 +22,12 @@ export function RegistroAnotacoes() {
     const data = `${dia}/${mes}/${ano}`;
     console.log({ data, horaInicio, horaFim, notas });
   };
+
+  function leave() {
+    sessionStorage.removeItem("sessaoPsicologo");
+    sessionStorage.removeItem("sessaoPaciente");
+    navigate("/")
+  }
 
   return (
       <Main>
@@ -34,12 +42,17 @@ export function RegistroAnotacoes() {
             classNameInput="border-0 font-semibold text-[14px]"
             icon={<img className="w-[25px]" src={IconPesquisar} alt="pesquisar" />}
           />
-          <BotaoPadrao
-            color="bg-white"
-            className="text-[16px] !font-medium ml-auto !text-black"
-            texto="Sair"
-            icone={<img className="w-[26px]" src={ExitIcon} alt="Sair" />}
-          />
+          <div className="flex">
+            <BotaoPadrao
+                texto="Sair"
+                icone={<ExitToAppIcon />}
+                color="bg-white"
+                textoColor="text-gray-600"
+                className="ml-auto hover:text-black transition-colors duration-200 font-medium cursor-pointer"
+                handleClick={leave}
+            />
+
+          </div>
         </div>
 
         <div className="flex gap-7">

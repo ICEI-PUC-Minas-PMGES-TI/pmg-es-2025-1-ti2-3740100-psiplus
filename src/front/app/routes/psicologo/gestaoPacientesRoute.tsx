@@ -1,5 +1,5 @@
 import type { Route } from "./+types/gestaoPacientesRoute";
-import GestaoPacientes from "../../modulos/psicologo/gestaoPacientes";
+import GestaoPacientes from "~/modulos/psicologo/gestaoPacientes";
 import ProtectedRoute from "~/routes/ProtectedRoute";
 
 export function meta({}: Route.MetaArgs) {

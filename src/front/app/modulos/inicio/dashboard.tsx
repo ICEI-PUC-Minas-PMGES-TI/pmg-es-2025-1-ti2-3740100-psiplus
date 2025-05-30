@@ -1,16 +1,11 @@
 import Main from "~/componentes/Main";
 import MenuLateralPsicólogo from "~/componentes/MenuLateralPsicólogo";
-import InputPadrao from "~/componentes/InputPadrao";
-import IconPesquisar from "../../../public/assets/IconPesquisar.png"
 import ExitIcon from "../../../public/assets/ExitIcon.png"
-import IconArquivado from "../../../public/assets/IconArquivado.png"
-import Filtro from "../../../public/assets/Filtro.png"
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import TabelaPadrao from "~/componentes/TabelaPadrao";
 import { useEffect, useState } from "react";
 import { useMemo } from "react";
 import { useNavigate } from "react-router";
-import GestaoPacientes from "../psicologo/GestaoPacientes";
 
 export function Dashboard() {
     const navigate = useNavigate();
@@ -39,7 +34,7 @@ export function Dashboard() {
 
 
     const irParaGestaoPaciente = (idPaciente: number) => {
-        navigate(`/psicologo/gestaoPacientes/${idPaciente}`);
+        navigate(`/psicologo/pacientes/${idPaciente}`);
     };
 
     const filteredData = useMemo(() => {

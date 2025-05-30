@@ -32,7 +32,7 @@ export function LoginPsicologo() {
                 };
 
                 localStorage.setItem("sessaoPsicologo", JSON.stringify(dadosSessao));
-                navigate("/psicologo/paginaPrincipal");
+                navigate("/psicologo/agenda");
             })
             .catch((error) => {
                 console.error("Erro ao salvar os dados no backend:", error);

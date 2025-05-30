@@ -1,5 +1,6 @@
 import type { Route } from "./+types/paginaPrincipalRoute";
 import PaginaPrincipal from "../../modulos/psicologo/paginaPrincipal";
+import ProtectedRoute from "~/routes/ProtectedRoute";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -9,5 +10,9 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function PaginaPrincipalRoute() {
-    return <PaginaPrincipal />;
+    return (
+        <ProtectedRoute>
+            <PaginaPrincipal />
+        </ProtectedRoute>
+    )
 }

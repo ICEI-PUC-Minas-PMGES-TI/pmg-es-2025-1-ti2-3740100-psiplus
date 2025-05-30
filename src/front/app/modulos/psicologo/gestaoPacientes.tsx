@@ -1,7 +1,6 @@
 import Main from "~/componentes/Main";
 import MenuLateralPsicólogo from "~/componentes/MenuLateralPsicólogo";
 import InputPadrao from "~/componentes/InputPadrao";
-import ExitIcon from "../../../public/assets/ExitIcon.png"
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import PerfilUser from "../../../public/assets/PerfilUser.jpg";
 import PersonIcon from '@mui/icons-material/Person';
@@ -16,7 +15,7 @@ import LockIcon from "@mui/icons-material/Lock";
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
 import { useNavigate, useParams } from "react-router";
 import axios from "axios";
-
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 
 interface Endereco {
     rua: string;
@@ -210,9 +209,8 @@ export default function GestaoPacientes() {
     function leave() {
         sessionStorage.removeItem("sessaoPsicologo");
         sessionStorage.removeItem("sessaoPaciente");
-        navigate("/");
+        navigate("/")
     }
-
 
     return (
         <Main>
@@ -221,17 +219,17 @@ export default function GestaoPacientes() {
             <MenuLateralPsicólogo telaAtiva={"pacientes"}/>
             <div className="w-px bg-gray-300"></div>
             <div className="m-5 w-4/5">
-              <div className="flex">
-                <BotaoPadrao
-                    texto="Sair"
-                    icone={<img className="w-[26px]" src={ExitIcon} alt="Sair" />}
-                    color="bg-white"
-                    textoColor="text-gray-600"
-                    className="ml-auto hover:text-black transition-colors duration-200 font-medium cursor-pointer"
-                    handleClick={leave}
-                />
+                <div className="flex">
+                    <BotaoPadrao
+                        texto="Sair"
+                        icone={<ExitToAppIcon />}
+                        color="bg-white"
+                        textoColor="text-gray-600"
+                        className="ml-auto hover:text-black transition-colors duration-200 font-medium cursor-pointer"
+                        handleClick={leave}
+                    />
 
-              </div>
+                </div>
               <hr className="border-t-2 border-[#DFE5F1] my-2"/>
               <h1 className="font-semibold text-black mx-4 text-[20px] mt-5">Gestão de Pacientes</h1>
 

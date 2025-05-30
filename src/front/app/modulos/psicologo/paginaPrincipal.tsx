@@ -9,19 +9,23 @@ import EditIcon from "@mui/icons-material/Edit";
 
 //Imports da agenda
 import localizer from "~/utils/calendarConfig";
-import { Calendar, Views, momentLocalizer } from "react-big-calendar";
+import {Calendar, Views, momentLocalizer, type HeaderProps} from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "~/estilos/customCalendar.css";
 import CustomToolbar from "~/componentes/CustomToolbar";
 import { format, startOfWeek, endOfWeek} from "date-fns";
 import { ptBR } from "date-fns/locale";
-import type { HeaderProps } from './Header';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { eachDayOfInterval, startOfMonth, endOfMonth, isSameDay, isSameMonth, isToday } from "date-fns";
 import type { View } from "react-big-calendar";
+import {useNavigate} from "react-router";
+import BotaoPadrao from "~/componentes/BotaoPadrao";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 
 
 export default function Agenda() {
+    const navigate = useNavigate();
+
     const [dataBase, setDataBase] = useState(new Date());
     const [mesLateral, setMesLateral] = useState(new Date()); // NOVO: controla o mês no calendário lateral
 
@@ -51,6 +55,10 @@ export default function Agenda() {
         return `${diaInicio} - ${diaFim} de ${mesCapitalizado}`;
     }
 
+
+    function editaragenda() {
+        navigate("/psicologo/agenda/editar")
+    }
 
     // Eventos
     const eventos = [
@@ -114,7 +122,11 @@ export default function Agenda() {
         isSameDay(evento.start, dataSelecionada)
     );
 
-
+    function leave() {
+        sessionStorage.removeItem("sessaoPsicologo");
+        sessionStorage.removeItem("sessaoPaciente");
+        navigate("/")
+    }
 
     return (
         <Main>
@@ -153,7 +165,7 @@ export default function Agenda() {
 
                         {/* Direita: Botão editar */}
                         <button className="bg-[#ADD9E2] text-[#0088A3] cursor-pointer
-                        px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1 hover:brightness-95">
+                        px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1 hover:brightness-95" onClick={editaragenda}>
                             <EditIcon style={{ fontSize: 18, color: "#0088A3" }} />
                             Editar agenda
                         </button>
@@ -178,6 +190,10 @@ export default function Agenda() {
                             localizer={localizer}
                             culture="pt-BR"
                             events={eventos}
+                            step={60}
+                            timeslots={1}
+                            min={new Date(0, 0, 0, 0, 0)}
+                            max={new Date(0, 0, 0, 23, 0)}
                             startAccessor="start"
                             endAccessor="end"
                             defaultView={Views.WEEK}
@@ -208,11 +224,17 @@ export default function Agenda() {
                 {/* Painel lateral (Resumo Diário com calendário e atendimentos) */}
                 <div className="w-[300px] border-l border-gray-200 bg-white shadow px-4 py-6 relative flex flex-col">
 
-                    {/* Botão Sair no canto superior direito */}
-                    <button className="absolute top-6 right-6 flex items-center gap-2 text-gray-600 hover:text-black cursor-pointer">
-                        <img className="w-[20px]" src={ExitIcon} alt="Sair" />
-                        <span className="text-sm font-medium">Sair</span>
-                    </button>
+                    <div className="flex">
+                        <BotaoPadrao
+                            texto="Sair"
+                            icone={<ExitToAppIcon />}
+                            color="bg-white"
+                            textoColor="text-gray-600"
+                            className="ml-auto hover:text-black transition-colors duration-200 font-medium cursor-pointer"
+                            handleClick={leave}
+                        />
+
+                    </div>
 
                     {/* Calendário dinâmico */}
                     <div className="mt-15">
@@ -287,7 +309,7 @@ export default function Agenda() {
                                             </p>
                                             <p className="text-xs text-[#8C9BB0] flex items-center gap-1">
                                                 <span className="w-2 h-2 bg-[#F79824] rounded-full inline-block"></span>
-                                                {format(consulta.start, "HH:mm")}
+                                                {format(consulta.start, "HH:mm")} - {format(consulta.end, "HH:mm")}
                                             </p>
                                         </div>
                                     </div>

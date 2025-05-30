@@ -52,7 +52,7 @@ export default function MenuLateralPsicologo({ telaAtiva }: MenuLateralPsicologo
 
             {/* Agenda */}
             <BotaoPadrao
-                caminho={"/psicologo/paginaPrincipal"}
+                caminho={"/psicologo/agenda"}
                 className={"!items-start text-[16px] !justify-start mt-[10px]"}
                 color="bg-white"
                 texto="Agenda"
@@ -64,7 +64,7 @@ export default function MenuLateralPsicologo({ telaAtiva }: MenuLateralPsicologo
 
             {/* Pacientes */}
             <BotaoPadrao
-                caminho={"/dashboard"}
+                caminho={"/psicologo/pacientes"}
                 className={"!items-start text-[16px] !justify-start mt-[10px]"}
                 color="bg-white"
                 texto="Pacientes"

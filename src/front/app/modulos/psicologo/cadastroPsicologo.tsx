@@ -63,12 +63,12 @@ export function CadastroPsicologo() {
           const tempoDeSessao = 30 * 60 * 1000; // 30 minutos
 
           const dadosSessao = {
-            usuarioId: response.data.usuario.usuarioId,
+            usuarioId: response.data.psicologoId,
             expiraEm: Date.now() + tempoDeSessao,
           };
 
           localStorage.setItem("sessaoPsicologo", JSON.stringify(dadosSessao));
-          navigate("/psicologo/paginaPrincipal");
+          navigate("/psicologo/agenda");
       })
       .catch((error) => {
         console.error("Erro ao salvar os dados no backend:", error);

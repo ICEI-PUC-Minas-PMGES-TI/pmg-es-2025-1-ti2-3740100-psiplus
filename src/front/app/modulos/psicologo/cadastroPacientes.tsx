@@ -278,7 +278,7 @@ export default function CadastroPacientes() {
                 mensagem="Paciente cadastrado com sucesso!"
                 onClose={() => {
                   setMostrarPopup(false);
-                  navigate("/psicologo/paginaPrincipal");
+                  navigate("/psicologo/agenda");
                 }}
             />
         )}

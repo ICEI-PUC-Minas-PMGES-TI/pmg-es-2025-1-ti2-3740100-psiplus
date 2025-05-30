@@ -7,6 +7,8 @@ O processo de agendamento de horários por parte do paciente se inicia na visual
 
 **Visualizar agenda**
 
+![Wireframe visualizar agenda](images/PrincipalPsicólogo.png)
+
 | **Comandos**         |  **Destino**                   | **Tipo**          |
 | ---                  | ---                            | ---               |
 | agendarConsulta                | Abrir popup de agendamento| ---               |

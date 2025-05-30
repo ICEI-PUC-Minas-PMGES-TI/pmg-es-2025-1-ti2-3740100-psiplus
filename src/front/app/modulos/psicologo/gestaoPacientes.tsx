@@ -12,7 +12,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { useState, useEffect } from "react";
 import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from "@mui/icons-material/Lock";
-import { CheckCircleIcon } from '@heroicons/react/24/solid';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useNavigate, useParams } from "react-router";
 import axios from "axios";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
@@ -311,7 +311,16 @@ export default function GestaoPacientes() {
                                 handleClick={salvarEdicao}
                                 className="group bg-transparent !border-none !shadow-none !text-[#0088A3] flex items-center gap-1 hover:!text-[#006e85] text-base font-bold transition-colors"
                                 icone={
-                                  <CheckCircleIcon className="h-5 w-5 text-[#0088A3] group-hover:text-[#006e85] transition-colors" />
+                                    <CheckCircleIcon
+                                        sx={{
+                                            fontSize: 20,
+                                            color: '#0088A3',
+                                            transition: 'color 0.2s',
+                                            '&:hover': {
+                                                color: '#006e85',
+                                            },
+                                        }}
+                                    />
                                 }
                             />
                             <BotaoPadrao

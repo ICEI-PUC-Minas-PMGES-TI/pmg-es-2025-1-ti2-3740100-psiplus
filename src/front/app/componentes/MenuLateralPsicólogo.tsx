@@ -16,7 +16,15 @@ export default function MenuLateralPsicologo({ telaAtiva }: MenuLateralPsicologo
     const [nome, setNome] = useState("Carregando...");
 
     useEffect(() => {
-        const sessao = localStorage.getItem("sessaoPsicologo");
+        const sessionDataRaw = sessionStorage.getItem("sessionData");
+
+        if (sessionDataRaw) {
+            const sessionData = JSON.parse(sessionDataRaw);
+            setNome(sessionData.nome);
+            return;
+        }
+
+        const sessao = sessionStorage.getItem("sessaoPsicologo");
         if (!sessao) return;
 
         const { usuarioId } = JSON.parse(sessao);
@@ -24,7 +32,13 @@ export default function MenuLateralPsicologo({ telaAtiva }: MenuLateralPsicologo
         axios
             .get(`http://localhost:8080/psicologos/${usuarioId}`)
             .then((res) => {
-                const nomeDoUsuario = res.data.usuario?.nome || "Nome não encontrado";
+                const usuario = res.data.usuario || {};
+                const nomeDoUsuario = usuario.nome || "Nome não encontrado";
+                const emailDoUsuario = usuario.email || "Email não encontrado";
+
+                const sessionData = { nome: nomeDoUsuario, email: emailDoUsuario };
+                sessionStorage.setItem("sessionData", JSON.stringify(sessionData));
+
                 setNome(nomeDoUsuario);
             })
             .catch((err) => {
@@ -32,6 +46,7 @@ export default function MenuLateralPsicologo({ telaAtiva }: MenuLateralPsicologo
                 setNome("Erro ao carregar nome");
             });
     }, []);
+
 
     return (
         <div className="w-1/6 h-screen pl-[15px] text-black font-semibold flex flex-col bg-white">

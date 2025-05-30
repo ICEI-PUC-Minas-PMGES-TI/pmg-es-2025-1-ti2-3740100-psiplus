@@ -8,5 +8,11 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['react-input-mask-next'], // ← evita o erro 504
   },
+  server: {
+    watch: {
+      usePolling: true,
+      ignored: ['**/node_modules/**'],
+    },
+  },
 });
 

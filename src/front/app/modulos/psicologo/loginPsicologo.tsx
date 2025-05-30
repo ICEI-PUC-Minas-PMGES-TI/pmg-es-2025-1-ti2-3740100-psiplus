@@ -31,7 +31,7 @@ export function LoginPsicologo() {
                     expiraEm: Date.now() + tempoDeSessao,
                 };
 
-                localStorage.setItem("sessaoPsicologo", JSON.stringify(dadosSessao));
+                sessionStorage.setItem("sessaoPsicologo", JSON.stringify(dadosSessao));
                 navigate("/psicologo/agenda");
             })
             .catch((error) => {

@@ -14,7 +14,7 @@ export function GestaoRegistros() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const dadosSalvos = localStorage.getItem("anotacoes");
+    const dadosSalvos = sessionStorage.getItem("anotacoes");
     if (dadosSalvos) {
       setAnotacoes(JSON.parse(dadosSalvos));
     }

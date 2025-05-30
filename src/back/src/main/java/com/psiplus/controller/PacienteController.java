@@ -1,6 +1,6 @@
 package com.psiplus.controller;
 
-import back.src.main.java.com.psiplus.DTO.PacienteDTO;
+import com.psiplus.DTO.PacienteDTO;
 import com.psiplus.model.Paciente;
 import com.psiplus.service.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;

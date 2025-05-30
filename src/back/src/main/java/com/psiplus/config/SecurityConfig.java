@@ -1,4 +1,4 @@
-package com.psiplus.security;
+package com.psiplus.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

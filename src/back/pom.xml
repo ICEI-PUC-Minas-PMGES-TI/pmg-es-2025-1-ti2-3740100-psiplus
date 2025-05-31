@@ -88,6 +88,18 @@
 			<version>5.8.7</version>
 		</dependency>
 
+		<!-- Spring Boot starter para envio de e-mail -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
+		<!-- Jakarta Mail (necessária para compilar com jakarta.mail.*) -->
+		<dependency>
+			<groupId>com.sun.mail</groupId>
+			<artifactId>jakarta.mail</artifactId>
+			<version>2.0.1</version>
+		</dependency>
 
 
 	</dependencies>

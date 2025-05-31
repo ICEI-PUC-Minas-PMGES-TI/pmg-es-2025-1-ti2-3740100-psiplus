@@ -25,8 +25,14 @@ export default function CadastroPacientes() {
   const [estado, setEstado] = useState("");
   const [notas, setNotas] = useState("");
   const [mostrarPopup, setMostrarPopup] = useState(false);
+  const [mensagemErro, setMensagemErro] = useState("");
 
   const handleSubmit = async () => {
+    if (!camposObrigatoriosPreenchidos()) {
+      setMensagemErro("Preencha os campos obrigatórios");
+      return;
+    }
+
     const paciente = {
       usuario: {
         cpfCnpj: cpfCnpj,
@@ -51,10 +57,24 @@ export default function CadastroPacientes() {
 
     try {
       await axios.post("http://localhost:8080/pacientes", paciente);
-      setMostrarPopup(true);
-    } catch (error) {
-      console.error("Erro ao cadastrar paciente:", error);
-      alert("Erro ao cadastrar paciente.");
+      setMensagemErro(""); // Limpa erro anterior
+      setMostrarPopup(true); // Mostra popup de sucesso
+    } catch (error: any) {
+      const msgBackend = error.response?.data?.message;
+
+      if (typeof msgBackend === "string") {
+        if (msgBackend.includes("CPF já cadastrado")) {
+          setMensagemErro("CPF já cadastrado.");
+        } else if (msgBackend.includes("E-mail já cadastrado")) {
+          setMensagemErro("Email já cadastrado.");
+        } else {
+          setMensagemErro("Erro ao cadastrar paciente.");
+        }
+      } else {
+        setMensagemErro("Erro desconhecido ao cadastrar paciente.");
+      }
+
+      setMostrarPopup(false); // Garante que o popup de sucesso não apareça junto
     }
 
   };
@@ -62,6 +82,16 @@ export default function CadastroPacientes() {
   const formatarParaISO = (data: string): string => {
     const [dia, mes, ano] = data.split("/");
     return `${ano}-${mes}-${dia}`;
+  };
+
+  const camposObrigatoriosPreenchidos = (): boolean => {
+    return (
+        nome.trim() !== "" &&
+        cpfCnpj.trim() !== "" &&
+        email.trim() !== "" &&
+        telefone.trim() !== "" &&
+        dataNascimento.trim() !== ""
+    );
   };
 
   function formatTelefone(value: string) {
@@ -283,6 +313,15 @@ export default function CadastroPacientes() {
                 }}
             />
         )}
+
+        {mensagemErro && (
+            <Popup
+                titulo="Erro no cadastro"
+                mensagem={mensagemErro}
+                onClose={() => setMensagemErro("")}
+            />
+        )}
+
       </Main>
   );
 }

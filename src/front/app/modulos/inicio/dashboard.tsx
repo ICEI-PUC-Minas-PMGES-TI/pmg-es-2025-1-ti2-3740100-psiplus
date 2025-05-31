@@ -50,6 +50,12 @@ export function Dashboard() {
         );
     }, [search, data, columns]);
 
+    function leave() {
+        sessionStorage.removeItem("sessaoPsicologo");
+        sessionStorage.removeItem("sessaoPaciente");
+        navigate("/")
+    }
+
     return (
         <Main>
             <div className="flex h-screen bg-white ">
@@ -63,6 +69,7 @@ export function Dashboard() {
                             className="text-[16px] !font-medium  ml-auto !text-black "
                             texto="Sair"
                             icone={<img className=" w-[26px] " src={ExitIcon} alt="Sair" />}
+                            handleClick={leave}
                         />
                     </div>
                     <hr className="border-t-2 border-[#DFE5F1] my-2"/>

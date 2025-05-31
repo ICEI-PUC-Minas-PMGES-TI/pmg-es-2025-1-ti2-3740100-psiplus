@@ -20,6 +20,9 @@ public class Paciente {
     @Column(length = 500)
     private String observacoes;
 
+    @Column(columnDefinition = "NVARCHAR(MAX)")
+    private String notas;
+
     // Getters e Setters
     public Long getPacienteId() {
         return pacienteId;
@@ -45,4 +48,7 @@ public class Paciente {
     public void setObservacoes(String observacoes) {
         this.observacoes = observacoes;
     }
+    public String getNotas() { return notas; }
+    public void setNotas(String notas) { this.notas = notas; }
+
 }

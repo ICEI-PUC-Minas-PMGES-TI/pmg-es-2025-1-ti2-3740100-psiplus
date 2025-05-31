@@ -40,6 +40,7 @@ interface Usuario {
 
 interface Paciente {
     usuario: Usuario;
+    notas?: string;
 }
 
 export default function GestaoPacientes() {
@@ -66,6 +67,7 @@ export default function GestaoPacientes() {
                 estado: "",
             },
         },
+        notas: "",
     });
 
     useEffect(() => {
@@ -86,6 +88,7 @@ export default function GestaoPacientes() {
                 const data = res.data;
 
                 setPaciente({
+                    notas: data.notas || "",
                     usuario: {
                         id: data.usuario?.usuarioId ?? undefined,
                         nome: data.usuario?.nome || "",
@@ -151,6 +154,7 @@ export default function GestaoPacientes() {
                 dataNascimento: formatarDataParaISO(paciente.usuario.dataNascimento || ""),
                 senha: paciente.usuario.senha || "senha123",
             },
+            notas: paciente.notas || ""
         };
         console.log("Enviando para o backend:", pacienteAtualizado);
 
@@ -365,7 +369,7 @@ export default function GestaoPacientes() {
                           value={paciente.usuario.cpfCnpj ?? ""}
                           onChange={handleInputChange}
                           icon={<LockIcon style={{ color: "#BBC6D9" }} />}
-                          classNameInput="!px-5 !pl-10 !py-2 rounded-lg !text-[#858EBD] !border-[#DAE0F2]"
+                          classNameInput="!px-5 !pl-10 !py-2 rounded-lg !text-[#858EBD] !border-[#DAE0F2] !bg-[#F3F4F9]"
                           disabled={true}
                       />
                     </div>
@@ -455,7 +459,7 @@ export default function GestaoPacientes() {
                     <div>
                       <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Rua</label>
                       <InputPadrao
-                          name="endereco"
+                          name="rua"
                           value={paciente?.usuario?.endereco?.rua ?? ""}
                           onChange={handleEnderecoChange}
                           classNameInput="!px-5 !py-2 border-[#DAE0F2] rounded-lg !text-[#858EBD] !border-[#DAE0F2]"
@@ -520,6 +524,10 @@ export default function GestaoPacientes() {
                     <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Notas</label>
                     <textarea
                         name="notas"
+                        value={paciente.notas}
+                        onChange={(e) =>
+                            setPaciente((prev) => ({ ...prev, notas: e.target.value }))
+                        }
                         disabled={!modoEdicao}
                         className="w-full border border-[#DAE0F2] rounded-lg px-4 py-2 pt-3 text-sm text-[#858EBD]"
                         rows={4}

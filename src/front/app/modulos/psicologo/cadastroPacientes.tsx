@@ -46,7 +46,7 @@ export default function CadastroPacientes() {
         }
       },
       historicoClinico: null,
-      observacoes: notas || null
+      notas: notas || null
     };
 
     try {

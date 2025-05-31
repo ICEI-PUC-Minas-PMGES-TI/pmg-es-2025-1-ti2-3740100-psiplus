@@ -16,7 +16,7 @@ export function RedefinicaoSenha(){
                 {/* Lado esquerdo com gradiente */}
                 <HomeLogoCadastro />
                 {/* Lado direito com formulário */}
-                <div className="w-3/4 flex flex-col justify-center items-center bg-white p-8">
+                <div className="w-3/4 flex flex-col items-center mt-35 bg-white p-8">
 
                     {/* Texto de boas-vindas */}
                     <div className="text-center">
@@ -31,12 +31,14 @@ export function RedefinicaoSenha(){
                             placeholder="Digite sua nova senha"
                             icon={<Lock />}
                             value={senha}
+                            classNameInput="mb-4"
                             onChange={(e) => setSenha(e.target.value)}
                         />
                         <InputPadrao
                             type="password"
                             placeholder="Confirme a senha"
                             icon={<Lock />}
+                            classNameInput="mb-4"
                             value={confirmarSenha}
                             onChange={(e) => setConfirmarSenha(e.target.value)}
                         />

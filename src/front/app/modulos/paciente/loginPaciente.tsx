@@ -32,7 +32,11 @@ export function LoginPaciente() {
                 };
 
                 sessionStorage.setItem("sessaoPaciente", JSON.stringify(dadosSessao));
+<<<<<<< Updated upstream
                 navigate("/paciente/redefinirSenha");
+=======
+                navigate("/psicologo/agenda");
+>>>>>>> Stashed changes
             })
             .catch((error) => {
                 console.error("Erro ao salvar os dados no backend:", error);

@@ -4,6 +4,8 @@ import com.psiplus.DTO.PacienteDTO;
 import com.psiplus.model.Paciente;
 import com.psiplus.model.Usuario;
 import com.psiplus.model.Endereco;
+import com.psiplus.email.EmailService;
+import com.psiplus.util.EmailTemplates;
 import com.psiplus.repository.UsuarioRepository;
 import com.psiplus.repository.PacienteRepository;
 import com.psiplus.repository.EnderecoRepository;
@@ -29,6 +31,9 @@ public class PacienteService {
 
     @Autowired
     private EnderecoRepository enderecoRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     public List<Paciente> listarTodos() {
         return repository.findAll();
@@ -69,6 +74,10 @@ public class PacienteService {
                 usuario.setEndereco(enderecoPersistido);
             }
 
+            if (usuario.getSenha() == null || usuario.getSenha().isBlank()) {
+                usuario.setSenha(usuario.getCpfCnpj());
+            }
+
             // **Criptografar a senha antes de salvar**
             if (usuario.getSenha() != null && !usuario.getSenha().isBlank()) {
                 usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
@@ -78,7 +87,14 @@ public class PacienteService {
             paciente.setUsuario(usuario);
         }
 
-        return repository.save(paciente);
+        Paciente salvo = repository.save(paciente);
+
+        // Agora sim: enviar o e-mail depois de tudo estar salvo
+        String html = EmailTemplates.gerarBoasVindas(usuario.getNome(), usuario.getEmail(), usuario.getCpfCnpj());
+        emailService.enviarEmail(usuario.getEmail(), "Bem-vindo ao Psi+", html);
+
+        return salvo;
+
     }
 
     public void deletar(Long id) {

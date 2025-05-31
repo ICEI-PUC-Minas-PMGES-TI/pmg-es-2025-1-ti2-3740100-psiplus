@@ -4,7 +4,7 @@ import InfoPaciente from "~/componentes/InfoPaciente";
 import InputPadrao from "~/componentes/InputPadrao";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import IconPesquisar from "../../../public/assets/IconPesquisar.png";
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+
 import ConsultationHistory from "~/componentes/ConsultationHistory";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import {useNavigate} from "react-router";

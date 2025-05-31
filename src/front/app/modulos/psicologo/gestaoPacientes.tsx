@@ -16,6 +16,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useNavigate, useParams } from "react-router";
 import axios from "axios";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import ExitIcon from "../../../public/assets/ExitIcon.png"
 
 interface Endereco {
     rua: string;
@@ -226,7 +227,7 @@ export default function GestaoPacientes() {
                 <div className="flex">
                     <BotaoPadrao
                         texto="Sair"
-                        icone={<ExitToAppIcon />}
+                        icone={<img className=" w-[26px] " src={ExitIcon} alt="Sair" />}
                         color="bg-white"
                         textoColor="text-gray-600"
                         className="ml-auto hover:text-black transition-colors duration-200 font-medium cursor-pointer"

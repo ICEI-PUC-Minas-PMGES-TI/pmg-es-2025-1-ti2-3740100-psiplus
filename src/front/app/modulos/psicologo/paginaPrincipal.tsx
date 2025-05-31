@@ -20,7 +20,6 @@ import { eachDayOfInterval, startOfMonth, endOfMonth, isSameDay, isSameMonth, is
 import type { View } from "react-big-calendar";
 import {useNavigate} from "react-router";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
-import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 
 
 export default function Agenda() {
@@ -227,7 +226,7 @@ export default function Agenda() {
                     <div className="flex">
                         <BotaoPadrao
                             texto="Sair"
-                            icone={<ExitToAppIcon />}
+                            icone={<img className=" w-[26px] " src={ExitIcon} alt="Sair" />}
                             color="bg-white"
                             textoColor="text-gray-600"
                             className="ml-auto hover:text-black transition-colors duration-200 font-medium cursor-pointer"

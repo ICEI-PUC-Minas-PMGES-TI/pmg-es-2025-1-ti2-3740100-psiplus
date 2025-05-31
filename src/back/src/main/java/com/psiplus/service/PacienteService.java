@@ -57,6 +57,10 @@ public class PacienteService {
                 if (usuarioRepository.existsByCpfCnpj(usuario.getCpfCnpj())) {
                     throw new RuntimeException("CPF já cadastrado!");
                 }
+
+                if (usuarioRepository.existsByEmail(usuario.getEmail())) {
+                    throw new RuntimeException("E-mail já cadastrado!");
+                }
             }
 
             // **Salvar o endereço antes do usuário**

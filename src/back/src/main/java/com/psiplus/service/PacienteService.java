@@ -87,4 +87,9 @@ public class PacienteService {
                 .map(PacienteDTO::new)
                 .collect(Collectors.toList());
     }
+    public Paciente autenticar(String email, String senha) {
+        return repository.findByUsuarioEmail(email)
+                .filter(p -> passwordEncoder.matches(senha, p.getUsuario().getSenha()))
+                .orElse(null);
+    }
 }

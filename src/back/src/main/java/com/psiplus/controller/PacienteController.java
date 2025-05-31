@@ -1,5 +1,7 @@
 package com.psiplus.controller;
-
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.http.HttpStatus;
 import com.psiplus.DTO.PacienteDTO;
 import com.psiplus.model.Paciente;
 import com.psiplus.service.PacienteService;
@@ -73,6 +75,17 @@ public class PacienteController {
     @GetMapping("/resumo")
     public List<PacienteDTO> listarResumo() {
         return service.listarResumo();
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody com.psiplus.model.LoginRequest request) {
+        com.psiplus.model.Paciente paciente = service.autenticar(request.getEmail(), request.getSenha());
+        if (paciente == null) {
+            Map<String, String> erro = new HashMap<>();
+            erro.put("erro", "Email ou senha inválidos");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(erro);
+        }
+        return ResponseEntity.ok(paciente);
     }
 
 }

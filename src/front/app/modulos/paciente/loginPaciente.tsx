@@ -15,6 +15,29 @@ export function LoginPaciente() {
     const [erro, setErro] = useState("");
 
     function fazerLogin(e: React.FormEvent) {
+        e.preventDefault();
+        setErro(""); // limpa o erro antes de tentar de novo
+
+        axios
+            .post("http://localhost:8080/pacientes/login", {
+                email,
+                senha,
+            })
+            .then((response) => {
+                const tempoDeSessao = 30 * 60 * 1000; // 30 minutos
+
+                const dadosSessao = {
+                    usuarioId: response.data.pacienteId,
+                    expiraEm: Date.now() + tempoDeSessao,
+                };
+
+                sessionStorage.setItem("sessaoPaciente", JSON.stringify(dadosSessao));
+                navigate("/paciente/redefinirSenha");
+            })
+            .catch((error) => {
+                console.error("Erro ao salvar os dados no backend:", error);
+                alert("Houve um erro ao salvar os dados.");
+            });
     }
     return (
         <Main>

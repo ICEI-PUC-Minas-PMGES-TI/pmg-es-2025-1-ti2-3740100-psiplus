@@ -50,7 +50,7 @@ export default function MenuLateralPsicologo({ telaAtiva }: MenuLateralPsicologo
 
 
     return (
-        <div className="w-1/6 h-screen pl-[15px] text-black font-semibold flex flex-col bg-white">
+        <div className="sticky top-0 w-1/6 h-screen pl-[15px] text-black font-semibold flex flex-col bg-white">
             <div className="flex mt-[10px]">
                 <img className="w-[41px] h-[48px]" src={IconPsiPlus} alt="Logo" />
                 <h1 className="text-[20px] pt-[15px] pl-[5px] font-bold">Psi+</h1>

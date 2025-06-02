@@ -1,5 +1,6 @@
 package com.psiplus.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.psiplus.util.TipoExcecao;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -16,11 +17,14 @@ public class ExcecaoDisponibilidade {
     @JoinColumn(name = "psicologoId")
     private Psicologo psicologo;
 
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")
     @Column(name = "data_hora_inicio", nullable = false)
     private LocalDateTime dataHoraInicio;
 
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")
     @Column(name = "data_hora_fim", nullable = false)
     private LocalDateTime dataHoraFim;
+
 
     @Column(name = "motivo")
     private String motivo;

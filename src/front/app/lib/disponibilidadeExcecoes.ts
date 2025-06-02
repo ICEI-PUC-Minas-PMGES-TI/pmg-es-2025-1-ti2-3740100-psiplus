@@ -2,6 +2,11 @@ import axios from 'axios';
 
 const BASE_URL = 'http://localhost:8080';
 
+function formatarParaBackend(date: Date): string {
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+}
+
 export async function listarExcecoesDisponibilidade(psicologoId: number) {
     try {
         const response = await axios.get(`${BASE_URL}/disponibilidades/excecoes/psicologo/${psicologoId}`);
@@ -24,8 +29,8 @@ export async function salvarExcecaoDisponibilidade(excecao: ExcecaoDisponibilida
     try {
         const payload = {
             psicologo: { psicologoId: excecao.psicologoId },
-            dataHoraInicio: excecao.start.toISOString(),
-            dataHoraFim: excecao.end.toISOString(),
+            dataHoraInicio: formatarParaBackend(excecao.start),
+            dataHoraFim: formatarParaBackend(excecao.end),
             motivo: excecao.motivo ?? '',
             tipo: excecao.tipo,
         };

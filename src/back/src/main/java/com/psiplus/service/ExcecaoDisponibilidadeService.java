@@ -3,7 +3,9 @@ package com.psiplus.service;
 import com.psiplus.model.ExcecaoDisponibilidade;
 import com.psiplus.repository.ExcecaoDisponibilidadeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -23,8 +25,13 @@ public class ExcecaoDisponibilidadeService {
     }
 
     public void deletar(Long id) {
+        if (!repository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Exceção não encontrada");
+        }
+
         repository.deleteById(id);
     }
+
 
     private void validarExcecao(ExcecaoDisponibilidade e) {
         if (e.getDataHoraFim().isBefore(e.getDataHoraInicio()) || e.getDataHoraFim().equals(e.getDataHoraInicio())) {

@@ -68,52 +68,7 @@ export default function EditarAgenda() {
     const [tipoSelecionado, setTipoSelecionado] = useState("DISPONIVEL");
     const [motivo, setMotivo] = useState("");
 
-    const onSelectSlotHandle = ({ start, end }) => {
-        const inicioDia = new Date(start);
-        inicioDia.setHours(0, 0, 0, 0);
-
-        const fimDia = new Date(start);
-        fimDia.setHours(23, 59, 59, 999);
-
-        if (start.getTime() <= inicioDia.getTime() && end.getTime() >= fimDia.getTime()) {
-            return;
-        }
-
-        const haSobreposicao = excecoes.some((excecao) => {
-            const excecaoInicio = new Date(excecao.start);
-            const excecaoFim = new Date(excecao.end);
-            return start < excecaoFim && excecaoInicio < end;
-        });
-
-        if (haSobreposicao) {
-            alert("Esse horário entra em conflito com uma exceção existente.");
-            return;
-        }
-
-        setSelecao({ start, end });
-        setModalAberto(true);
-    };
-
-    const confirmarSelecao = () => {
-        setExcecoes((prev) => [
-            ...prev,
-            {
-                start: selecao.start,
-                end: selecao.end,
-                tipo: tipoSelecionado,
-                motivo: motivo.trim() || (tipoSelecionado === "DISPONIVEL" ? "Disponível" : "Indisponível"),
-            },
-        ]);
-        setModalAberto(false);
-        setMotivo("");
-        setTipoSelecionado("DISPONIVEL");
-    };
-
-    const cancelarSelecao = () => {
-        setModalAberto(false);
-        setMotivo("");
-        setTipoSelecionado("DISPONIVEL");
-    };
+    const [excecoesRemovidas, setExcecoesRemovidas] = useState<any[]>([]);
 
     useEffect(() => {
         const novasExcecoes = excecoes.some(e => !e.id);
@@ -158,7 +113,7 @@ export default function EditarAgenda() {
                 const excecoesFormatadas = data.map((excecao: any) => ({
                     ...excecao,
                     psicologoId,
-                    id: excecao.excecaoDisponibilidadeId,
+                    id: excecao.id,
                     start: new Date(excecao.dataHoraInicio),
                     end: new Date(excecao.dataHoraFim),
                     motivo: excecao.motivo ?? null,
@@ -190,6 +145,61 @@ export default function EditarAgenda() {
         carregarDisponibilidadesRecorrente();
 
     }, [psicologoId]);
+
+    const onSelectSlotHandle = ({ start, end }) => {
+        const excecaoClicada = excecoes.find(
+            (ex) => start >= new Date(ex.start) && start < new Date(ex.end)
+        );
+
+        if (excecaoClicada) {
+            setExcecoes((prev) => prev.filter((ex) => ex !== excecaoClicada));
+            if (excecaoClicada.id) {
+                setExcecoesRemovidas((prev) => [...prev, excecaoClicada]);
+            }
+            return;
+        }
+
+        const inicioDia = new Date(start);
+        inicioDia.setHours(0, 0, 0, 0);
+        const fimDia = new Date(start);
+        fimDia.setHours(23, 59, 59, 999);
+        if (start.getTime() <= inicioDia.getTime() && end.getTime() >= fimDia.getTime()) return;
+
+        const haSobreposicao = excecoes.some((excecao) => {
+            const inicio = new Date(excecao.start);
+            const fim = new Date(excecao.end);
+            return start < fim && inicio < end;
+        });
+        if (haSobreposicao) {
+            alert("Esse horário entra em conflito com uma exceção existente.");
+            return;
+        }
+
+        setSelecao({ start, end });
+        setModalAberto(true);
+    };
+
+
+    const confirmarSelecao = () => {
+        setExcecoes((prev) => [
+            ...prev,
+            {
+                start: selecao.start,
+                end: selecao.end,
+                tipo: tipoSelecionado,
+                motivo: motivo.trim() || (tipoSelecionado === "DISPONIVEL" ? "Disponível" : "Indisponível"),
+            },
+        ]);
+        setModalAberto(false);
+        setMotivo("");
+        setTipoSelecionado("DISPONIVEL");
+    };
+
+    const cancelarSelecao = () => {
+        setModalAberto(false);
+        setMotivo("");
+        setTipoSelecionado("DISPONIVEL");
+    };
 
 
     const proximaSemana = () => {
@@ -256,6 +266,8 @@ export default function EditarAgenda() {
         const disponiveisFormatados = unidos.map((e) => ({
             start: e.start,
             end: e.end,
+            id: e.id,
+            psicologoId: e.psicologoId,
             title: "Disponível (Exceção)",
             tipo: "disponivel-excecao",
             backgroundColor: "#D1FAE5",
@@ -267,6 +279,8 @@ export default function EditarAgenda() {
             .map(e => ({
                 start: new Date(e.start),
                 end: new Date(e.end),
+                id: e.id,
+                psicologoId: e.psicologoId,
                 title: e.motivo || "Indisponível",
                 tipo: "indisponivel-excecao",
                 backgroundColor: "#FECACA",
@@ -323,57 +337,84 @@ export default function EditarAgenda() {
         }
     }
 
+    function formatarParaBackend(date: Date): string {
+        const pad = (n: number) => n.toString().padStart(2, '0');
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+    }
+
+
     const salvarAlteracoes = async () => {
         try {
-            const excecoesParaSalvar = excecoes
-                .filter((e) => !e.deletado) // Ignora os que foram marcados como "deletado"
-                .map((excecao) => ({
-                    psicologoId,
-                    start: new Date(excecao.start),
-                    end: new Date(excecao.end),
-                    motivo: excecao.motivo ?? '',
-                    tipo: excecao.tipo ?? "INDISPONIVEL", // Adiciona tipo se estiver ausente
-                }));
+            const excecoesJaSalvas = await listarExcecoesDisponibilidade(psicologoId);
+            const excecoesExistentes = excecoesJaSalvas.map((e: any) => ({
+                id: e.excecaoDisponibilidadeId,
+                start: new Date(e.dataHoraInicio).toISOString(),
+                end: new Date(e.dataHoraFim).toISOString(),
+                motivo: e.motivo ?? null,
+                tipo: e.tipo ?? "INDISPONIVEL",
+            }));
 
-            for (const excecao of excecoesParaSalvar) {
-                await salvarExcecaoDisponibilidade(excecao);
-            }
+            const excecoesParaSalvar = excecoes.filter((excecao) => {
+                const existe = excecoesExistentes.find((e) =>
+                    e.start === excecao.start.toISOString() &&
+                    e.end === excecao.end.toISOString() &&
+                    e.motivo === excecao.motivo &&
+                    e.tipo === excecao.tipo
+                );
+                return !existe;
+            });
 
-            // Agora, deletar exceções removidas:
-            const excecoesRemovidas = excecoesOriginais.filter(orig =>
-                !excecoes.some(e => e.id === orig.id)
+            const payloadsSalvar = excecoesParaSalvar.map((excecao) => ({
+                psicologoId,
+                start: excecao.start,
+                end: excecao.end,
+                motivo: excecao.motivo ?? null,
+                tipo: excecao.tipo ?? "INDISPONIVEL",
+                recorrenteRelacionadaId: excecao.recorrenteRelacionadaId ?? null,
+            }));
+
+            console.log("Salvando novos ou modificados:", payloadsSalvar);
+
+            const promisesSalvar = payloadsSalvar.map((excecao) =>
+                salvarExcecaoDisponibilidade(excecao)
             );
 
-            for (const excecaoRemovida of excecoesRemovidas) {
-                if (excecaoRemovida.id) {
-                    await excluirExcecaoDisponibilidade(excecaoRemovida.id);
-                }
-            }
+            const promisesRemover = excecoesRemovidas
+                .filter(e => e.id)
+                .map((excecao) => deletarExcecaoDisponibilidade(excecao.id));
 
-            // Recarrega os dados após salvar
+            console.log("Removendo:", excecoesRemovidas);
+
+            await Promise.all([...promisesSalvar, ...promisesRemover]);
+
             const resposta = await listarExcecoesDisponibilidade(psicologoId);
-            setExcecoes(
-                resposta.map((excecao: any) => ({
-                    id: excecao.excecaoDisponibilidadeId,
-                    psicologoId,
-                    start: new Date(excecao.dataHoraInicio),
-                    end: new Date(excecao.dataHoraFim),
-                    motivo: excecao.motivo ?? null,
-                    tipo: excecao.tipo,
-                    recorrenteRelacionadaId: excecao.recorrenteRelacionada
-                        ? excecao.recorrenteRelacionada.recorrenteId
-                        : null,
-                }))
-            );
 
-            alert('Alterações salvas com sucesso!');
+            const novasExcecoes = resposta.map((excecao: any) => ({
+                id: excecao.excecaoDisponibilidadeId,
+                psicologoId,
+                start: new Date(excecao.dataHoraInicio),
+                end: new Date(excecao.dataHoraFim),
+                motivo: excecao.motivo ?? null,
+                tipo: excecao.tipo ?? "INDISPONIVEL",
+                recorrenteRelacionadaId: excecao.recorrenteRelacionada
+                    ? excecao.recorrenteRelacionada.recorrenteId
+                    : null,
+            }))
+
+            setExcecoes(novasExcecoes);
+
+            setExcecoesOriginais(novasExcecoes)
+
+            setExcecoesRemovidas([]);
+
+            setTemAlteracoes(false);
+
+            alert("Alterações salvas com sucesso!");
         } catch (error) {
-            console.error('Erro ao salvar exceções:', error);
-            alert('Erro ao salvar alterações.');
+            console.error("Erro ao salvar alterações:", error);
+            alert("Erro ao salvar alterações.");
         }
     };
-
-
 
     const MeuEvento = ({ event }) => <div>{event.title}</div>;
 
@@ -387,6 +428,34 @@ export default function EditarAgenda() {
         sessionStorage.removeItem("sessaoPaciente");
         navigate("/")
     }
+
+    const onSelectEventHandle = (event) => {
+
+        if (event.tipo === "disponivel") {
+            const novasDisponibilidades = disponibilidades.filter(disp =>
+                disp.start.getTime() !== event.start.getTime() ||
+                disp.end.getTime() !== event.end.getTime()
+            );
+            setDisponibilidades(novasDisponibilidades);
+        }
+
+        else if (event.tipo === "disponivel-excecao" || event.tipo === "indisponivel-excecao") {
+            setExcecoes((prev) => {
+
+                const novas = prev.filter(excecao =>
+                    excecao.start.getTime() !== event.start.getTime() ||
+                    excecao.end.getTime() !== event.end.getTime()
+                );
+
+                if (event.id) {
+                    setExcecoesRemovidas((prevRemovidas) => [...prevRemovidas, event]);
+                }
+
+                return novas;
+            });
+        }
+    };
+
 
     return (
         <Main>
@@ -481,14 +550,7 @@ export default function EditarAgenda() {
                             }}
                             date={dataBase}
                             onNavigate={(date) => setDataBase(date)}
-                            onSelectEvent={(event) => {
-                                if(event.tipo === "disponivel") {
-                                    const novoArray = disponibilidades.filter(disp => {
-                                        return disp.end.getTime() <= event.start.getTime() || disp.start.getTime() >= event.end.getTime();
-                                    });
-                                    setDisponibilidades(novoArray);
-                                }
-                            }}
+                            onSelectEvent={onSelectEventHandle}
                             onSelectSlot={onSelectSlotHandle}
                             selectable
                             events={agendaEventos}
@@ -496,15 +558,14 @@ export default function EditarAgenda() {
                                 const temEvento = agendaEventos.some(
                                     (evento) => date >= evento.start && date < evento.end
                                 );
-                                if (!temEvento) {
-                                    return {
-                                        style: {
-                                            backgroundColor: "#fff",
-                                        },
-                                    };
-                                }
-                                return {};
+                                return {
+                                    style: {
+                                        backgroundColor: temEvento ? undefined : "#fff",
+                                        cursor: "pointer",
+                                    },
+                                };
                             }}
+
                             eventPropGetter={(event) => {
                                 let style = {};
                                 let className = "";
@@ -627,7 +688,7 @@ export default function EditarAgenda() {
             </div>
             {/* Modal */}
             {modalAberto && (
-                <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+                <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
                     <div className="bg-white rounded-xl p-6 w-[90%] max-w-md shadow-2xl border border-gray-200 flex flex-col gap-5 animate-fade-in">
                         <h2 className="text-lg font-semibold text-gray-800 text-center">Nova Exceção</h2>
 

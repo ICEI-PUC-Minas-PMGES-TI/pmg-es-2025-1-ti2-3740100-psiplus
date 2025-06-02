@@ -218,7 +218,7 @@ export default function AgendarConsulta() {
         <div className="w-full flex justify-end mt-8 pr-10">
           <BotaoPadrao
             texto="Agendar Consulta"
-            onClick={() => {
+            handleClick={() => {
               if (selectedPatient && selectedDate && selectedTimeSlot) {
                 alert(`Consulta agendada para:\nPaciente: ${selectedPatient.nome}\nData: ${selectedDate.toLocaleDateString("pt-BR")}\nHorário: ${selectedTimeSlot}`);
               } else {

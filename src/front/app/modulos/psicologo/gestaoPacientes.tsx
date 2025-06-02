@@ -15,8 +15,8 @@ import LockIcon from "@mui/icons-material/Lock";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useNavigate, useParams } from "react-router";
 import axios from "axios";
-import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import ExitIcon from "../../../public/assets/ExitIcon.png"
+import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
 
 interface Endereco {
     rua: string;
@@ -285,7 +285,7 @@ export default function GestaoPacientes() {
                     <button
                         className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-[#2B2F42] w-full">
                       <div className="bg-[#F4F7FF] rounded-md p-1">
-                        <SentimentSatisfiedAltIcon style={{color: "#858EBD"}}/>
+                        <SentimentVerySatisfiedIcon style={{color: "#858EBD"}}/>
                       </div>
                       <span className="text-sm font-regular whitespace-nowrap">Calendário de Emoções</span>
                     </button>

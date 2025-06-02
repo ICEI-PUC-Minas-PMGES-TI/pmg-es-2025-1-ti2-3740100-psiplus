@@ -5,7 +5,7 @@ import ProtectedRoute from "~/routes/ProtectedRoute";
 export function meta({}: Route.MetaArgs) {
     return [
         { title: "Psi+ | Página Principal" },
-        { name: "description", content: "Página principal do paciente." },
+        { name: "description", content: "Página principal do psicólogo." },
     ];
 }
 

@@ -30,6 +30,10 @@ export async function salvarExcecaoDisponibilidade(excecao: ExcecaoDisponibilida
             tipo: excecao.tipo,
         };
 
+        if (!excecao.start || !excecao.end) {
+            throw new Error("Start ou End está indefinido ao salvar exceção.");
+        }
+
         const response = await axios.post(`${BASE_URL}/disponibilidades/excecoes`, payload);
         return response.data;
     } catch (error) {

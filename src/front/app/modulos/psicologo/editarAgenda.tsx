@@ -60,6 +60,7 @@ export default function EditarAgenda() {
     const [visualizacao, setVisualizacao] = useState<View>("week");
     const [temAlteracoes, setTemAlteracoes] = useState(false);
     const [excecoes, setExcecoes] = useState<any[]>([]);
+    const [excecoesOriginais, setExcecoesOriginais] = useState<any[]>([]);
     const [disponibilidades, setDisponibilidades] = useState<any[]>([]);
     const [psicologoId, setPsicologoId] = useState<number | null>(null);
     const [modalAberto, setModalAberto] = useState(false);
@@ -115,8 +116,31 @@ export default function EditarAgenda() {
     };
 
     useEffect(() => {
-        setTemAlteracoes(disponibilidades.length > 0);
-    }, [disponibilidades]);
+        const novasExcecoes = excecoes.some(e => !e.id);
+
+        const excecoesRemovidas = excecoesOriginais.some(orig =>
+            !excecoes.some(e => e.id === orig.id)
+        );
+
+        const excecoesModificadas = excecoes.some(e => {
+            const original = excecoesOriginais.find(orig => orig.id === e.id);
+            if (!original) return false;
+
+            return (
+                new Date(e.start).getTime() !== new Date(original.start).getTime() ||
+                new Date(e.end).getTime() !== new Date(original.end).getTime() ||
+                (e.motivo ?? "") !== (original.motivo ?? "")
+            );
+        });
+
+        const houveAlteracoes =
+            novasExcecoes ||
+            excecoesRemovidas ||
+            excecoesModificadas;
+
+        setTemAlteracoes(houveAlteracoes);
+    }, [excecoes, excecoesOriginais]);
+
 
     useEffect(() => {
         const sessao = JSON.parse(sessionStorage.getItem("sessaoPsicologo") || '{}');
@@ -133,10 +157,17 @@ export default function EditarAgenda() {
                 const data = await listarExcecoesDisponibilidade(psicologoId);
                 const excecoesFormatadas = data.map((excecao: any) => ({
                     ...excecao,
+                    psicologoId,
+                    id: excecao.excecaoDisponibilidadeId,
                     start: new Date(excecao.dataHoraInicio),
                     end: new Date(excecao.dataHoraFim),
+                    motivo: excecao.motivo ?? null,
+                    recorrenteRelacionadaId: excecao.recorrenteRelacionada
+                        ? excecao.recorrenteRelacionada.recorrenteId
+                        : null
                 }));
                 setExcecoes(excecoesFormatadas);
+                setExcecoesOriginais(excecoesFormatadas);
             } catch (error) {
                 console.error('Erro ao carregar exceções:', error);
             }
@@ -294,20 +325,33 @@ export default function EditarAgenda() {
 
     const salvarAlteracoes = async () => {
         try {
-            const excecoesParaSalvar = excecoes.map((excecao) => ({
-                psicologoId,
-                dataHoraInicio: excecao.start.toISOString(),
-                dataHoraFim: excecao.end.toISOString(),
-                motivo: excecao.motivo ?? null,
-                recorrenteRelacionadaId: excecao.recorrenteRelacionadaId ?? null,
-            }));
+            const excecoesParaSalvar = excecoes
+                .filter((e) => !e.deletado) // Ignora os que foram marcados como "deletado"
+                .map((excecao) => ({
+                    psicologoId,
+                    start: new Date(excecao.start),
+                    end: new Date(excecao.end),
+                    motivo: excecao.motivo ?? '',
+                    tipo: excecao.tipo ?? "INDISPONIVEL", // Adiciona tipo se estiver ausente
+                }));
 
-            await Promise.all(
-                excecoesParaSalvar.map((excecao) => salvarExcecaoDisponibilidade(excecao))
+            for (const excecao of excecoesParaSalvar) {
+                await salvarExcecaoDisponibilidade(excecao);
+            }
+
+            // Agora, deletar exceções removidas:
+            const excecoesRemovidas = excecoesOriginais.filter(orig =>
+                !excecoes.some(e => e.id === orig.id)
             );
 
-            const resposta = await listarExcecoesDisponibilidade(psicologoId);
+            for (const excecaoRemovida of excecoesRemovidas) {
+                if (excecaoRemovida.id) {
+                    await excluirExcecaoDisponibilidade(excecaoRemovida.id);
+                }
+            }
 
+            // Recarrega os dados após salvar
+            const resposta = await listarExcecoesDisponibilidade(psicologoId);
             setExcecoes(
                 resposta.map((excecao: any) => ({
                     id: excecao.excecaoDisponibilidadeId,
@@ -315,6 +359,7 @@ export default function EditarAgenda() {
                     start: new Date(excecao.dataHoraInicio),
                     end: new Date(excecao.dataHoraFim),
                     motivo: excecao.motivo ?? null,
+                    tipo: excecao.tipo,
                     recorrenteRelacionadaId: excecao.recorrenteRelacionada
                         ? excecao.recorrenteRelacionada.recorrenteId
                         : null,
@@ -327,6 +372,8 @@ export default function EditarAgenda() {
             alert('Erro ao salvar alterações.');
         }
     };
+
+
 
     const MeuEvento = ({ event }) => <div>{event.title}</div>;
 
@@ -369,8 +416,7 @@ export default function EditarAgenda() {
                         </div>
                         <div className={"flex gap-3"}>
                             <button
-                                //disabled={!temAlteracoes}
-                                disabled={true}
+                                disabled={!temAlteracoes}
                                 onClick={salvarRecorrenteSemanal}
                                 className={`px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1 transition
         ${temAlteracoes ? 'bg-[#ADD9E2] text-[#0088A3] hover:brightness-95 cursor-pointer' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}>

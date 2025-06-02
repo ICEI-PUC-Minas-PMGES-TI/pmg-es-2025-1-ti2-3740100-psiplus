@@ -122,7 +122,9 @@ export default function AgendarConsulta() {
   };
 
   return (
-    <Main menu={<MenuLateralPsicólogo />}>
+    <Main>
+      <div className="flex min-h-screen bg-white">
+      <MenuLateralPsicólogo telaAtiva="pacientes" />
       <div className="p-10 w-full flex flex-col gap-6">
         <h1 className="text-2xl font-bold text-[#303030]">Agendar Consulta</h1>
 
@@ -226,6 +228,8 @@ export default function AgendarConsulta() {
             className="bg-[#0088A3] hover:bg-[#00718a] text-white px-6 py-3 rounded-md"
           />
         </div>
+      </div>
+
       </div>
     </Main>
   );

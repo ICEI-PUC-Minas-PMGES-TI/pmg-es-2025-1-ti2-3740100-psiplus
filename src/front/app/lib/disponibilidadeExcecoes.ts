@@ -12,14 +12,22 @@ export async function listarExcecoesDisponibilidade(psicologoId: number) {
     }
 }
 
-export async function salvarExcecaoDisponibilidade(excecao: { psicologoId: number; start: Date; end: Date }) {
-    try {
+export interface ExcecaoDisponibilidadePayload {
+    psicologoId: number;
+    start: Date;
+    end: Date;
+    tipo: 'DISPONIVEL' | 'INDISPONIVEL';
+    motivo?: string;
+}
 
+export async function salvarExcecaoDisponibilidade(excecao: ExcecaoDisponibilidadePayload) {
+    try {
         const payload = {
             psicologo: { psicologoId: excecao.psicologoId },
             dataHoraInicio: excecao.start.toISOString(),
             dataHoraFim: excecao.end.toISOString(),
-            motivo: 'Disponível'
+            motivo: excecao.motivo ?? '',
+            tipo: excecao.tipo,
         };
 
         const response = await axios.post(`${BASE_URL}/disponibilidades/excecoes`, payload);

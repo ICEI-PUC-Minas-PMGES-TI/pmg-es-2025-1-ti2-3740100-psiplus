@@ -1,5 +1,6 @@
 package com.psiplus.model;
 
+import com.psiplus.util.TipoExcecao;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -23,6 +24,10 @@ public class ExcecaoDisponibilidade {
 
     @Column(name = "motivo")
     private String motivo;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_excecao", nullable = false)
+    private TipoExcecao tipo;
 
     @ManyToOne
     @JoinColumn(name = "recorrente_id")
@@ -48,4 +53,8 @@ public class ExcecaoDisponibilidade {
     public void setRecorrenteRelacionada(DisponibilidadeRecorrente recorrenteRelacionada) {
         this.recorrenteRelacionada = recorrenteRelacionada;
     }
+
+    public TipoExcecao getTipo() { return tipo; }
+    public void setTipo(TipoExcecao tipo) { this.tipo = tipo; }
+
 }

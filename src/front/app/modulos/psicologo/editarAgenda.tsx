@@ -1,7 +1,7 @@
 import Main from "~/componentes/Main";
 import MenuLateralPsicólogo from "~/componentes/MenuLateralPsicólogo";
 import ExitIcon from "../../../public/assets/ExitIcon.png";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 // imports de icons
 import {ChevronLeft, ChevronRight, Copy, Save} from "lucide-react";
@@ -59,21 +59,75 @@ export default function EditarAgenda() {
     const [dataSelecionada, setDataSelecionada] = useState(new Date());
     const [visualizacao, setVisualizacao] = useState<View>("week");
     const [temAlteracoes, setTemAlteracoes] = useState(false);
-    const [excecoes, setExcecoes] = useState([]);
+    const [excecoes, setExcecoes] = useState<any[]>([]);
     const [disponibilidades, setDisponibilidades] = useState<any[]>([]);
-    const [psicologoId, setPsicologoId] = useState(1);
+    const [psicologoId, setPsicologoId] = useState<number | null>(null);
+    const [modalAberto, setModalAberto] = useState(false);
+    const [selecao, setSelecao] = useState({ start: null, end: null });
+    const [tipoSelecionado, setTipoSelecionado] = useState("DISPONIVEL");
+    const [motivo, setMotivo] = useState("");
+
+    const onSelectSlotHandle = ({ start, end }) => {
+        const inicioDia = new Date(start);
+        inicioDia.setHours(0, 0, 0, 0);
+
+        const fimDia = new Date(start);
+        fimDia.setHours(23, 59, 59, 999);
+
+        if (start.getTime() <= inicioDia.getTime() && end.getTime() >= fimDia.getTime()) {
+            return;
+        }
+
+        const haSobreposicao = excecoes.some((excecao) => {
+            const excecaoInicio = new Date(excecao.start);
+            const excecaoFim = new Date(excecao.end);
+            return start < excecaoFim && excecaoInicio < end;
+        });
+
+        if (haSobreposicao) {
+            alert("Esse horário entra em conflito com uma exceção existente.");
+            return;
+        }
+
+        setSelecao({ start, end });
+        setModalAberto(true);
+    };
+
+    const confirmarSelecao = () => {
+        setExcecoes((prev) => [
+            ...prev,
+            {
+                start: selecao.start,
+                end: selecao.end,
+                tipo: tipoSelecionado,
+                motivo: motivo.trim() || (tipoSelecionado === "DISPONIVEL" ? "Disponível" : "Indisponível"),
+            },
+        ]);
+        setModalAberto(false);
+        setMotivo("");
+        setTipoSelecionado("DISPONIVEL");
+    };
+
+    const cancelarSelecao = () => {
+        setModalAberto(false);
+        setMotivo("");
+        setTipoSelecionado("DISPONIVEL");
+    };
 
     useEffect(() => {
         setTemAlteracoes(disponibilidades.length > 0);
     }, [disponibilidades]);
 
     useEffect(() => {
-        const psicologoId = JSON.parse(sessionStorage.getItem("sessaoPsicologo") || '{}')?.usuarioId || null;
-        setPsicologoId(psicologoId);
-
+        const sessao = JSON.parse(sessionStorage.getItem("sessaoPsicologo") || '{}');
+        if (sessao?.usuarioId) {
+            setPsicologoId(sessao.usuarioId);
+        }
     }, []);
 
     useEffect(() => {
+        if (!psicologoId) return;
+
         const carregarExcecoes = async () => {
             try {
                 const data = await listarExcecoesDisponibilidade(psicologoId);
@@ -88,7 +142,7 @@ export default function EditarAgenda() {
             }
         };
 
-        async function carregarDisponibilidadesRecorrente() {
+        const carregarDisponibilidadesRecorrente = async () => {
             try {
                 const inicio = new Date();
                 const fim = new Date(inicio);
@@ -99,12 +153,11 @@ export default function EditarAgenda() {
             } catch (err) {
                 alert('Erro ao carregar disponibilidades');
             }
-        }
+        };
 
-        if (psicologoId) {
-            carregarExcecoes();
-            carregarDisponibilidadesRecorrente();
-        }
+        carregarExcecoes();
+        carregarDisponibilidadesRecorrente();
+
     }, [psicologoId]);
 
 
@@ -120,29 +173,6 @@ export default function EditarAgenda() {
         setDataBase(novaData);
     };
 
-    function unirDisponibilidadesEventos(eventos) {
-        if (eventos.length === 0) return [];
-
-        const ordenados = eventos.slice().sort((a, b) => a.start.getTime() - b.start.getTime());
-
-        const unidos = [];
-        let atual = { ...ordenados[0] };
-
-        for (let i = 1; i < ordenados.length; i++) {
-            const evento = ordenados[i];
-
-            if (evento.start.getTime() === atual.end.getTime()) {
-                atual.end = evento.end;
-            } else {
-                unidos.push(atual);
-                atual = { ...evento };
-            }
-        }
-        unidos.push(atual);
-
-        return unidos;
-    }
-
     function formatarIntervaloSemana(data: Date) {
         const inicio = startOfWeek(data, { weekStartsOn: 1 });
         const fim = endOfWeek(data, { weekStartsOn: 1 });
@@ -156,7 +186,7 @@ export default function EditarAgenda() {
         return `${diaInicio} - ${diaFim} de ${mesCapitalizado}`;
     }
 
-    function editaragenda() {
+    function retornar() {
         navigate("/psicologo/agenda");
     }
 
@@ -167,20 +197,60 @@ export default function EditarAgenda() {
         { title: "Pedro Coimbra", start: new Date(2025, 4, 29, 15, 0), end: new Date(2025, 4, 29, 16, 0) },
     ];
 
-    const gerarEventosClicados = () => {
-        const unidos = unirDisponibilidadesEventos(disponibilidades);
+    const gerarExcecoesFormatadas = React.useCallback(() => {
+        const disponiveis = excecoes
+            .filter(e => e.tipo === "DISPONIVEL")
+            .map(e => ({
+                ...e,
+                start: new Date(e.start),
+                end: new Date(e.end),
+            }))
+            .sort((a, b) => a.start.getTime() - b.start.getTime());
 
-        return unidos.map((event) => ({
-            ...event,
-            tipo: "disponivel-manual",
-            title: "Disponível",
+        const unidos: any[] = [];
+        let atual = null;
+
+        for (const disp of disponiveis) {
+            if (!atual) {
+                atual = { ...disp };
+            } else if (disp.start.getTime() <= atual.end.getTime()) {
+                atual.end = new Date(Math.max(atual.end.getTime(), disp.end.getTime()));
+            } else {
+                unidos.push(atual);
+                atual = { ...disp };
+            }
+        }
+        if (atual) unidos.push(atual);
+
+        const disponiveisFormatados = unidos.map((e) => ({
+            start: e.start,
+            end: e.end,
+            title: "Disponível (Exceção)",
+            tipo: "disponivel-excecao",
+            backgroundColor: "#D1FAE5",
+            borderColor: "#10B981",
         }));
-    };
 
-    const agendaEventos = [
-        ...consultas,
-        ...gerarEventosClicados(),
-    ];
+        const indisponiveisFormatados = excecoes
+            .filter(e => e.tipo !== "DISPONIVEL")
+            .map(e => ({
+                start: new Date(e.start),
+                end: new Date(e.end),
+                title: e.motivo || "Indisponível",
+                tipo: "indisponivel-excecao",
+                backgroundColor: "#FECACA",
+                borderColor: "#EF4444",
+            }));
+
+        return [...disponiveisFormatados, ...indisponiveisFormatados];
+    }, [excecoes]);
+
+    const agendaEventos = React.useMemo(() => {
+        return [
+            ...gerarExcecoesFormatadas(),
+            ...consultas
+        ];
+    }, [excecoes, disponibilidades, consultas]);
 
     const consultasDoDia = agendaEventos.filter((evento) => isSameDay(evento.start, dataSelecionada));
 
@@ -258,8 +328,6 @@ export default function EditarAgenda() {
         }
     };
 
-
-
     const MeuEvento = ({ event }) => <div>{event.title}</div>;
 
     const diasDoMes = eachDayOfInterval({
@@ -321,7 +389,7 @@ export default function EditarAgenda() {
 
                         </div>
                         <button
-                            onClick={editaragenda}
+                            onClick={retornar}
                             className="bg-[#ADD9E2] text-[#0088A3] px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1 hover:brightness-95 cursor-pointer">
                             <ChevronLeft style={{ fontSize: 18, color: "#0088A3" }} />
                             Voltar à Agenda
@@ -368,31 +436,14 @@ export default function EditarAgenda() {
                             date={dataBase}
                             onNavigate={(date) => setDataBase(date)}
                             onSelectEvent={(event) => {
-                                if(event.tipo === "disponivel-manual") {
+                                if(event.tipo === "disponivel") {
                                     const novoArray = disponibilidades.filter(disp => {
                                         return disp.end.getTime() <= event.start.getTime() || disp.start.getTime() >= event.end.getTime();
                                     });
                                     setDisponibilidades(novoArray);
                                 }
                             }}
-                            onSelectSlot={({ start, end }) => {
-
-                                const inicioDia = new Date(start);
-                                inicioDia.setHours(0, 0, 0, 0);
-
-                                const fimDia = new Date(start);
-                                fimDia.setHours(23, 59, 59, 999);
-
-                                if (start.getTime() <= inicioDia.getTime() && end.getTime() >= fimDia.getTime()) {
-                                    return;
-                                }
-
-                                setDataSelecionada(start);
-                                const conflito = consultas.some((c) => start < c.end && end > c.start);
-                                if (!conflito) {
-                                    setDisponibilidades((prev) => [...prev, { start, end }]);
-                                }
-                            }}
+                            onSelectSlot={onSelectSlotHandle}
                             selectable
                             events={agendaEventos}
                             slotPropGetter={(date) => {
@@ -411,12 +462,11 @@ export default function EditarAgenda() {
                             eventPropGetter={(event) => {
                                 let style = {};
                                 let className = "";
-
-                                if (event.tipo === "disponivel-manual") {
+                                if (event.tipo == "disponivel-excecao") {
                                     style = {
-                                        backgroundColor: "#fff",  // fundo branco
-                                        color: "#005F30",         // mantém o texto verde escuro
-                                        border: "1px solid #B0EAC1", // ou ajuste a borda se quiser
+                                        backgroundColor: "#fff",
+                                        color: "#005F30",
+                                        border: "1px solid #B0EAC1",
                                         borderRadius: "6px",
                                     };
                                     className = "rbc-event-disponivel";
@@ -529,6 +579,71 @@ export default function EditarAgenda() {
                 </div>
 
             </div>
+            {/* Modal */}
+            {modalAberto && (
+                <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-xl p-6 w-[90%] max-w-md shadow-2xl border border-gray-200 flex flex-col gap-5 animate-fade-in">
+                        <h2 className="text-lg font-semibold text-gray-800 text-center">Nova Exceção</h2>
+
+                        <div className="space-y-2">
+                            <p className="text-sm text-gray-600">Escolha o tipo:</p>
+                            <div className="flex items-center space-x-4">
+                                <label className="flex items-center space-x-2">
+                                    <input
+                                        type="radio"
+                                        name="tipo"
+                                        value="DISPONIVEL"
+                                        checked={tipoSelecionado === "DISPONIVEL"}
+                                        onChange={() => setTipoSelecionado("DISPONIVEL")}
+                                        className="accent-green-600"
+                                    />
+                                    <span className="text-sm text-green-700">Disponível</span>
+                                </label>
+
+                                <label className="flex items-center space-x-2">
+                                    <input
+                                        type="radio"
+                                        name="tipo"
+                                        value="INDISPONIVEL"
+                                        checked={tipoSelecionado === "INDISPONIVEL"}
+                                        onChange={() => setTipoSelecionado("INDISPONIVEL")}
+                                        className="accent-red-600"
+                                    />
+                                    <span className="text-sm text-red-700">Indisponível</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col">
+                            <label htmlFor="motivo" className="text-sm text-gray-600 mb-1">Motivo (opcional):</label>
+                            <input
+                                id="motivo"
+                                type="text"
+                                value={motivo}
+                                onChange={(e) => setMotivo(e.target.value)}
+                                placeholder="Ex: Feriado, Reunião..."
+                                className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                            />
+                        </div>
+
+                        <div className="flex justify-end space-x-3 mt-2">
+                            <button
+                                onClick={cancelarSelecao}
+                                className="px-4 py-2 text-sm rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 transition"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                onClick={confirmarSelecao}
+                                className="px-4 py-2 text-sm rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition"
+                            >
+                                Confirmar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </Main>
     );
 }

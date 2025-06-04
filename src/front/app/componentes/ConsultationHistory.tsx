@@ -4,6 +4,8 @@ import AddIcon from '@mui/icons-material/Add';
 import SaveIcon from "@mui/icons-material/Check";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 interface Anotacao {
     data: string; // ISO string
@@ -96,6 +98,17 @@ const ConsultationHistory: React.FC = () => {
         })}`;
     };
 
+    const [abertos, setAbertos] = useState<number[]>([]);
+
+    const toggleRegistro = (index: number) => {
+        setAbertos((prev) =>
+            prev.includes(index)
+                ? prev.filter((i) => i !== index)
+                : [...prev, index]
+        );
+    };
+
+
     return (
         <div className="max-w-[900px] mx-auto">
             <div className="flex justify-between items-center mb-5">
@@ -116,7 +129,7 @@ const ConsultationHistory: React.FC = () => {
 
             {modoEdicao ? (
                 <>
-                    <div className="flex justify-between items-center mb-5">
+                    <div className="flex justify-between items-center mb-4">
                         <h2 className="text-[17px] font-bold text-[#3A3F63]">REGISTRO DE SESSÃO</h2>
                         <BotaoPadrao
                             texto="Salvar"
@@ -129,32 +142,33 @@ const ConsultationHistory: React.FC = () => {
                     <div className="mb-6 space-y-4">
                         <div className="flex flex-wrap gap-4">
                             <div className="flex flex-col">
-                                <label className="text-sm text-gray-600 mb-1">Data da Consulta</label>
+                                <label className="text-[#3A3F63] mb-1 text-sm font-regular">Data da Consulta</label>
                                 <input
                                     type="date"
                                     value={dataConsulta}
                                     onChange={(e) => setDataConsulta(e.target.value)}
-                                    className="border border-gray-300 rounded px-3 py-2 text-sm"
+                                    className="bg-[#F3F4F9] text-[#7D8DA6] rounded-lg px-3 py-2 text-sm"
                                 />
                             </div>
                             <div className="flex flex-col">
-                                <label className="text-sm text-gray-600 mb-1">Horário da Consulta</label>
+                                <label className="text-sm font-regular text-[#3A3F63] mb-1">Horário da Consulta</label>
                                 <input
                                     type="time"
                                     value={horaConsulta}
                                     onChange={(e) => setHoraConsulta(e.target.value)}
-                                    className="border border-gray-300 rounded px-3 py-2 text-sm"
+                                    className="bg-[#F3F4F9] text-[#7D8DA6] rounded-lg px-3 py-2 text-sm"
                                 />
                             </div>
                         </div>
                         <div>
-                        <textarea
-                            rows={5}
-                            placeholder="Insira alguma nota sobre esse paciente"
-                            value={novoConteudo}
-                            onChange={(e) => setNovoConteudo(e.target.value)}
-                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-                        />
+                            <label className="text-sm font-regular text-[#3A3F63] mb-1">Notas</label>
+                            <textarea
+                                rows={15}
+                                placeholder="Insira alguma nota sobre esse paciente"
+                                value={novoConteudo}
+                                onChange={(e) => setNovoConteudo(e.target.value)}
+                                className="w-full border border-[#DAE0F2] rounded-lg px-3 py-2 text-sm text-[#858EBD]"
+                            />
                         </div>
                     </div>
                 </>
@@ -162,15 +176,35 @@ const ConsultationHistory: React.FC = () => {
                 <p className="text-sm text-[#333]">Nenhuma anotação registrada.</p>
             ) : (
                 <ul className="space-y-4">
-                    {anotacoesOrdenadas.map((anotacao, index) => (
-                        <li key={index} className="border border-gray-200 rounded-lg p-3">
-                            <div className="flex justify-between items-center mb-1">
-                                <span className="text-xs text-gray-500">{formatarDataHora(anotacao.data)}</span>
-                            </div>
-                            <p className="text-sm text-[#333] whitespace-pre-line mt-1">{anotacao.conteudo}</p>
-                        </li>
-                    ))}
+                    {anotacoesOrdenadas.map((anotacao, index) => {
+                        const aberto = abertos.includes(index);
+                        return (
+                            <li
+                                key={index}
+                                className="bg-[#FBFBFB] text-[#3A3F63] text-sm font-regular rounded-xl p-4"
+                            >
+                                <div
+                                    className="flex justify-between items-center cursor-pointer text-sm font-regular"
+                                    onClick={() => toggleRegistro(index)}
+                                >
+                                  <span className="text-sm font-semibold">
+                                    {formatarDataHora(anotacao.data)}
+                                  </span>
+                                    <span className="text-xl">
+                                    <span className="text-xl">
+                                        {!aberto && <span className="text-[13px] text-[#858EBD]">Exibir anotações</span>}
+                                      {aberto ? <ExpandLessIcon sx={{ color: '#858EBD' }} /> : <ExpandMoreIcon sx={{ color: '#858EBD' }} />}
+                                    </span>
+                                  </span>
+                                </div>
+                                {aberto && (
+                                    <p className="text-sm mt-3 whitespace-pre-line">{anotacao.conteudo}</p>
+                                )}
+                            </li>
+                        );
+                    })}
                 </ul>
+
             )}
         </div>
     );

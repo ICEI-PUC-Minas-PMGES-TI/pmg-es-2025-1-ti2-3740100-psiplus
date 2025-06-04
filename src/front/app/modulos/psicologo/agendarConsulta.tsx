@@ -27,14 +27,17 @@ export default function AgendarConsulta() {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
   const [mesLateral, setMesLateral] = useState(new Date());
 
-  useEffect(() => {
-    axios.get("http://localhost:8080/pacientes/resumo")
-      .then((res) => setPatients(res.data))
-      .catch((err) => {
-        setPatients([]);
-        console.error("Erro ao buscar pacientes:", err);
-      });
-  }, []);
+ useEffect(() => {
+  axios.get("http://localhost:8080/pacientes/resumo")
+    .then((res) => {
+      console.log("Pacientes recebidos:", res.data); // <- veja o console do navegador
+      setPatients(res.data);
+    })
+    .catch((err) => {
+      setPatients([]);
+      console.error("Erro ao buscar pacientes:", err);
+    });
+}, []);
 
   useEffect(() => {
     if (
@@ -110,16 +113,26 @@ export default function AgendarConsulta() {
     setSelectedTimeSlot(time);
   };
 
-  const handleScheduleAppointment = () => {
-    if (selectedPatient && selectedDate && selectedTimeSlot) {
-      alert(`Consulta agendada para:
-        Paciente: ${selectedPatient.nome}
-        Data: ${selectedDate.toLocaleDateString("pt-BR")}
-        Horário: ${selectedTimeSlot}`);
-    } else {
-      alert("Por favor, selecione um paciente, uma data e um horário.");
+  const handleScheduleAppointment = async () => {
+  if (selectedPatient && selectedDate && selectedTimeSlot) {
+    const data = {
+      pacienteId: selectedPatient.pacienteId,
+      data: selectedDate.toISOString().split("T")[0],     // "2025-06-04"
+      horario: selectedTimeSlot                           // "14:00"
+    };
+
+    try {
+      await axios.post("http://localhost:8080/consultas/agendar", data);
+      alert("Consulta agendada com sucesso!");
+    } catch (err) {
+      console.error("Erro ao agendar consulta:", err);
+      alert("Erro ao agendar consulta.");
     }
-  };
+  } else {
+    alert("Por favor, selecione um paciente, uma data e um horário.");
+  }
+};
+
 
   return (
     <Main>
@@ -134,18 +147,21 @@ export default function AgendarConsulta() {
             Selecione um Paciente
           </label>
           <select
-            value={selectedPatient || ""}
-            onChange={(e) => {
-              const selected = patients.find((p) => p.nome === e.target.value);
-              setSelectedPatient(selected);
-            }}
-            className="w-full p-3 rounded-md bg-[#F4F6F8] text-sm text-gray-600 border border-gray-300 focus:outline-none"
-          >
-            <option value="" disabled hidden>Nome do Paciente</option>
-            {patients.map((p) => (
-              <option key={p.id} value={p.nome}>{p.nome}</option>
-            ))}
-          </select>
+  value={selectedPatient?.pacienteId || ""}
+  onChange={(e) => {
+    const idSelecionado = parseInt(e.target.value);
+    const paciente = patients.find((p) => p.pacienteId === idSelecionado);
+    setSelectedPatient(paciente);
+  }}
+  className="border rounded px-2 py-1"
+>
+  <option value="" disabled hidden>Selecione um paciente</option>
+  {patients.map((p) => (
+    <option key={p.pacienteId} value={p.pacienteId}>
+      {p.nome}
+    </option>
+  ))}
+</select>
         </div>
 
         {/* Calendário e horários */}
@@ -216,15 +232,9 @@ export default function AgendarConsulta() {
 
         {/* Botão de Agendar */}
         <div className="w-full flex justify-end mt-8 pr-10">
-          <BotaoPadrao
+         <BotaoPadrao
             texto="Agendar Consulta"
-            handleClick={() => {
-              if (selectedPatient && selectedDate && selectedTimeSlot) {
-                alert(`Consulta agendada para:\nPaciente: ${selectedPatient.nome}\nData: ${selectedDate.toLocaleDateString("pt-BR")}\nHorário: ${selectedTimeSlot}`);
-              } else {
-                alert("Por favor, selecione um paciente, uma data e um horário.");
-              }
-            }}
+            handleClick={handleScheduleAppointment} // <-- Aqui você usa a função que envia pro backend
             className="bg-[#0088A3] hover:bg-[#00718a] text-white px-6 py-3 rounded-md"
           />
         </div>

@@ -1,14 +1,21 @@
 package com.psiplus.service;
 
 import com.psiplus.DTO.PacienteDTO;
+import com.psiplus.DTO.AnotacaoDTO;
+
 import com.psiplus.model.Paciente;
 import com.psiplus.model.Usuario;
 import com.psiplus.model.Endereco;
+
 import com.psiplus.email.EmailService;
 import com.psiplus.util.EmailTemplates;
+
 import com.psiplus.repository.UsuarioRepository;
 import com.psiplus.repository.PacienteRepository;
 import com.psiplus.repository.EnderecoRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -112,4 +119,15 @@ public class PacienteService {
                 .filter(p -> passwordEncoder.matches(senha, p.getUsuario().getSenha()))
                 .orElse(null);
     }
+
+    public boolean atualizarHistoricoClinico(Long pacienteId, String anotacoes) {
+        Paciente paciente = buscarPorId(pacienteId);
+        if (paciente == null) {
+            return false;
+        }
+        paciente.setHistoricoClinico(anotacoes); // adapte se for outro tipo
+        salvar(paciente);
+        return true;
+    }
+
 }

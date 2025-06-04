@@ -88,4 +88,13 @@ public class PacienteController {
         return ResponseEntity.ok(paciente);
     }
 
+    @PutMapping("/{id}/historico-clinico")
+    public ResponseEntity<?> atualizarHistoricoClinico(@PathVariable Long id, @RequestBody String anotacoes) {
+        boolean atualizado = service.atualizarHistoricoClinico(id, anotacoes);
+        if (!atualizado) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().build();
+    }
+
 }

@@ -14,7 +14,7 @@ public class Paciente {
     @JoinColumn(name = "usuarioId", referencedColumnName = "usuarioId")
     private Usuario usuario;
 
-    @Column(length = 500)
+    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String historicoClinico;
 
     @Column(length = 500)

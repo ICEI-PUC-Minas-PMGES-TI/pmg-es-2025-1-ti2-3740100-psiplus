@@ -6,7 +6,6 @@ import PerfilUser from "../../../public/assets/PerfilUser.jpg";
 import PersonIcon from '@mui/icons-material/Person';
 import HistoryIcon from "@mui/icons-material/History";
 import BarChartIcon from "@mui/icons-material/BarChart";
-import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAlt";
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import { IoIosArrowDown } from "react-icons/io";
 import { useState, useEffect } from "react";
@@ -233,7 +232,6 @@ export default function GestaoPacientes() {
                         className="ml-auto hover:text-black transition-colors duration-200 font-medium cursor-pointer"
                         handleClick={leave}
                     />
-
                 </div>
               <hr className="border-t-2 border-[#DFE5F1] my-2"/>
               <h1 className="font-semibold text-black mx-4 text-[20px] mt-5">Gestão de Pacientes</h1>
@@ -267,7 +265,9 @@ export default function GestaoPacientes() {
                     </button>
 
                     {/* Botões inativos */}
-                    <button className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-[#2B2F42] w-full">
+                    <button
+                        onClick={() => navigate(`/psicologo/gestaoRegistros/${id}`)}
+                        className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-[#2B2F42] w-full">
                       <div className="bg-[#F4F7FF] rounded-md p-1">
                         <HistoryIcon style={{color: "#858EBD"}}/>
                       </div>

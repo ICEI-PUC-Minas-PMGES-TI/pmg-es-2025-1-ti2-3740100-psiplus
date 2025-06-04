@@ -122,7 +122,7 @@ export default function TabelaPadrao({ data, onRowClick }: TabelaPadraoProps) {
 
     return (
         <div className="w-full p-4">
-            <div className="mb-4 flex mt-12 w-full">
+            <div className="mb-4 flex mt-5 w-full">
                 <div className="w-[70%]">
                     <InputPadrao
                         placeholder="Pesquisar paciente"
@@ -235,14 +235,14 @@ export default function TabelaPadrao({ data, onRowClick }: TabelaPadraoProps) {
                 <button
                     onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
                     disabled={page === 0}
-                    className="px-3 py-1 text-sm border rounded disabled:opacity-40"
+                    className="cursor-pointer px-3 py-1 text-sm border rounded disabled:opacity-40"
                 >
                     Anterior
                 </button>
                 <button
                     onClick={() => setPage((prev) => Math.min(prev + 1, pageCount - 1))}
                     disabled={page >= pageCount - 1}
-                    className="px-3 py-1 text-sm border rounded disabled:opacity-40"
+                    className="cursor-pointer px-3 py-1 text-sm border rounded disabled:opacity-40"
                 >
                     Próxima
                 </button>

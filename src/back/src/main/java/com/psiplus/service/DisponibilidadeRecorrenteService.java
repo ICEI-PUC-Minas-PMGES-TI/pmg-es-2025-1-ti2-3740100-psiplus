@@ -24,6 +24,10 @@ public class DisponibilidadeRecorrenteService {
         return repository.findByPsicologoPsicologoId(psicologoId);
     }
 
+    public void deletarPorPsicologo(Long psicologoId) {
+        repository.deleteByPsicologo_PsicologoId(psicologoId);
+    }
+
     public void deletar(Long id) {
         repository.deleteById(id);
     }

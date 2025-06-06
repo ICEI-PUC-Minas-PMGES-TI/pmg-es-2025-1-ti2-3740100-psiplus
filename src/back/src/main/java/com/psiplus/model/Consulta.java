@@ -15,7 +15,9 @@ public class Consulta {
 
     private LocalDate data;
 
-    private LocalTime horario;
+    private LocalTime horarioInicio;
+
+    private LocalTime horarioFim;
 
     // Getters e Setters
     public Long getId() { return id; }
@@ -23,6 +25,10 @@ public class Consulta {
     public void setPacienteId(Long pacienteId) { this.pacienteId = pacienteId; }
     public LocalDate getData() { return data; }
     public void setData(LocalDate data) { this.data = data; }
-    public LocalTime getHorario() { return horario; }
-    public void setHorario(LocalTime horario) { this.horario = horario; }
+
+    public LocalTime getHorarioInicio() { return horarioInicio; }
+    public void setHorarioInicio(LocalTime horarioInicio) { this.horarioInicio = horarioInicio; }
+
+    public LocalTime getHorarioFim() { return horarioFim; }
+    public void setHorarioFim(LocalTime horarioFim) { this.horarioFim = horarioFim; }
 }

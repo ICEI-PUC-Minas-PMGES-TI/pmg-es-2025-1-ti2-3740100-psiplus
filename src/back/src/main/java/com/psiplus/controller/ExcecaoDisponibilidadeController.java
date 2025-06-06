@@ -31,12 +31,12 @@ public class ExcecaoDisponibilidadeController {
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         try {
             service.deletar(id);
-            return ResponseEntity.noContent().build(); // 204 No Content
         } catch (EmptyResultDataAccessException e) {
-            return ResponseEntity.notFound().build(); // 404
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // 500
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+        return ResponseEntity.ok().build();
     }
+
 
 }

@@ -1,10 +1,9 @@
 import Main from "~/componentes/Main";
 import MenuLateralPsicólogo from "~/componentes/MenuLateralPsicólogo";
-import ExitIcon from "../../../public/assets/ExitIcon.png";
 import React, { useState, useEffect } from "react";
 
 // imports de icons
-import {ChevronLeft, ChevronRight, Copy, Save} from "lucide-react";
+import {ChevronLeft, ChevronRight, Copy, Save, Trash2} from "lucide-react";
 import EditIcon from "@mui/icons-material/Edit";
 
 // Imports da agenda
@@ -12,7 +11,11 @@ import localizer from "~/utils/calendarConfig";
 import { Calendar, Views, type HeaderProps } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "~/estilos/customCalendar.css";
-import { buscarDisponibilidadesRecorrente, salvarDisponibilidadeRecorrente, deletarDisponibilidadeRecorrente } from '~/lib/disponibilidadeRecorrente';
+import {
+    salvarDisponibilidadeRecorrente,
+    deletarDisponibilidadeRecorrente,
+    listarDisponibilidadesRecorrente, limparDisponibilidadesRecorrente
+} from '~/lib/disponibilidadeRecorrente';
 import { listarExcecoesDisponibilidade, salvarExcecaoDisponibilidade, deletarExcecaoDisponibilidade } from "~/lib/disponibilidadeExcecoes";
 import CustomToolbar from "~/componentes/CustomToolbar";
 
@@ -43,7 +46,7 @@ import {
     isSameMonth,
     isToday,
     setHours,
-    setMinutes,
+    setMinutes, getDay,
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import type { View } from "react-big-calendar";
@@ -130,11 +133,7 @@ export default function EditarAgenda() {
 
         const carregarDisponibilidadesRecorrente = async () => {
             try {
-                const inicio = new Date();
-                const fim = new Date(inicio);
-                fim.setDate(fim.getDate() + 7);
-
-                const dados = await buscarDisponibilidadesRecorrente(psicologoId, inicio, fim);
+                const dados = await listarDisponibilidadesRecorrente(psicologoId);
                 setDisponibilidades(dados);
             } catch (err) {
                 alert('Erro ao carregar disponibilidades');
@@ -290,12 +289,43 @@ export default function EditarAgenda() {
         return [...disponiveisFormatados, ...indisponiveisFormatados];
     }, [excecoes]);
 
+    const gerarDisponibilidadesFormatadas = React.useCallback(() => {
+        const inicioSemana = startOfWeek(dataBase, { weekStartsOn: 0 });
+        const fimSemana = endOfWeek(dataBase, { weekStartsOn: 0 });
+
+        return disponibilidades.map((disp) => {
+            console.log("disp teste", disp)
+            const dia = new Date(inicioSemana);
+            dia.setDate(inicioSemana.getDate() + disp.diaSemana);
+
+            const [horaI, minutoI] = disp.horaInicio.split(":").map(Number);
+            const [horaF, minutoF] = disp.horaFim.split(":").map(Number);
+
+            const start = new Date(dia);
+            start.setHours(horaI, minutoI, 0, 0);
+
+            const end = new Date(dia);
+            end.setHours(horaF, minutoF, 0, 0);
+
+            return {
+                start,
+                end,
+                psicologoId: disp.psicologoId,
+                title: "Disponível (Recorrente)",
+                tipo: "disponivel-recorrente",
+                backgroundColor: "#DBEAFE",
+                borderColor: "#3B82F6",
+            };
+        });
+    }, [dataBase, disponibilidades]);
+
     const agendaEventos = React.useMemo(() => {
         return [
             ...gerarExcecoesFormatadas(),
+            ...gerarDisponibilidadesFormatadas(),
             ...consultas
         ];
-    }, [excecoes, disponibilidades, consultas]);
+    }, [excecoes, disponibilidades, consultas, dataBase]);
 
     const consultasDoDia = agendaEventos.filter((evento) => isSameDay(evento.start, dataSelecionada));
 
@@ -315,31 +345,60 @@ export default function EditarAgenda() {
 
     async function salvarRecorrenteSemanal() {
         try {
-            const psicologoId = JSON.parse(sessionStorage.getItem("sessaoPsicologo") || '{}')?.usuarioId;
-            if (!psicologoId) {
-                alert("Sessão expirada. Faça login novamente.");
-                return;
+
+            const semanaAtual = {
+                inicio: startOfWeek(dataBase, { weekStartsOn: 1 }),
+                fim: endOfWeek(dataBase, { weekStartsOn: 1 })
+            };
+
+            const excecoesNaSemanaAtual = excecoes.filter(ex =>
+                ex.start >= semanaAtual.inicio && ex.start <= semanaAtual.fim
+            );
+
+            const recorrentesParaSalvar = excecoesNaSemanaAtual.map(ex => ({
+                psicologoId,
+                diaSemana: getDay(ex.start),
+                horaInicio: ex.start.toTimeString().slice(0, 5),
+                horaFim: ex.end.toTimeString().slice(0, 5),
+                dataInicio: semanaAtual.inicio.toISOString().split('T')[0],
+                dataFim: null
+            }));
+
+            for (const recorrente of recorrentesParaSalvar) {
+                await salvarDisponibilidadeRecorrente(recorrente);
             }
 
-            for (const disp of disponibilidades) {
-                await salvarDisponibilidadeRecorrente({
-                    psicologoId,
-                    start: disp.start,
-                    end: disp.end,
-                });
-            }
-
-            alert("Recorrente semanal salvo com sucesso!");
+            alert("Disponibilidade recorrente semanal salva com sucesso!");
             setTemAlteracoes(false);
+
+            const novasDisponibilidades = await listarDisponibilidadesRecorrente(psicologoId);
+
+            setDisponibilidades(novasDisponibilidades);
+
         } catch (error) {
             console.error("Erro ao salvar Recorrente semanal:", error);
             alert("Erro ao salvar o Recorrente semanal.");
         }
     }
 
-    function formatarParaBackend(date: Date): string {
-        const pad = (n: number) => n.toString().padStart(2, '0');
-        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+    async function limparModeloRecorrente() {
+        try {
+
+            const confirmacao = confirm("Tem certeza que deseja excluir todo o modelo semanal?");
+            if (!confirmacao) return;
+
+            await limparDisponibilidadesRecorrente(psicologoId)
+
+
+            const novasDisponibilidades = await listarDisponibilidadesRecorrente(psicologoId);
+
+            setDisponibilidades(novasDisponibilidades);
+
+            alert("Modelo semanal limpo com sucesso!");
+        } catch (error) {
+            console.error("Erro ao limpar modelo semanal:", error);
+            alert("Erro ao limpar modelo semanal.");
+        }
     }
 
 
@@ -379,9 +438,13 @@ export default function EditarAgenda() {
                 salvarExcecaoDisponibilidade(excecao)
             );
 
-            const promisesRemover = excecoesRemovidas
-                .filter(e => e.id)
-                .map((excecao) => deletarExcecaoDisponibilidade(excecao.id));
+            const idsUnicos = Array.from(new Set(
+                excecoesRemovidas
+                    .filter(e => e.id)        // remove null/undefined
+                    .map(e => e.id!)          // extrai apenas os IDs
+            ));
+
+            const promisesRemover = idsUnicos.map(id => deletarExcecaoDisponibilidade(id));
 
             console.log("Removendo:", excecoesRemovidas);
 
@@ -456,7 +519,6 @@ export default function EditarAgenda() {
         }
     };
 
-
     return (
         <Main>
             <div className="flex min-h-screen bg-white">
@@ -485,12 +547,17 @@ export default function EditarAgenda() {
                         </div>
                         <div className={"flex gap-3"}>
                             <button
-                                disabled={!temAlteracoes}
                                 onClick={salvarRecorrenteSemanal}
-                                className={`px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1 transition
-        ${temAlteracoes ? 'bg-[#ADD9E2] text-[#0088A3] hover:brightness-95 cursor-pointer' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}>
-                                <Copy style={{ fontSize: 18, color: temAlteracoes ? "#0088A3" : "#A0A0A0" }} />
+                                className={`px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1 transition bg-[#ADD9E2] text-[#0088A3] hover:brightness-95 cursor-pointer`}>
+                                <Copy style={{ fontSize: 18, color: "#0088A3" }} />
                                 Salvar Modelo semanal
+                            </button>
+
+                            <button
+                                onClick={limparModeloRecorrente}
+                                className={`px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1 transition bg-[#f8d7da] text-[#8a1c1c] hover:brightness-95 cursor-pointer`}>
+                                <Trash2 style={{ fontSize: 18, color: "#8a1c1c" }} />
+                                Limpar Modelo semanal
                             </button>
 
                             <button
@@ -659,7 +726,7 @@ export default function EditarAgenda() {
                     {/* Consultas do dia */}
                     <div className="mt-8">
                         <h2 className="text-base font-bold text-[#161736] mb-4">
-                            Consultas do dia
+                            Eventos do dia
                         </h2>
 
                         {consultasDoDia.length === 0 ? (

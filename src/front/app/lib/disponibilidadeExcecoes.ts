@@ -50,8 +50,14 @@ export async function salvarExcecaoDisponibilidade(excecao: ExcecaoDisponibilida
 export async function deletarExcecaoDisponibilidade(id: number) {
     try {
         await axios.delete(`${BASE_URL}/disponibilidades/excecoes/${id}`);
-    } catch (error) {
-        console.error('Erro ao deletar exceção de disponibilidade:', error);
-        throw error;
+        console.log(`Exceção ${id} deletada com sucesso ou já inexistente.`);
+    } catch (error: any) {
+        if (error.response?.status === 500) {
+            console.error('Erro interno ao tentar deletar:', error);
+            throw error;
+        } else {
+            console.warn(`Exceção ${id} pode já ter sido deletada ou não existir.`);
+        }
     }
 }
+

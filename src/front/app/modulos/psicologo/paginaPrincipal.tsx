@@ -1,7 +1,7 @@
 import Main from "~/componentes/Main";
 import MenuLateralPsicólogo from "~/componentes/MenuLateralPsicólogo";
 import ExitIcon from "../../../public/assets/ExitIcon.png";
-import { useState } from "react";
+import React, {useEffect, useState} from "react";
 
 //imports de icons
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -20,13 +20,16 @@ import { eachDayOfInterval, startOfMonth, endOfMonth, isSameDay, isSameMonth, is
 import type { View } from "react-big-calendar";
 import {useNavigate} from "react-router";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
+import {listarExcecoesDisponibilidade} from "~/lib/disponibilidadeExcecoes";
 
 
 export default function Agenda() {
     const navigate = useNavigate();
 
     const [dataBase, setDataBase] = useState(new Date());
-    const [mesLateral, setMesLateral] = useState(new Date()); // NOVO: controla o mês no calendário lateral
+    const [mesLateral, setMesLateral] = useState(new Date());
+    const [excecoes, setExcecoes] = useState<any[]>([]);
+    const [psicologoId, setPsicologoId] = useState<number | null>(null);
 
     // Funções para mudar de semana
     const proximaSemana = () => {
@@ -40,6 +43,57 @@ export default function Agenda() {
         novaData.setDate(novaData.getDate() - 7);
         setDataBase(novaData);
     };
+
+    useEffect(() => {
+        const sessao = JSON.parse(sessionStorage.getItem("sessaoPsicologo") || '{}');
+        if (sessao?.usuarioId) {
+            setPsicologoId(sessao.usuarioId);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (!psicologoId) return;
+
+        const carregarExcecoes = async () => {
+            try {
+                const data = await listarExcecoesDisponibilidade(psicologoId);
+                const excecoesFormatadas = data.map((excecao: any) => ({
+                    ...excecao,
+                    psicologoId,
+                    id: excecao.id,
+                    start: new Date(excecao.dataHoraInicio),
+                    end: new Date(excecao.dataHoraFim),
+                    motivo: excecao.motivo ?? null,
+                    recorrenteRelacionadaId: excecao.recorrenteRelacionada
+                        ? excecao.recorrenteRelacionada.recorrenteId
+                        : null
+                }));
+                setExcecoes(excecoesFormatadas);
+            } catch (error) {
+                console.error('Erro ao carregar exceções:', error);
+            }
+        };
+
+        carregarExcecoes();
+
+    }, [psicologoId]);
+
+    const gerarExcecoesFormatadas = React.useCallback(() => {
+        const indisponiveisFormatados = excecoes
+            .filter(e => e.tipo !== "DISPONIVEL")
+            .map(e => ({
+                start: new Date(e.start),
+                end: new Date(e.end),
+                id: e.id,
+                psicologoId: e.psicologoId,
+                title: e.motivo || "Indisponível",
+                tipo: "indisponivel-excecao",
+                backgroundColor: "#FECACA",
+                borderColor: "#EF4444",
+            }));
+
+        return [...indisponiveisFormatados];
+    }, [excecoes]);
 
     function formatarIntervaloSemana(data: Date) {
         const inicio = startOfWeek(data, { weekStartsOn: 1 });
@@ -59,32 +113,20 @@ export default function Agenda() {
         navigate("/psicologo/agenda/editar")
     }
 
-    // Eventos
-    const eventos = [
-        {
-            title: "Fernanda Oliveira",
-            start: new Date(2025, 4, 26, 9, 0),
-            end: new Date(2025, 4, 26, 10, 0),
-        },
-        {
-            title: "Diego Cardoso",
-            start: new Date(2025, 4, 30, 10, 0),
-            end: new Date(2025, 4, 30, 11, 0),
-        },
-        {
-            title: "Ana Carolina",
-            start: new Date(2025, 4, 27, 8, 0),
-            end: new Date(2025, 4, 27, 9, 0),
-        },
-        {
-            title: "Pedro Coimbra",
-            start: new Date(2025, 4, 27, 15, 0),
-            end: new Date(2025, 4, 27, 16, 0),
-        },
+    const consultas = [
+        { title: "Fernanda Oliveira", start: new Date(2025, 4, 26, 9, 0), end: new Date(2025, 4, 26, 10, 0) },
+        { title: "Diego Cardoso", start: new Date(2025, 4, 30, 10, 0), end: new Date(2025, 4, 30, 11, 0) },
+        { title: "Ana Carolina", start: new Date(2025, 4, 29, 8, 0), end: new Date(2025, 4, 29, 9, 0) },
+        { title: "Pedro Coimbra", start: new Date(2025, 4, 29, 15, 0), end: new Date(2025, 4, 29, 16, 0) },
     ];
 
+    const agendaEventos = React.useMemo(() => {
+        return [
+            ...gerarExcecoesFormatadas(),
+            ...consultas
+        ];
+    }, [excecoes, consultas]);
 
-    // Componente interno para customizar header do calendário principal
     const CustomHeader: React.FC<HeaderProps> = ({ date }) => {
         const weekday = format(date, "EEE", { locale: ptBR }); // ex: seg
         const dayNumber = format(date, "d", { locale: ptBR }); // ex: 27
@@ -117,7 +159,7 @@ export default function Agenda() {
     });
 
     // Consultas do dia selecionado
-    const consultasDoDia = eventos.filter((evento) =>
+    const consultasDoDia = agendaEventos.filter((evento) =>
         isSameDay(evento.start, dataSelecionada)
     );
 
@@ -188,7 +230,7 @@ export default function Agenda() {
                         <Calendar
                             localizer={localizer}
                             culture="pt-BR"
-                            events={eventos}
+                            events={agendaEventos}
                             step={60}
                             timeslots={1}
                             min={new Date(0, 0, 0, 0, 0)}
@@ -291,7 +333,7 @@ export default function Agenda() {
                     {/* Consultas do dia */}
                         <div className="mt-8">
                             <h2 className="text-base font-bold text-[#161736] mb-4">
-                                Consultas do dia
+                                Eventos do dia
                             </h2>
 
                             {consultasDoDia.length === 0 ? (

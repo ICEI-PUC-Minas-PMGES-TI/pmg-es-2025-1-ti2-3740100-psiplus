@@ -23,7 +23,8 @@ public class ConsultaController {
             Consulta nova = new Consulta();
             nova.setPacienteId(dto.pacienteId);
             nova.setData(LocalDate.parse(dto.data));
-            nova.setHorario(LocalTime.parse(dto.horario));
+            nova.setHorarioInicio(LocalTime.parse(dto.horarioInicio));
+            nova.setHorarioFim(LocalTime.parse(dto.horarioFim));
             return consultaRepository.save(nova);
     }
 }

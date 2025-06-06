@@ -5,25 +5,18 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router";
 import TimeSlotSelector from "~/componentes/TimeSlotSelector"
-import { 
-  format,
-  startOfMonth,
-  endOfMonth,
-  startOfWeek,      // <-- esta linha estava faltando!
-  endOfWeek,
-  addDays,
-  isSameDay,
-  isToday,
-  isSameMonth
-} from "date-fns";
+import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameDay, isToday, isSameMonth } from "date-fns";
 import { ptBR } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import ExitIcon from "../../../public/assets/ExitIcon.png";
 import {IoIosArrowDown} from "react-icons/io";
+import Popup from "../../componentes/Popup";
 
 
 export default function AgendarConsulta() {
   const navigate = useNavigate();
+  const [mostrarPopup, setMostrarPopup] = useState(false);
+  const [mensagemErro, setMensagemErro] = useState("");
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [patients, setPatients] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -67,7 +60,6 @@ export default function AgendarConsulta() {
     }
   };
 
-
   useEffect(() => {
     fetchAvailableSlots();
   }, [selectedDate, psicologoId]);
@@ -104,8 +96,6 @@ export default function AgendarConsulta() {
     return slots;
   }
 
-
-
   const diasDoMes = (() => {
     const start = startOfWeek(startOfMonth(mesLateral), { locale: ptBR });
     const end = endOfWeek(endOfMonth(mesLateral), { locale: ptBR });
@@ -133,17 +123,17 @@ export default function AgendarConsulta() {
 
       try {
         await axios.post("http://localhost:8080/consultas/agendar", data);
-        alert("Consulta agendada com sucesso!");
+        setMostrarPopup(true);
 
         // Atualiza os horários disponíveis após agendar
         await fetchAvailableSlots();
 
       } catch (err) {
         console.error("Erro ao agendar consulta:", err);
-        alert("Erro ao agendar consulta.");
+        setMensagemErro("Erro ao agendar paciente.");
       }
     } else {
-      alert("Por favor, selecione um paciente, uma data e um horário.");
+      setMensagemErro("Por favor, selecione um paciente, uma data e um horário.");
     }
   };
 
@@ -244,7 +234,7 @@ export default function AgendarConsulta() {
 
             {/* Horários disponíveis */}
             <div className="w-[300px] flex flex-col">
-              <div className="text-center text-[#303030] font-semibold text-lg mb-5">
+              <div className="text-center text-[#161736] font-semibold text-lg mb-5">
                 {format(selectedDate, "EEEE, d 'de' MMMM", { locale: ptBR })}
               </div>
               {availableTimeSlots.length === 0 ? (
@@ -279,6 +269,25 @@ export default function AgendarConsulta() {
           </div>
         </div>
       </div>
+      {/* Popup */}
+      {mostrarPopup && (
+          <Popup
+              titulo="Agendamento realizado com sucesso!"
+              mensagem="Acompanhe seus agendamentos na página principal."
+              onClose={() => {
+                setMostrarPopup(false);
+                navigate("/psicologo/agenda");
+              }}
+          />
+      )}
+
+      {mensagemErro && (
+          <Popup
+              titulo="Erro no agendamento!"
+              mensagem={mensagemErro}
+              onClose={() => setMensagemErro("")}
+          />
+      )}
     </Main>
   );
 }

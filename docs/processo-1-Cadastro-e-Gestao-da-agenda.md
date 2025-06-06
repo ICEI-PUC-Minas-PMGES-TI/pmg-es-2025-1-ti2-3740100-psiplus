@@ -8,7 +8,7 @@ Após realizar as alterações desejadas, o psicólogo deve clicar em Salvar par
 ![Modelo BPMN agendamento](images/Cadastro-da-Agenda-Diagram.png)
 
 ---  
-## Detalhamento das atividades
+## Detalhamento das atividades:
 
 **Cadastro da agenda**
 

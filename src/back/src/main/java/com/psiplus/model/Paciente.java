@@ -20,6 +20,7 @@ public class Paciente {
     @Column(name = "senha_redefinida")
     private Boolean senhaRedefinida = false;
 
+
     @Column(length = 500)
     private String observacoes;
 

@@ -35,7 +35,7 @@ export function LoginPaciente() {
 
                 const senhaRedefinida = response.data.senhaRedefinida;
                 if (senhaRedefinida) {
-                    navigate("/psicologo/cadastro");
+                    navigate("/paciente/agenda");
                 } else {
                     navigate("/paciente/redefinirSenha", {
                         state: {
@@ -46,8 +46,12 @@ export function LoginPaciente() {
                 }
             })
             .catch((error) => {
-                console.error("Erro ao salvar os dados no backend:", error);
-                alert("Houve um erro ao salvar os dados.");
+                if (error.response && error.response.status === 401) {
+                    setErro("E-mail ou senha incorretos");
+                } else {
+                    console.error("Erro ao salvar os dados no backend:", error);
+                    setErro("Houve um erro ao salvar os dados.");
+                }
             });
     }
     return (

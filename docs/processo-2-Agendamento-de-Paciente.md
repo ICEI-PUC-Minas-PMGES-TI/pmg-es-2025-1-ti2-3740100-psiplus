@@ -1,6 +1,6 @@
 ### 3.3.2 Processo 2 – Agendamento de Paciente
 
-O processo de agendamento de horários por parte do paciente se inicia na visualização da agenda atualizada, onde o usuário pode clicar em um botão e ser levado para uma tela de confirmação podendo confirmar ou cancelar a operação.
+O processo de agendamento de um horário por parte do paciente se inicia na visualização da agenda atualizada, onde o usuário pode clicar em um botão e ser levado para uma tela de confirmação podendo confirmar ou cancelar a operação.
 
 
 ![Modelo BPMN agendamento](images/diagramaPaciente.png)

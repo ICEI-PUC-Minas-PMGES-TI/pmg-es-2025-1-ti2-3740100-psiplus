@@ -6,8 +6,7 @@ import {Lock, Mail} from "lucide-react";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import HomeLogoCadastro from "~/componentes/HomeLogoCadastro";
 import {useState} from "react";
-import { useLocation } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 
 export function RedefinicaoSenha(){
     const location = useLocation();

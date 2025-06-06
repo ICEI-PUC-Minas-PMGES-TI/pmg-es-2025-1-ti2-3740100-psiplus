@@ -66,7 +66,8 @@ export function Dashboard() {
                     <div className="flex">
                         <BotaoPadrao
                             color="bg-white"
-                            className="text-[16px] !font-medium  ml-auto !text-black "
+                            textoColor="text-gray-600"
+                            className="ml-auto hover:text-black transition-colors duration-200 font-medium cursor-pointer"
                             texto="Sair"
                             icone={<img className=" w-[26px] " src={ExitIcon} alt="Sair" />}
                             handleClick={leave}

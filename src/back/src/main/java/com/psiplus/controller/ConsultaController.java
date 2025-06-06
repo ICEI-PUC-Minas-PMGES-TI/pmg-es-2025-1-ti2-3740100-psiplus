@@ -3,28 +3,33 @@ package com.psiplus.controller;
 import com.psiplus.DTO.AgendamentoDTO;
 import com.psiplus.model.Consulta;
 import com.psiplus.repository.ConsultaRepository;
+import com.psiplus.service.ConsultaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/consultas")
-@CrossOrigin(origins = "http://localhost:5173") // ajuste se necessário
 public class ConsultaController {
 
     @Autowired
-    private ConsultaRepository consultaRepository;
+    private ConsultaService consultaService;
 
     @PostMapping("/agendar")
-        public Consulta agendarConsulta(@RequestBody AgendamentoDTO dto) {
-            System.out.println("DTO recebido: " + dto); // 🚀 Verifique os dados recebidos
-            Consulta nova = new Consulta();
-            nova.setPacienteId(dto.pacienteId);
-            nova.setData(LocalDate.parse(dto.data));
-            nova.setHorarioInicio(LocalTime.parse(dto.horarioInicio));
-            nova.setHorarioFim(LocalTime.parse(dto.horarioFim));
-            return consultaRepository.save(nova);
+    public Consulta agendarConsulta(@RequestBody AgendamentoDTO dto) {
+        return consultaService.agendarConsulta(dto);
+    }
+
+    @GetMapping("/paciente/{id}")
+    public List<Consulta> buscarPorPaciente(@PathVariable Long id) {
+        return consultaService.listarPorPaciente(id);
+    }
+
+    @GetMapping("/psicologo/{id}")
+    public List<Consulta> buscarPorPsicologo(@PathVariable Long id) {
+        return consultaService.listarPorPsicologo(id);
     }
 }

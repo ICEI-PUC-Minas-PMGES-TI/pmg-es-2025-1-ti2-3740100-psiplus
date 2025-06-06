@@ -10,19 +10,31 @@ public class Consulta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @JoinColumn(name = "paciente_Id")
+
+    @Column(name = "paciente_id", nullable = false)
     private Long pacienteId;
 
+    @Column(name = "psicologo_id", nullable = false)
+    private Long psicologoId;
+
+    @Column(nullable = false)
     private LocalDate data;
 
+    @Column(name = "horario_inicio", nullable = false)
     private LocalTime horarioInicio;
 
+    @Column(name = "horario_fim", nullable = false)
     private LocalTime horarioFim;
 
     // Getters e Setters
     public Long getId() { return id; }
-    public Long getPaciente_Id() { return pacienteId; }
+
+    public Long getPacienteId() { return pacienteId; }
     public void setPacienteId(Long pacienteId) { this.pacienteId = pacienteId; }
+
+    public Long getPsicologoId() { return psicologoId; }
+    public void setPsicologoId(Long psicologoId) { this.psicologoId = psicologoId; }
+
     public LocalDate getData() { return data; }
     public void setData(LocalDate data) { this.data = data; }
 

@@ -21,6 +21,7 @@ import type { View } from "react-big-calendar";
 import {useNavigate} from "react-router";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import {listarExcecoesDisponibilidade} from "~/lib/disponibilidadeExcecoes";
+import axios from "axios";
 
 
 export default function Agenda() {
@@ -30,8 +31,8 @@ export default function Agenda() {
     const [mesLateral, setMesLateral] = useState(new Date());
     const [excecoes, setExcecoes] = useState<any[]>([]);
     const [psicologoId, setPsicologoId] = useState<number | null>(null);
+    const [consultas, setConsultas] = useState([]);
 
-    // Funções para mudar de semana
     const proximaSemana = () => {
         const novaData = new Date(dataBase);
         novaData.setDate(novaData.getDate() + 7);
@@ -74,7 +75,46 @@ export default function Agenda() {
             }
         };
 
+        async function carregarConsultas() {
+            try {
+                const { data: consultasBackend } = await axios.get(`http://localhost:8080/consultas/psicologo/${psicologoId}`);
+
+                const consultasComNome = await Promise.all(consultasBackend.map(async (consulta: any) => {
+                    try {
+                        const resPaciente = await axios.get(`http://localhost:8080/pacientes/${consulta.pacienteId}`);
+                        const nomePaciente = resPaciente.data.usuario.nome;
+
+                        const data = new Date(consulta.data);
+                        const [hIni, mIni] = consulta.horarioInicio.split(":").map(Number);
+                        const [hFim, mFim] = consulta.horarioFim.split(":").map(Number);
+
+                        const start = new Date(data);
+                        start.setHours(hIni, mIni, 0, 0);
+
+                        const end = new Date(data);
+                        end.setHours(hFim, mFim, 0, 0);
+
+                        return {
+                            id: consulta.id,
+                            title: "Consulta: " + nomePaciente,
+                            start,
+                            end,
+                        };
+                    } catch (error) {
+                        console.error(`Erro ao buscar nome do paciente ${consulta.pacienteId}:`, error);
+                        return null;
+                    }
+                }));
+
+                const filtradas = consultasComNome.filter(Boolean);
+                setConsultas(filtradas);
+            } catch (error) {
+                console.error("Erro ao buscar consultas:", error);
+            }
+        }
+
         carregarExcecoes();
+        carregarConsultas();
 
     }, [psicologoId]);
 
@@ -113,13 +153,6 @@ export default function Agenda() {
         navigate("/psicologo/agenda/editar")
     }
 
-    const consultas = [
-        { title: "Fernanda Oliveira", start: new Date(2025, 4, 26, 9, 0), end: new Date(2025, 4, 26, 10, 0) },
-        { title: "Diego Cardoso", start: new Date(2025, 4, 30, 10, 0), end: new Date(2025, 4, 30, 11, 0) },
-        { title: "Ana Carolina", start: new Date(2025, 4, 29, 8, 0), end: new Date(2025, 4, 29, 9, 0) },
-        { title: "Pedro Coimbra", start: new Date(2025, 4, 29, 15, 0), end: new Date(2025, 4, 29, 16, 0) },
-    ];
-
     const agendaEventos = React.useMemo(() => {
         return [
             ...gerarExcecoesFormatadas(),
@@ -144,10 +177,30 @@ export default function Agenda() {
         );
     };
 
-    const MeuEvento = ({ event }) => (
-        <div>{event.title}</div> // Exibe só o nome
-    );
+    const EventoCalendario = ({ event }: any) => {
+        const horaInicio = event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const horaFim = event.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
+        return (
+            <div className="flex flex-col text-sm">
+                <span className="font-semibold">{event.title}</span>
+                <span className="text-gray-600 text-xs">{horaInicio} - {horaFim}</span>
+            </div>
+        );
+    };
+
+    const estiloEvento = () => {
+        return {
+            style: {
+                minHeight: '80px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                padding: '2px 4px',
+                fontSize: '0.75rem',
+            }
+        };
+    };
 
     //Calendário lateral
     const [dataSelecionada, setDataSelecionada] = useState(new Date());
@@ -243,8 +296,9 @@ export default function Agenda() {
                             components={{
                                 toolbar: CustomToolbar,
                                 header: CustomHeader,
-                                event: MeuEvento
+                                event: EventoCalendario
                             }}
+                            eventPropGetter={estiloEvento}
                             messages={{
                                 week: "Semana",
                                 day: "Dia",

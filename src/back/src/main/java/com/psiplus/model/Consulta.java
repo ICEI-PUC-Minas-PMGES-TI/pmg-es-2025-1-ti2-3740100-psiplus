@@ -2,6 +2,7 @@ package com.psiplus.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
@@ -28,6 +29,15 @@ public class Consulta {
 
     // Getters e Setters
     public Long getId() { return id; }
+
+    public LocalDateTime getDataHoraInicio() {
+        return LocalDateTime.of(data, horarioInicio);
+    }
+
+    public LocalDateTime getDataHoraFim() {
+        return LocalDateTime.of(data, horarioFim);
+    }
+
 
     public Long getPacienteId() { return pacienteId; }
     public void setPacienteId(Long pacienteId) { this.pacienteId = pacienteId; }

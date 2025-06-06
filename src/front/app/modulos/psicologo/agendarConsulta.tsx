@@ -25,34 +25,82 @@ export default function AgendarConsulta() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
+  const [psicologoId, setPsicologoId] = useState<number | null>(null);
   const [mesLateral, setMesLateral] = useState(new Date());
-
- useEffect(() => {
-  axios.get("http://localhost:8080/pacientes/resumo")
-    .then((res) => {
-      console.log("Pacientes recebidos:", res.data); // <- veja o console do navegador
-      setPatients(res.data);
-    })
-    .catch((err) => {
-      setPatients([]);
-      console.error("Erro ao buscar pacientes:", err);
-    });
-}, []);
+  useEffect(() => {
+    const sessao = JSON.parse(sessionStorage.getItem("sessaoPsicologo") || '{}');
+    if (sessao?.usuarioId) {
+      setPsicologoId(sessao.usuarioId);
+    }
+  }, []);
 
   useEffect(() => {
-    if (
-      selectedDate.getDate() === 16 &&
-      selectedDate.getMonth() === 2 &&
-      selectedDate.getFullYear() === 2025
-    ) {
-      setAvailableTimeSlots([
-        "08:00", "10:00", "13:00", "15:00", "17:00", "18:00", "19:00"
-      ]);
-    } else {
-      setAvailableTimeSlots(["09:00", "11:00", "14:00", "16:00", "17:00"]);
+    axios.get("http://localhost:8080/pacientes/resumo")
+        .then((res) => {
+          console.log("Pacientes recebidos:", res.data);
+          setPatients(res.data);
+        })
+        .catch((err) => {
+          setPatients([]);
+          console.error("Erro ao buscar pacientes:", err);
+        });
+  }, []);
+
+  const fetchAvailableSlots = async () => {
+    if (!psicologoId || !selectedDate) return;
+
+    try {
+      const dataISO = selectedDate.toISOString().split("T")[0];
+      const url = `http://localhost:8080/consultas/horarios-disponiveis?psicologoId=${psicologoId}&data=${dataISO}`;
+      const response = await axios.get(url);
+
+      const intervalosQuebrados = gerarIntervalosDeUmaHora(response.data);
+      setAvailableTimeSlots(intervalosQuebrados);
+      setSelectedTimeSlot(null);
+    } catch (error) {
+      console.error("Erro ao buscar horários disponíveis:", error);
+      setAvailableTimeSlots([]);
     }
-    setSelectedTimeSlot(null);
-  }, [selectedDate]);
+  };
+
+
+  useEffect(() => {
+    fetchAvailableSlots();
+  }, [selectedDate, psicologoId]);
+
+
+  function gerarIntervalosDeUmaHora(intervalos) {
+    // intervalos: [{ inicio: "2025-06-07T04:00:00", fim: "2025-06-07T06:00:00" }, ...]
+    const slots = [];
+
+    intervalos.forEach(({ inicio, fim }) => {
+      let start = new Date(inicio);
+      const end = new Date(fim);
+
+      while (start < end) {
+        const next = new Date(start);
+        next.setHours(next.getHours() + 1);
+
+        if (next > end) {
+          break;
+        }
+
+        const label = `${start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${next.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+
+        slots.push({
+          inicio: new Date(start),
+          fim: new Date(next),
+          label
+        });
+
+        start = next;
+      }
+    });
+
+    return slots;
+  }
+
+
 
   const diasDoMes = (() => {
     const start = startOfWeek(startOfMonth(mesLateral), { locale: ptBR });
@@ -63,75 +111,38 @@ export default function AgendarConsulta() {
     }
     return days;
   })();
-  useEffect(() => {
-    axios.get("http://localhost:8080/pacientes/resumo")
-      .then((res) => setPatients(res.data))
-      .catch((err) => {
-        setPatients([]);
-        console.error("Erro ao buscar pacientes:", err);
-      });
-  }, []);
-
-  useEffect(() => {
-    const fetchTimeSlots = () => {
-      if (
-        selectedDate &&
-        selectedDate.getDate() === 16 &&
-        selectedDate.getMonth() === 2 &&
-        selectedDate.getFullYear() === 2025
-      ) {
-        setAvailableTimeSlots([
-          "08:00",
-          "10:00",
-          "13:00",
-          "15:00",
-          "17:00",
-          "18:00",
-          "19:00",
-        ]);
-      } else if (selectedDate) {
-        setAvailableTimeSlots([
-          "09:00",
-          "11:00",
-          "14:00",
-          "16:00",
-          "17:00",
-        ]);
-      } else {
-        setAvailableTimeSlots([]);
-      }
-    };
-    fetchTimeSlots();
-    setSelectedTimeSlot(null);
-  }, [selectedDate, selectedPatient]);
-
-  const handleDateSelect = (date) => {
-    setSelectedDate(date);
-  };
-
-  const handleTimeSlotSelect = (time) => {
-    setSelectedTimeSlot(time);
-  };
 
   const handleScheduleAppointment = async () => {
-  if (selectedPatient && selectedDate && selectedTimeSlot) {
-    const data = {
-      pacienteId: selectedPatient.pacienteId,
-      data: selectedDate.toISOString().split("T")[0],     // "2025-06-04"
-      horario: selectedTimeSlot                           // "14:00"
-    };
+    if (selectedPatient && selectedDate && selectedTimeSlot && psicologoId) {
+      const dataStr = selectedDate.toISOString().split("T")[0];
 
-    try {
-      await axios.post("http://localhost:8080/consultas/agendar", data);
-      alert("Consulta agendada com sucesso!");
-    } catch (err) {
-      console.error("Erro ao agendar consulta:", err);
-      alert("Erro ao agendar consulta.");
+      const horarioInicio = format(selectedTimeSlot.inicio, "HH:mm");
+      const horarioFim = format(selectedTimeSlot.fim, "HH:mm");
+
+      const data = {
+        pacienteId: selectedPatient.pacienteId,
+        psicologoId,
+        data: dataStr,
+        horarioInicio,
+        horarioFim
+      };
+
+      try {
+        await axios.post("http://localhost:8080/consultas/agendar", data);
+        alert("Consulta agendada com sucesso!");
+
+        // Atualiza os horários disponíveis após agendar
+        await fetchAvailableSlots();
+
+      } catch (err) {
+        console.error("Erro ao agendar consulta:", err);
+        alert("Erro ao agendar consulta.");
+      }
+    } else {
+      alert("Por favor, selecione um paciente, uma data e um horário.");
     }
-  } else {
-    alert("Por favor, selecione um paciente, uma data e um horário.");
-  }
-};
+  };
+
 
 
   return (
@@ -211,23 +222,29 @@ export default function AgendarConsulta() {
             <div className="text-right text-[#303030] font-semibold text-lg mb-4">
               {format(selectedDate, "EEEE, d 'de' MMMM", { locale: ptBR })}
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              {availableTimeSlots.map((hora) => (
-                <button
-                  key={hora}
-                  onClick={() => setSelectedTimeSlot(hora)}
-                  className={`border-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all
-                    ${
-                      selectedTimeSlot === hora
-                        ? 'bg-[#0088A3] text-white border-[#0088A3]'
-                        : 'text-[#0088A3] border-[#0088A3] hover:bg-[#f0fdff]'
-                    }`}
-                >
-                  {hora}
-                </button>
-              ))}
-            </div>
+            {availableTimeSlots.length === 0 ? (
+                <p className="text-center text-gray-500">Nenhum horário disponível para este dia.</p>
+            ) : (
+                <div className="grid grid-cols-2 gap-3">
+                  {availableTimeSlots.map((slot, idx) => (
+                      <button
+                          key={idx}
+                          onClick={() => setSelectedTimeSlot(slot)}
+                          className={`border-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all
+            ${
+                              selectedTimeSlot?.inicio?.toISOString() === slot.inicio.toISOString()
+                                  ? 'bg-[#0088A3] text-white border-[#0088A3]'
+                                  : 'text-[#0088A3] border-[#0088A3] hover:bg-[#f0fdff]'
+                          }`}
+                      >
+                        {slot.label}
+                      </button>
+                  ))}
+                </div>
+            )}
           </div>
+
+
         </div>
 
         {/* Botão de Agendar */}

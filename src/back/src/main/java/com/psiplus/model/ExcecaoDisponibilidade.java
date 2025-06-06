@@ -24,8 +24,7 @@ public class ExcecaoDisponibilidade {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")
     @Column(name = "data_hora_fim", nullable = false)
     private LocalDateTime dataHoraFim;
-
-
+    
     @Column(name = "motivo")
     private String motivo;
 

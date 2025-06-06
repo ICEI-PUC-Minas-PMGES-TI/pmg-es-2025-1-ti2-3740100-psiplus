@@ -79,26 +79,67 @@ export default function Agenda() {
             try {
                 const { data: consultasBackend } = await axios.get(`http://localhost:8080/consultas/psicologo/${psicologoId}`);
 
-                const consultasComNome = await Promise.all(consultasBackend.map(async (consulta: any) => {
+                // Primeiro, ordena por paciente + data + horário de início
+                consultasBackend.sort((a, b) => {
+                    if (a.pacienteId !== b.pacienteId) return a.pacienteId - b.pacienteId;
+                    if (a.data !== b.data) return a.data.localeCompare(b.data);
+                    return a.horarioInicio.localeCompare(b.horarioInicio);
+                });
+
+                const gruposUnificados = [];
+
+                for (let i = 0; i < consultasBackend.length; i++) {
+                    const atual = consultasBackend[i];
+
+                    const [hIni, mIni] = atual.horarioInicio.split(":").map(Number);
+                    const [hFim, mFim] = atual.horarioFim.split(":").map(Number);
+
+                    const dataPartes = atual.data.split("-");
+                    const dataConsulta = new Date(
+                        Number(dataPartes[0]),
+                        Number(dataPartes[1]) - 1,
+                        Number(dataPartes[2])
+                    );
+
+                    const inicio = new Date(dataConsulta);
+                    inicio.setHours(hIni, mIni, 0, 0);
+                    const fim = new Date(dataConsulta);
+                    fim.setHours(hFim, mFim, 0, 0);
+
+                    // Se for a primeira, ou não for continuação, cria novo grupo
+                    const ultimoGrupo = gruposUnificados[gruposUnificados.length - 1];
+                    const mesmaPessoa = ultimoGrupo && ultimoGrupo.pacienteId === atual.pacienteId;
+                    const mesmaData = ultimoGrupo && ultimoGrupo.data === atual.data;
+                    const continua = ultimoGrupo && ultimoGrupo.horarioFim === atual.horarioInicio;
+
+                    if (mesmaPessoa && mesmaData && continua) {
+                        // Estende o horário final do grupo anterior
+                        ultimoGrupo.horarioFim = atual.horarioFim;
+                        ultimoGrupo.end = fim;
+                    } else {
+                        gruposUnificados.push({
+                            id: atual.id,
+                            pacienteId: atual.pacienteId,
+                            data: atual.data,
+                            horarioInicio: atual.horarioInicio,
+                            horarioFim: atual.horarioFim,
+                            start: inicio,
+                            end: fim,
+                        });
+                    }
+                }
+
+                // Agora, buscar os nomes dos pacientes
+                const consultasComNome = await Promise.all(gruposUnificados.map(async (consulta) => {
                     try {
                         const resPaciente = await axios.get(`http://localhost:8080/pacientes/${consulta.pacienteId}`);
                         const nomePaciente = resPaciente.data.usuario.nome;
 
-                        const data = new Date(consulta.data);
-                        const [hIni, mIni] = consulta.horarioInicio.split(":").map(Number);
-                        const [hFim, mFim] = consulta.horarioFim.split(":").map(Number);
-
-                        const start = new Date(data);
-                        start.setHours(hIni, mIni, 0, 0);
-
-                        const end = new Date(data);
-                        end.setHours(hFim, mFim, 0, 0);
-
                         return {
                             id: consulta.id,
                             title: "Consulta: " + nomePaciente,
-                            start,
-                            end,
+                            start: consulta.start,
+                            end: consulta.end,
                         };
                     } catch (error) {
                         console.error(`Erro ao buscar nome do paciente ${consulta.pacienteId}:`, error);
@@ -112,6 +153,8 @@ export default function Agenda() {
                 console.error("Erro ao buscar consultas:", error);
             }
         }
+
+
 
         carregarExcecoes();
         carregarConsultas();

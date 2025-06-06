@@ -53,6 +53,7 @@ import type { View } from "react-big-calendar";
 import { useNavigate } from "react-router";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import axios from "axios";
 
 export default function EditarAgenda() {
     const navigate = useNavigate();
@@ -70,6 +71,7 @@ export default function EditarAgenda() {
     const [selecao, setSelecao] = useState({ start: null, end: null });
     const [tipoSelecionado, setTipoSelecionado] = useState("DISPONIVEL");
     const [motivo, setMotivo] = useState("");
+    const [consultas, setConsultas] = useState([]);
 
     const [excecoesRemovidas, setExcecoesRemovidas] = useState<any[]>([]);
 
@@ -140,7 +142,88 @@ export default function EditarAgenda() {
             }
         };
 
+        async function carregarConsultas() {
+            try {
+                const { data: consultasBackend } = await axios.get(`http://localhost:8080/consultas/psicologo/${psicologoId}`);
+
+                // Primeiro, ordena por paciente + data + horário de início
+                consultasBackend.sort((a, b) => {
+                    if (a.pacienteId !== b.pacienteId) return a.pacienteId - b.pacienteId;
+                    if (a.data !== b.data) return a.data.localeCompare(b.data);
+                    return a.horarioInicio.localeCompare(b.horarioInicio);
+                });
+
+                const gruposUnificados = [];
+
+                for (let i = 0; i < consultasBackend.length; i++) {
+                    const atual = consultasBackend[i];
+
+                    const [hIni, mIni] = atual.horarioInicio.split(":").map(Number);
+                    const [hFim, mFim] = atual.horarioFim.split(":").map(Number);
+
+                    const dataPartes = atual.data.split("-");
+                    const dataConsulta = new Date(
+                        Number(dataPartes[0]),
+                        Number(dataPartes[1]) - 1,
+                        Number(dataPartes[2])
+                    );
+
+                    const inicio = new Date(dataConsulta);
+                    inicio.setHours(hIni, mIni, 0, 0);
+                    const fim = new Date(dataConsulta);
+                    fim.setHours(hFim, mFim, 0, 0);
+
+                    // Se for a primeira, ou não for continuação, cria novo grupo
+                    const ultimoGrupo = gruposUnificados[gruposUnificados.length - 1];
+                    const mesmaPessoa = ultimoGrupo && ultimoGrupo.pacienteId === atual.pacienteId;
+                    const mesmaData = ultimoGrupo && ultimoGrupo.data === atual.data;
+                    const continua = ultimoGrupo && ultimoGrupo.horarioFim === atual.horarioInicio;
+
+                    if (mesmaPessoa && mesmaData && continua) {
+                        // Estende o horário final do grupo anterior
+                        ultimoGrupo.horarioFim = atual.horarioFim;
+                        ultimoGrupo.end = fim;
+                    } else {
+                        gruposUnificados.push({
+                            id: atual.id,
+                            pacienteId: atual.pacienteId,
+                            data: atual.data,
+                            horarioInicio: atual.horarioInicio,
+                            horarioFim: atual.horarioFim,
+                            start: inicio,
+                            end: fim,
+                        });
+                    }
+                }
+
+                // Agora, buscar os nomes dos pacientes
+                const consultasComNome = await Promise.all(gruposUnificados.map(async (consulta) => {
+                    try {
+                        const resPaciente = await axios.get(`http://localhost:8080/pacientes/${consulta.pacienteId}`);
+                        const nomePaciente = resPaciente.data.usuario.nome;
+
+                        return {
+                            id: consulta.id,
+                            title: "Consulta: " + nomePaciente,
+                            start: consulta.start,
+                            end: consulta.end,
+                        };
+                    } catch (error) {
+                        console.error(`Erro ao buscar nome do paciente ${consulta.pacienteId}:`, error);
+                        return null;
+                    }
+                }));
+
+                const filtradas = consultasComNome.filter(Boolean);
+                setConsultas(filtradas);
+            } catch (error) {
+                console.error("Erro ao buscar consultas:", error);
+            }
+        }
+
+
         carregarExcecoes();
+        carregarConsultas()
         carregarDisponibilidadesRecorrente();
 
     }, [psicologoId]);
@@ -213,6 +296,7 @@ export default function EditarAgenda() {
         setDataBase(novaData);
     };
 
+
     function formatarIntervaloSemana(data: Date) {
         const inicio = startOfWeek(data, { weekStartsOn: 1 });
         const fim = endOfWeek(data, { weekStartsOn: 1 });
@@ -229,13 +313,6 @@ export default function EditarAgenda() {
     function retornar() {
         navigate("/psicologo/agenda");
     }
-
-    const consultas = [
-        { title: "Fernanda Oliveira", start: new Date(2025, 4, 26, 9, 0), end: new Date(2025, 4, 26, 10, 0) },
-        { title: "Diego Cardoso", start: new Date(2025, 4, 30, 10, 0), end: new Date(2025, 4, 30, 11, 0) },
-        { title: "Ana Carolina", start: new Date(2025, 4, 29, 8, 0), end: new Date(2025, 4, 29, 9, 0) },
-        { title: "Pedro Coimbra", start: new Date(2025, 4, 29, 15, 0), end: new Date(2025, 4, 29, 16, 0) },
-    ];
 
     const gerarExcecoesFormatadas = React.useCallback(() => {
         const disponiveis = excecoes
@@ -291,39 +368,97 @@ export default function EditarAgenda() {
 
     const gerarDisponibilidadesFormatadas = React.useCallback(() => {
         const inicioSemana = startOfWeek(dataBase, { weekStartsOn: 0 });
-        const fimSemana = endOfWeek(dataBase, { weekStartsOn: 0 });
 
-        return disponibilidades.map((disp) => {
-            console.log("disp teste", disp)
+        const intervaloSeCruzam = (start1, end1, start2, end2) => {
+            return start1 < end2 && start2 < end1;
+        };
+
+        const fatiarIntervalo = (dispStart, dispEnd, consultas) => {
+            // Ordena consultas por start
+            const sorted = consultas.sort((a, b) => a.start - b.start);
+            const livres = [];
+            let cursor = dispStart;
+
+            for (const cons of sorted) {
+                // Se o cursor está antes do começo da consulta, tem espaço livre
+                if (cursor < cons.start) {
+                    livres.push({ start: cursor, end: cons.start });
+                }
+                // Avança o cursor para o fim da consulta se estiver dentro da disponibilidade
+                if (cons.end > cursor) {
+                    cursor = cons.end;
+                }
+            }
+
+            // Depois da última consulta, se sobrar espaço, adiciona também
+            if (cursor < dispEnd) {
+                livres.push({ start: cursor, end: dispEnd });
+            }
+
+            return livres;
+        };
+
+        let disponibilidadesComIntervalos = [];
+
+        disponibilidades.forEach((disp) => {
             const dia = new Date(inicioSemana);
             dia.setDate(inicioSemana.getDate() + disp.diaSemana);
 
             const [horaI, minutoI] = disp.horaInicio.split(":").map(Number);
             const [horaF, minutoF] = disp.horaFim.split(":").map(Number);
 
-            const start = new Date(dia);
-            start.setHours(horaI, minutoI, 0, 0);
+            const startDisp = new Date(dia);
+            startDisp.setHours(horaI, minutoI, 0, 0);
 
-            const end = new Date(dia);
-            end.setHours(horaF, minutoF, 0, 0);
+            const endDisp = new Date(dia);
+            endDisp.setHours(horaF, minutoF, 0, 0);
 
-            return {
-                start,
-                end,
-                psicologoId: disp.psicologoId,
-                title: "Disponível (Recorrente)",
-                tipo: "disponivel-recorrente",
-                backgroundColor: "#DBEAFE",
-                borderColor: "#3B82F6",
-            };
+            // Pega as consultas que se cruzam
+            const consultasNoIntervalo = consultas.filter(c =>
+                intervaloSeCruzam(startDisp, endDisp, c.start, c.end)
+            );
+
+            if (consultasNoIntervalo.length === 0) {
+                // Disponibilidade inteira livre
+                disponibilidadesComIntervalos.push({
+                    start: startDisp,
+                    end: endDisp,
+                    psicologoId: disp.psicologoId,
+                    title: "Disponível (Recorrente)",
+                    tipo: "disponivel-recorrente",
+                    backgroundColor: "#DBEAFE",
+                    borderColor: "#3B82F6",
+                });
+            } else {
+                // Divide o intervalo, removendo as consultas
+                const intervalosLivres = fatiarIntervalo(startDisp, endDisp, consultasNoIntervalo);
+
+                intervalosLivres.forEach(({ start, end }) => {
+                    // Só adiciona se o intervalo for válido (ex: maior que zero)
+                    if (start < end) {
+                        disponibilidadesComIntervalos.push({
+                            start,
+                            end,
+                            psicologoId: disp.psicologoId,
+                            title: "Disponível (Recorrente)",
+                            tipo: "disponivel-recorrente",
+                            backgroundColor: "#DBEAFE",
+                            borderColor: "#3B82F6",
+                        });
+                    }
+                });
+            }
         });
-    }, [dataBase, disponibilidades]);
+
+        return disponibilidadesComIntervalos;
+    }, [dataBase, disponibilidades, consultas]);
+
 
     const agendaEventos = React.useMemo(() => {
         return [
             ...gerarExcecoesFormatadas(),
             ...gerarDisponibilidadesFormatadas(),
-            ...consultas
+            ...consultas,
         ];
     }, [excecoes, disponibilidades, consultas, dataBase]);
 
@@ -479,7 +614,17 @@ export default function EditarAgenda() {
         }
     };
 
-    const MeuEvento = ({ event }) => <div>{event.title}</div>;
+    const EventoCalendario = ({ event }: any) => {
+        const horaInicio = event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const horaFim = event.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        return (
+            <div className="flex flex-col text-sm">
+                <span className="font-semibold">{event.title}</span>
+                <span className="text-gray-600 text-xs">{horaInicio} - {horaFim}</span>
+            </div>
+        );
+    };
 
     const diasDoMes = eachDayOfInterval({
         start: startOfWeek(startOfMonth(mesLateral), { weekStartsOn: 0 }),
@@ -606,7 +751,7 @@ export default function EditarAgenda() {
                             components={{
                                 toolbar: CustomToolbar,
                                 header: CustomHeader,
-                                event: MeuEvento,
+                                event: EventoCalendario,
                             }}
                             messages={{
                                 week: "Semana",
@@ -636,7 +781,8 @@ export default function EditarAgenda() {
                             eventPropGetter={(event) => {
                                 let style = {};
                                 let className = "";
-                                if (event.tipo == "disponivel-excecao") {
+
+                                if (event.tipo === "disponivel-excecao") {
                                     style = {
                                         backgroundColor: "#fff",
                                         color: "#005F30",
@@ -645,11 +791,28 @@ export default function EditarAgenda() {
                                     };
                                     className = "rbc-event-disponivel";
                                 } else {
-                                    style = { backgroundColor: "#0088A3", color: "#fff" };
+                                    style = {
+                                        backgroundColor: "#0088A3",
+                                        color: "#fff",
+                                    };
                                 }
 
-                                return { style, className };
+                                // Estilos fixos de layout e tipografia, que se somam aos anteriores
+                                const baseStyle = {
+                                    minHeight: '80px',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center',
+                                    padding: '2px 4px',
+                                    fontSize: '0.75rem',
+                                };
+
+                                // Mesclamos os estilos
+                                const combinedStyle = { ...style, ...baseStyle };
+
+                                return { style: combinedStyle, className };
                             }}
+
 
                         />
                     </div>

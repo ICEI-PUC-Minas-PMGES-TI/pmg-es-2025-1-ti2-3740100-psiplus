@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -14,6 +16,8 @@ public class ExcecaoDisponibilidadeService {
 
     @Autowired
     private ExcecaoDisponibilidadeRepository repository;
+    @Autowired
+    private ExcecaoDisponibilidadeRepository excecaoDisponibilidadeRepository;
 
     public ExcecaoDisponibilidade criar(ExcecaoDisponibilidade excecao) {
         validarExcecao(excecao);
@@ -32,6 +36,16 @@ public class ExcecaoDisponibilidadeService {
         repository.deleteById(id);
     }
 
+    public List<ExcecaoDisponibilidade> buscarExcecoesDoDia(Long psicologoId, LocalDate data) {
+        LocalDateTime inicioDia = data.atStartOfDay();
+        LocalDateTime fimDia = data.plusDays(1).atStartOfDay();
+
+        return repository.findByPsicologo_PsicologoIdAndDataHoraInicioBetween(
+                psicologoId,
+                inicioDia,
+                fimDia
+        );
+    }
 
     private void validarExcecao(ExcecaoDisponibilidade e) {
         if (e.getDataHoraFim().isBefore(e.getDataHoraInicio()) || e.getDataHoraFim().equals(e.getDataHoraInicio())) {

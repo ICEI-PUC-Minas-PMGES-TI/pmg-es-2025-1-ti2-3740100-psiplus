@@ -17,6 +17,9 @@ public class Paciente {
     @Column(columnDefinition = "NVARCHAR(MAX)")
     private String historicoClinico;
 
+    @Column(name = "senha_redefinida")
+    private Boolean senhaRedefinida = false;
+
     @Column(length = 500)
     private String observacoes;
 
@@ -24,6 +27,14 @@ public class Paciente {
     private String notas;
 
     // Getters e Setters
+
+    public Boolean isSenhaRedefinida() {
+        return senhaRedefinida;
+    }
+
+    public void setSenhaRedefinida(Boolean senhaRedefinida) {
+        this.senhaRedefinida = senhaRedefinida;
+    }
     public Long getPacienteId() {
         return pacienteId;
     }

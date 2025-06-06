@@ -6,10 +6,45 @@ import {Lock, Mail} from "lucide-react";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import HomeLogoCadastro from "~/componentes/HomeLogoCadastro";
 import {useState} from "react";
+import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export function RedefinicaoSenha(){
+    const location = useLocation();
+    const navigate = useNavigate();
+    const { email, senhaAntiga } = location.state || {};
     const [senha, setSenha] = useState("");
     const [confirmarSenha, setConfirmarSenha] = useState("");
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await fetch("http://localhost:8080/pacientes/redefinir-senha", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email,
+                    senhaAntiga,
+                    novaSenha: senha,
+                    confirmarSenha
+                }),
+            });
+
+            if (response.ok) {
+                alert("Senha redefinida com sucesso!");
+                navigate("/psicologo/pacientes");
+
+            } else {
+                const mensagem = await response.text();
+                alert(`Erro: ${mensagem}`);
+            }
+        } catch (error) {
+            alert("Erro ao redefinir a senha.");
+            console.error(error);
+        }
+    };
     return (
         <Main>
             <div className="flex h-screen">
@@ -25,7 +60,7 @@ export function RedefinicaoSenha(){
                     </div>
 
                     {/* Formulário de login */}
-                    <FormPadrao >
+                    <FormPadrao onSubmit={handleSubmit}>
                         <InputPadrao
                             type="password"
                             placeholder="Digite sua nova senha"

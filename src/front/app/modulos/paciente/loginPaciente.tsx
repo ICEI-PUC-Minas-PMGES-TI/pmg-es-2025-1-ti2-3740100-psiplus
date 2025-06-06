@@ -32,7 +32,18 @@ export function LoginPaciente() {
                 };
 
                 sessionStorage.setItem("sessaoPaciente", JSON.stringify(dadosSessao));
-                navigate("/paciente/redefinirSenha");
+
+                const senhaRedefinida = response.data.senhaRedefinida;
+                if (senhaRedefinida) {
+                    navigate("/psicologo/cadastro");
+                } else {
+                    navigate("/paciente/redefinirSenha", {
+                        state: {
+                            email: email,
+                            senhaAntiga: senha,
+                        }
+                    });
+                }
             })
             .catch((error) => {
                 console.error("Erro ao salvar os dados no backend:", error);

@@ -1,5 +1,6 @@
 package com.psiplus.service;
 
+import back.src.main.java.com.psiplus.DTO.RedefinicaoSenhaDTO;
 import com.psiplus.DTO.PacienteDTO;
 import com.psiplus.DTO.AnotacaoDTO;
 
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -130,4 +132,31 @@ public class PacienteService {
         return true;
     }
 
+    public boolean redefinirSenha(String email, String senhaAntiga, String novaSenha, String confirmarSenha){
+        if(!novaSenha.equals(confirmarSenha)) {
+            return false; // Senhas novas não coincidem
+        }
+
+        Optional<Paciente> optionalPaciente = repository.findByUsuarioEmail(email);
+        if(optionalPaciente.isEmpty()){
+            return false; // Paciente não encontrado
+        }
+
+        Paciente paciente = optionalPaciente.get();
+        Usuario usuario = paciente.getUsuario();
+
+        // Verifica a senha antiga usando o encoder
+        if (!passwordEncoder.matches(senhaAntiga, usuario.getSenha())) {
+            return false; // Senha antiga incorreta
+        }
+
+        // Criptografa e atualiza a nova senha
+        usuario.setSenha(passwordEncoder.encode(novaSenha));
+        paciente.setSenhaRedefinida(true);
+        usuarioRepository.save(usuario); // pode salvar direto o usuário
+
+        return true;
+    }
+
 }
+

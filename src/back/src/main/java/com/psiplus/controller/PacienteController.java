@@ -1,9 +1,13 @@
 package com.psiplus.controller;
 import java.util.HashMap;
 import java.util.Map;
+
+import back.src.main.java.com.psiplus.DTO.RedefinicaoSenhaDTO;
 import org.springframework.http.HttpStatus;
 import com.psiplus.DTO.PacienteDTO;
 import com.psiplus.model.Paciente;
+import com.psiplus.model.LoginRequest;
+import com.psiplus.model.Psicologo;
 import com.psiplus.service.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -72,14 +76,18 @@ public class PacienteController {
         Paciente salvo = service.salvar(pacienteAtualizado);
         return ResponseEntity.ok(salvo);
     }
+
     @GetMapping("/resumo")
     public List<PacienteDTO> listarResumo() {
         return service.listarResumo();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody com.psiplus.model.LoginRequest request) {
-        com.psiplus.model.Paciente paciente = service.autenticar(request.getEmail(), request.getSenha());
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        Paciente paciente = service.autenticar(request.getEmail(), request.getSenha());
+        System.out.println(paciente);
+        System.out.println(request.getEmail());
+        System.out.println(request.getSenha());
         if (paciente == null) {
             Map<String, String> erro = new HashMap<>();
             erro.put("erro", "Email ou senha inválidos");
@@ -95,6 +103,16 @@ public class PacienteController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/redefinir-senha")
+    public ResponseEntity<?> redefinirSenha(@RequestBody RedefinicaoSenhaDTO dto) {
+        boolean sucesso = service.redefinirSenha(dto.getEmail(), dto.getSenhaAntiga(), dto.getNovaSenha(), dto.getConfirmarSenha());
+        if (sucesso) {
+            return ResponseEntity.ok("Senha redefinida com sucesso.");
+        }else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Senha antiga incorreta ou paciente não encontrado.");
+        }
     }
 
 }

@@ -1,5 +1,5 @@
 import Main from "~/componentes/Main";
-import MenuLateralPsicólogo from "~/componentes/MenuLateralPsicólogo";
+import MenuLateralPaciente from "~/componentes/MenuLateralPaciente";
 import ExitIcon from "../../../public/assets/ExitIcon.png";
 import React, {useEffect, useState} from "react";
 
@@ -111,10 +111,16 @@ export function AgendaPaciente(){
         end: endOfWeek(endOfMonth(mesLateral), { weekStartsOn: 0 }), // Sábado após ou do último dia do mês
     });
 
+    function leave() {
+        sessionStorage.removeItem("sessaoPsicologo");
+        sessionStorage.removeItem("sessaoPaciente");
+        sessionStorage.removeItem("sessionData");
+        navigate("/")
+    }
     return (
         <Main>
             <div className="flex min-h-screen bg-white">
-                <MenuLateralPsicólogo telaAtiva="agenda" />
+                <MenuLateralPaciente telaAtiva="agenda" />
                 <div className="w-px bg-gray-300"></div>
 
                 <div className="flex-1 p-5 overflow-visible">
@@ -208,6 +214,7 @@ export function AgendaPaciente(){
                             color="bg-white"
                             textoColor="text-gray-600"
                             className="ml-auto hover:text-black transition-colors duration-200 font-medium cursor-pointer"
+                            handleClick={leave}
                         />
 
                     </div>

@@ -192,13 +192,15 @@ export default function AgendarConsulta() {
             {/* Calendário Centralizado */}
             <div className="w-[420px]">
               <div className="flex items-center justify-between text-lg font-semibold text-[#7D8DA6] mb-10">
-                <button onClick={() => setMesLateral(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))}>
-                  <ChevronLeft size={24} />
+                <button className="cursor-pointer"
+                    onClick={() => setMesLateral(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))}>
+                  <ChevronLeft size={24}/>
                 </button>
                 <span className="text-[#7D8DA6] font-semibold">
                   {format(mesLateral, "MMMM yyyy", { locale: ptBR }).replace(/^\w/, c => c.toUpperCase())}
                 </span>
-                <button onClick={() => setMesLateral(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))}>
+                <button className="cursor-pointer"
+                    onClick={() => setMesLateral(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))}>
                   <ChevronRight size={24} />
                 </button>
               </div>

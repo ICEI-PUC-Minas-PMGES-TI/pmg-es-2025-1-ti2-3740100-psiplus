@@ -206,6 +206,7 @@ export default function CalendarioEmocoes() {
     function leave() {
         sessionStorage.removeItem("sessaoPsicologo");
         sessionStorage.removeItem("sessaoPaciente");
+        sessionStorage.removeItem("sessionData");
         navigate("/")
     }
 

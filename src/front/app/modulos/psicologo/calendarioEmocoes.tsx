@@ -5,8 +5,9 @@ import BotaoPadrao from "~/componentes/BotaoPadrao";
 import PersonIcon from '@mui/icons-material/Person';
 import HistoryIcon from "@mui/icons-material/History";
 import BarChartIcon from "@mui/icons-material/BarChart";
-import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAlt";
 import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router";
+import axios from "axios";
 import PerfilUser from "../../../public/assets/PerfilUser.jpg";
 import MenuIcon from "@mui/icons-material/Menu";
 import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
@@ -25,16 +26,52 @@ import { ptBR } from "date-fns/locale";
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { eachDayOfInterval, startOfMonth, endOfMonth, isSameDay, isSameMonth, isToday } from "date-fns";
 import type { View } from "react-big-calendar";
-import {useNavigate} from "react-router";
 import {ChevronLeft, ChevronRight} from "lucide-react";
 
 
+interface Usuario {
+    id?: number;
+    nome: string;
+    email: string;
+}
+
+interface Paciente {
+    usuario: Usuario;
+}
+
 export default function CalendarioEmocoes() {
     const navigate = useNavigate();
+    const { id } = useParams();
     const [menuAberto, setMenuAberto] = useState(false);
     const [dataBase, setDataBase] = useState(new Date());
     const [mesLateral, setMesLateral] = useState(new Date());
     const [visualizacao, setVisualizacao] = useState<View>("week");
+
+    //Buscar dados do paciente
+    const [paciente, setPaciente] = useState<Paciente>({
+        usuario: { nome: "", email: "" },
+    });
+
+    useEffect(() => {
+        if (!id) return;
+
+        const carregarPaciente = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8080/pacientes/${id}`);
+                setPaciente({
+                    usuario: {
+                        nome: response.data.usuario.nome,
+                        email: response.data.usuario.email,
+                    },
+                });
+            } catch (error) {
+                console.error("Erro ao buscar paciente:", error);
+            }
+        };
+
+        carregarPaciente();
+    }, [id]);
+
 
     {/* Ajustar menu lateral internoabrindo e fechando */}
     type BotaoLateralProps = {
@@ -42,11 +79,13 @@ export default function CalendarioEmocoes() {
         texto: string;
         visivel: boolean;
         ativo?: boolean;
+        onClick?: () => void;
     };
 
-    const BotaoLateral: React.FC<BotaoLateralProps> = ({ icone, texto, visivel, ativo = false }) => {
+    const BotaoLateral: React.FC<BotaoLateralProps> = ({ icone, texto, visivel, ativo = false, onClick }) => {
         return (
             <button
+                onClick={onClick}
                 className={`cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg w-full
                 ${ativo && visivel ? "bg-white shadow-md text-[#2B2F42]" : ""}
                 ${!ativo ? "hover:bg-gray-100 text-[#2B2F42]" : ""}
@@ -107,26 +146,6 @@ export default function CalendarioEmocoes() {
         { start: new Date(2025, 5, 3, 11, 0), end: new Date(2025, 5, 3, 12, 0), emocao: "triste" },
         { start: new Date(2025, 5, 3, 15, 0), end: new Date(2025, 5, 3, 16, 0), emocao: "neutro" },
         { start: new Date(2025, 5, 4, 8, 0), end: new Date(2025, 5, 4, 9, 0), emocao: "feliz" },
-        { start: new Date(2025, 5, 4, 13, 0), end: new Date(2025, 5, 4, 14, 0), emocao: "raiva" },
-        { start: new Date(2025, 5, 4, 16, 0), end: new Date(2025, 5, 4, 17, 0), emocao: "neutro" },
-        { start: new Date(2025, 5, 5, 10, 0), end: new Date(2025, 5, 5, 11, 0), emocao: "triste" },
-        { start: new Date(2025, 5, 5, 15, 0), end: new Date(2025, 5, 5, 16, 0), emocao: "feliz" },
-        { start: new Date(2025, 5, 6, 11, 0), end: new Date(2025, 5, 6, 12, 0), emocao: "neutro" },
-        { start: new Date(2025, 5, 7, 8, 0), end: new Date(2025, 5, 7, 9, 6), emocao: "triste" },
-        { start: new Date(2025, 5, 7, 15, 0), end: new Date(2025, 5, 7, 16, 0), emocao: "feliz" },
-        { start: new Date(2025, 5, 1, 9, 0), end: new Date(2025, 5, 1, 10, 0), emocao: "neutro" },
-        { start: new Date(2025, 5, 1, 13, 0), end: new Date(2025, 5, 1, 15, 0), emocao: "raiva" },
-        { start: new Date(2025, 5, 2, 10, 0), end: new Date(2025, 5, 2, 11, 0), emocao: "feliz" },
-        { start: new Date(2025, 5, 2, 15, 0), end: new Date(2025, 5, 2, 16, 0), emocao: "triste" },
-        { start: new Date(2025, 5, 4, 1, 0), end: new Date(2025, 5, 4, 2, 0), emocao: "triste" },
-        { start: new Date(2025, 5, 4, 15, 0), end: new Date(2025, 5, 4, 16, 0), emocao: "feliz" },
-        { start: new Date(2025, 5, 4, 20, 0), end: new Date(2025, 5, 4, 21, 0), emocao: "raiva" },
-        { start: new Date(2025, 5, 5, 5, 0), end: new Date(2025, 5, 5, 6, 0), emocao: "neutro" },
-        { start: new Date(2025, 5, 5, 19, 0), end: new Date(2025, 5, 5, 20, 0), emocao: "feliz" },
-        { start: new Date(2025, 5, 6, 0, 0), end: new Date(2025, 5, 6, 1, 0), emocao: "raiva" },
-        { start: new Date(2025, 5, 6, 8, 0), end: new Date(2025, 5, 6, 9, 0), emocao: "feliz" },
-        { start: new Date(2025, 5, 6, 18, 0), end: new Date(2025, 5, 6, 19, 0), emocao: "triste" },
-        { start: new Date(2025, 5, 7, 3, 0), end: new Date(2025, 5, 7, 4, 0), emocao: "neutro" },
     ];
 
     const MeuEvento = ({ event }) => {
@@ -237,9 +256,9 @@ export default function CalendarioEmocoes() {
                                 {menuAberto && (
                                     <>
                                         <h2 className="mt-2 font-semibold text-sm text-[#3A3F63]">
-                                            Nome do Paciente
+                                            {paciente?.usuario?.nome || ""}
                                         </h2>
-                                        <p className="text-xs text-[#5A607F]">email@gmail.com</p>
+                                        <p className="text-xs text-[#5A607F]">{paciente?.usuario?.email || ""}</p>
                                         <p className="text-xs text-gray-400">Última consulta - 12/02/2025</p>
                                     </>
                                 )}
@@ -248,11 +267,13 @@ export default function CalendarioEmocoes() {
                             {/* Menu de botões */}
                             <div className="mt-6 flex flex-col gap-3 w-full">
                                 <BotaoLateral
+                                    onClick={() => navigate(`/psicologo/pacientes/${id}`)}
                                     icone={<PersonIcon style={{ color: "#858EBD" }} />}
                                     texto="Informações Pessoais"
                                     visivel={menuAberto}
                                 />
                                 <BotaoLateral
+                                    onClick={() => navigate(`/psicologo/gestaoRegistros/${id}`)}
                                     icone={<HistoryIcon style={{ color: "#858EBD" }} />}
                                     texto="Histórico de Consultas"
                                     visivel={menuAberto}

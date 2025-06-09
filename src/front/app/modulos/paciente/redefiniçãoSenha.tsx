@@ -7,6 +7,7 @@ import BotaoPadrao from "~/componentes/BotaoPadrao";
 import HomeLogoCadastro from "~/componentes/HomeLogoCadastro";
 import {useState} from "react";
 import { useLocation, useNavigate } from "react-router";
+import Popup from "~/componentes/Popup";
 
 export function RedefinicaoSenha(){
     const location = useLocation();
@@ -14,6 +15,7 @@ export function RedefinicaoSenha(){
     const { email, senhaAntiga } = location.state || {};
     const [senha, setSenha] = useState("");
     const [confirmarSenha, setConfirmarSenha] = useState("");
+    const [mostrarPopup, setMostrarPopup] = useState(false);
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -32,8 +34,7 @@ export function RedefinicaoSenha(){
             });
 
             if (response.ok) {
-                alert("Senha redefinida com sucesso!");
-                navigate("/psicologo/pacientes");
+                setMostrarPopup(true); // Mostra popup de sucesso
 
             } else {
                 const mensagem = await response.text();
@@ -80,6 +81,18 @@ export function RedefinicaoSenha(){
                     </FormPadrao>
                 </div>
             </div>
+
+            {/* Popup */}
+            {mostrarPopup && (
+                <Popup
+                    titulo="Senha redefinida com sucesso!"
+                    mensagem="Está pronto para iniciar a sua jornada conosco? "
+                    onClose={() => {
+                        setMostrarPopup(false);
+                        navigate("/paciente/agenda");
+                    }}
+                />
+            )}
         </Main>
     );
 }

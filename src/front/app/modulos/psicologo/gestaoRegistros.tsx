@@ -60,8 +60,8 @@ export function GestaoRegistros() {
 
         const dataPaciente = pacienteRes.data;
         const registros = registrosRes.data.map((reg: any) => ({
-          data: reg.dataRegistro,
-          hora: reg.horaRegistro,
+          data: reg.data_registro,
+          hora: reg.hora_registro,
           conteudo: reg.anotacao
         }));
 
@@ -166,7 +166,10 @@ export function GestaoRegistros() {
 
               {/* Registros */}
               <div className="flex-1">
-                <ConsultationHistory />
+                <ConsultationHistory
+                    pacienteId={Number(id)}
+                    historicoClinico={paciente.historicoClinico || []}
+                />
               </div>
             </div>
           </div>

@@ -8,23 +8,23 @@ public class Paciente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "paciente_id")  // Recomendo explicitar o nome da coluna
     private Long pacienteId;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "usuarioId", referencedColumnName = "usuarioId")
+    @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
-    @Column(columnDefinition = "NVARCHAR(MAX)")
+    @Column(columnDefinition = "TEXT")
     private String historicoClinico;
 
     @Column(name = "senha_redefinida")
     private Boolean senhaRedefinida = false;
 
-
     @Column(length = 500)
     private String observacoes;
 
-    @Column(columnDefinition = "NVARCHAR(MAX)")
+    @Column(columnDefinition = "TEXT")
     private String notas;
 
     // Getters e Setters
@@ -53,12 +53,6 @@ public class Paciente {
     }
     public void setHistoricoClinico(String historicoClinico) {
         this.historicoClinico = historicoClinico;
-    }
-    public String getObservacoes() {
-        return observacoes;
-    }
-    public void setObservacoes(String observacoes) {
-        this.observacoes = observacoes;
     }
     public String getNotas() { return notas; }
     public void setNotas(String notas) { this.notas = notas; }

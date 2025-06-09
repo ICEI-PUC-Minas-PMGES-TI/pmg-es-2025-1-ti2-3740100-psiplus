@@ -8,8 +8,9 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 interface Anotacao {
-    data: string; // ISO string
-    conteudo: string;
+    data: string; // ou data_registro
+    hora: string; // ou hora_registro
+    conteudo: string; // ou anotacao
 }
 
 const ConsultationHistory: React.FC = () => {
@@ -23,31 +24,21 @@ const ConsultationHistory: React.FC = () => {
     const [dataConsulta, setDataConsulta] = useState("");
     const [horaConsulta, setHoraConsulta] = useState("");
 
-    // Buscar histórico clínico do paciente ao montar o componente
+    // Buscar os registros do paciente
     useEffect(() => {
         if (!pacienteId) return;
 
-        axios
-            .get(`http://localhost:8080/pacientes/${pacienteId}`)
+        axios.get(`http://localhost:8080/registros/${pacienteId}`)
             .then((res) => {
-                const paciente = res.data;
-
-                let historico: Anotacao[] = [];
-                if (paciente.historicoClinico) {
-                    try {
-                        historico =
-                            typeof paciente.historicoClinico === "string"
-                                ? JSON.parse(paciente.historicoClinico)
-                                : paciente.historicoClinico;
-                    } catch (e) {
-                        console.error("Erro ao converter histórico clínico:", e);
-                        historico = [];
-                    }
-                }
-                setAnotacoes(historico);
+                const registros: Anotacao[] = res.data.map((registro: any) => ({
+                    data: registro.data_registro,
+                    hora: registro.hora_registro,
+                    conteudo: registro.anotacao,
+                }));
+                setAnotacoes(registros);
             })
             .catch((err) => {
-                console.error("Erro ao carregar histórico do paciente:", err);
+                console.error("Erro ao carregar registros:", err);
             });
     }, [pacienteId]);
 
@@ -74,10 +65,12 @@ const ConsultationHistory: React.FC = () => {
 
         try {
             // Enviar as novas anotações, não as antigas!
-            await axios.put(
-                `http://localhost:8080/pacientes/${pacienteId}/historico-clinico`,
-                novasAnotacoes // não 'anotacoes', use 'novasAnotacoes'
-            );
+            await axios.post(`http://localhost:8080/registros`, {
+                pacienteId: pacienteId,
+                data: dataConsulta,
+                hora: horaConsulta,
+                conteudo: novoConteudo.trim(),
+            });
             setAnotacoes(novasAnotacoes);
             setNovoConteudo("");
             setModoEdicao(false);

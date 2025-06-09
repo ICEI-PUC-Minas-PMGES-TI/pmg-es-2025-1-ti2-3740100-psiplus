@@ -11,7 +11,7 @@ public class Psicologo {
     private Long psicologoId;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "usuarioId", referencedColumnName = "usuarioId")
+    @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
     // Getters e Setters

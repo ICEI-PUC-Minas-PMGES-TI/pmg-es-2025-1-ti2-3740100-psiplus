@@ -8,7 +8,8 @@ import MenuLateralPsicólogo from "~/componentes/MenuLateralPsicólogo";
 import IconPesquisar from "../../../public/assets/IconPesquisar.png";
 import ExitIcon from "../../../public/assets/ExitIcon.png";
 import Main from "~/componentes/Main";
-import {useNavigate} from "react-router";
+import { useNavigate, useParams } from "react-router";
+import axios from "axios";
 
 export function RegistroAnotacoes() {
   const navigate = useNavigate();
@@ -18,10 +19,31 @@ export function RegistroAnotacoes() {
   const [horaInicio, setHoraInicio] = useState("09:00");
   const [horaFim, setHoraFim] = useState("10:00");
   const [notas, setNotas] = useState("");
+  const { pacienteId } = useParams();
 
-  const handleSalvar = () => {
-    const data = `${dia}/${mes}/${ano}`;
-    console.log({ data, horaInicio, horaFim, notas });
+  const handleSalvar = async () => {
+    if (!pacienteId) {
+      alert("Paciente não informado");
+      return;
+    }
+
+    try {
+      const dataFormatada = `${ano}-${mes.padStart(2, "0")}-${dia.padStart(2, "0")}`;
+
+      const payload = {
+        data: dataFormatada,
+        hora: horaInicio,
+        conteudo: notas,
+      };
+
+      const res = await axios.post(`http://localhost:8080/registros/${pacienteId}`, payload);
+
+      alert("Registro salvo com sucesso!");
+      setNotas("");
+    } catch (error) {
+      console.error("Erro ao salvar registro:", error);
+      alert("Erro ao salvar registro.");
+    }
   };
 
   function leave() {

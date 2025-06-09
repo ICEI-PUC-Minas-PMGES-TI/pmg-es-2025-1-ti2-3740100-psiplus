@@ -20,9 +20,9 @@ import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfi
 
 
 interface Anotacao {
-  data: string;      // Ex: "2025-06-04"
-  titulo: string;    // Ex: "Sessão de retorno"
-  conteudo: string;  // Texto da anotação
+  data: string;
+  hora: string;
+  conteudo: string;
 }
 
 interface Usuario {
@@ -53,21 +53,32 @@ export function GestaoRegistros() {
   useEffect(() => {
     if (!id) return;
 
-    axios.get(`http://localhost:8080/pacientes/${id}`)
-        .then((res) => {
-          const data = res.data;
-          setPaciente({
-            usuario: {
-              id: data.usuario?.usuarioId,
-              nome: data.usuario?.nome || "",
-              email: data.usuario?.email || "",
-            },
-            historicoClinico: data.historicoClinico || [],
-          });
-        })
-        .catch((err) => {
-          console.error("Erro ao carregar paciente:", err);
+    const carregarDados = async () => {
+      try {
+        const pacienteRes = await axios.get(`http://localhost:8080/pacientes/${id}`);
+        const registrosRes = await axios.get(`http://localhost:8080/registros/${id}`);
+
+        const dataPaciente = pacienteRes.data;
+        const registros = registrosRes.data.map((reg: any) => ({
+          data: reg.dataRegistro,
+          hora: reg.horaRegistro,
+          conteudo: reg.anotacao
+        }));
+
+        setPaciente({
+          usuario: {
+            id: dataPaciente.usuario?.usuarioId,
+            nome: dataPaciente.usuario?.nome || "",
+            email: dataPaciente.usuario?.email || "",
+          },
+          historicoClinico: registros,
         });
+      } catch (err) {
+        console.error("Erro ao carregar dados:", err);
+      }
+    };
+
+    carregarDados();
   }, [id]);
 
   function leave() {
@@ -155,9 +166,7 @@ export function GestaoRegistros() {
 
               {/* Registros */}
               <div className="flex-1">
-                <ConsultationHistory
-                    historicoClinico={paciente.historicoClinico || []}
-                />
+                <ConsultationHistory />
               </div>
             </div>
           </div>

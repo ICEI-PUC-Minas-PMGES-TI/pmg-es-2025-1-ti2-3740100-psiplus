@@ -5,9 +5,10 @@ import com.psiplus.DTO.PacienteDTO;
 import com.psiplus.DTO.AnotacaoDTO;
 
 import com.psiplus.model.Paciente;
+import com.psiplus.model.Psicologo;
 import com.psiplus.model.Usuario;
 import com.psiplus.model.Endereco;
-import com.psiplus.model.Psicologo;
+
 
 import com.psiplus.email.EmailService;
 import com.psiplus.util.EmailTemplates;
@@ -43,7 +44,7 @@ public class PacienteService {
     @Autowired
     private EnderecoRepository enderecoRepository;
 
-    @Autowired
+    @Autowired 
     private PsicologoRepository psicologoRepository;
 
     @Autowired
@@ -53,14 +54,20 @@ public class PacienteService {
         return repository.findAll();
     }
 
+    public List<PacienteDTO> buscarPorNome(String nome) {
+        return repository.findByUsuarioNomeContainingIgnoreCase("%" + nome + "%")
+                .stream()
+                .map(PacienteDTO::new)
+                .collect(Collectors.toList());
+    }
+
     public Paciente buscarPorId(Long id) {
         return repository.findById(id).orElse(null);
     }
 
-
     @Transactional
     public Paciente salvar(Paciente paciente) {
-        // Verificar se paciente tem psicologo setado
+                // Verificar se paciente tem psicologo setado
         if (paciente.getPsicologo() != null && paciente.getPsicologo().getPsicologoId() != null) {
             Psicologo psicologo = psicologoRepository.findById(paciente.getPsicologo().getPsicologoId())
                     .orElseThrow(() -> new RuntimeException("Psicólogo não encontrado"));
@@ -68,7 +75,6 @@ public class PacienteService {
         } else {
             paciente.setPsicologo(null);
         }
-
         Usuario usuario = paciente.getUsuario();
 
         if (usuario != null) {

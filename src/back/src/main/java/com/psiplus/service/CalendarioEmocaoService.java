@@ -2,7 +2,7 @@ package com.psiplus.service;
 
 import com.psiplus.model.CalendarioEmocao;
 import com.psiplus.repository.CalendarioEmocaoRepository;
-import com.psiplus.dto.CalendarioEmocaoDTO;
+import com.psiplus.DTO.CalendarioEmocaoDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

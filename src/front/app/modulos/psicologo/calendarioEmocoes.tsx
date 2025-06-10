@@ -14,6 +14,7 @@ import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfi
 import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
 import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
+import PainelLateralEmocao from "~/componentes/PainelLateralEmocao";
 
 //Imports da agenda
 import localizer from "~/utils/calendarConfig";
@@ -46,6 +47,7 @@ export default function CalendarioEmocoes() {
     const [dataBase, setDataBase] = useState(new Date());
     const [mesLateral, setMesLateral] = useState(new Date());
     const [visualizacao, setVisualizacao] = useState<View>("week");
+    const [eventoSelecionado, setEventoSelecionado] = useState<any | null>(null);
 
     //Buscar dados do paciente
     const [paciente, setPaciente] = useState<Paciente>({
@@ -362,9 +364,34 @@ export default function CalendarioEmocoes() {
                                     onNavigate={(novaData) => setDataBase(novaData)}
                                     view={visualizacao}
                                     onView={(view) => setVisualizacao(view)}
+
+                                    onSelectEvent={(event) => {
+                                        const data = format(event.start, "yyyy-MM-dd");
+                                        const hora = format(event.start, "HH:mm:ss");
+
+                                        setEventoSelecionado({
+                                            id: 0,
+                                            paciente: paciente, // ou null, se não estiver usando
+                                            tipoEmocao: {
+                                                nome: event.emocao,
+                                                icone: event.emocao, // usamos o mesmo nome como ícone por enquanto
+                                            },
+                                            data,
+                                            hora,
+                                            sentimento: "",
+                                            notas: "",
+                                        });
+                                    }}
                                 />
                             </div>
                         </div>
+                        {eventoSelecionado && (
+                            <PainelLateralEmocao
+                                evento={eventoSelecionado}
+                                aoFechar={() => setEventoSelecionado(null)}
+                            />
+                        )}
+
                     </div>
                 </div>
             </div>

@@ -26,6 +26,9 @@ export default function CadastroPacientes() {
   const [notas, setNotas] = useState("");
   const [mostrarPopup, setMostrarPopup] = useState(false);
   const [mensagemErro, setMensagemErro] = useState("");
+  const psicologoSessao = sessionStorage.getItem("sessaoPsicologo");
+  const psicologo = psicologoSessao ? JSON.parse(psicologoSessao) : null;
+  const psicologoId = psicologo ? psicologo.usuarioId : null;
 
   const handleSubmit = async () => {
     if (!camposObrigatoriosPreenchidos()) {
@@ -52,7 +55,8 @@ export default function CadastroPacientes() {
         }
       },
       historicoClinico: null,
-      notas: notas || null
+      notas: notas || null,
+      psicologo: { psicologoId: psicologoId }
     };
 
     try {

@@ -1,6 +1,8 @@
 package com.psiplus.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "paciente")
@@ -26,6 +28,14 @@ public class Paciente {
 
     @Column(columnDefinition = "TEXT")
     private String notas;
+
+    @Column(name = "paciente_arquivado")
+    private Boolean arquivado = false;
+
+    @ManyToOne
+    @JoinColumn(name = "psicologo_id")
+    @JsonBackReference
+    private Psicologo psicologo;
 
     // Getters e Setters
 
@@ -56,5 +66,9 @@ public class Paciente {
     }
     public String getNotas() { return notas; }
     public void setNotas(String notas) { this.notas = notas; }
+    public Boolean getArquivado(){ return arquivado; }
+    public void setArquivado(Boolean arquivado){ this.arquivado = arquivado; }
+    public Psicologo getPsicologo() { return psicologo; }
+    public void setPsicologo (Psicologo psicologo){ this.psicologo = psicologo; }
 
 }

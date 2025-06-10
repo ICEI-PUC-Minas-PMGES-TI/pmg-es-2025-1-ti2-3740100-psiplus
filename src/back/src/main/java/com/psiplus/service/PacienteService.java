@@ -7,6 +7,7 @@ import com.psiplus.DTO.AnotacaoDTO;
 import com.psiplus.model.Paciente;
 import com.psiplus.model.Usuario;
 import com.psiplus.model.Endereco;
+import com.psiplus.model.Psicologo;
 
 import com.psiplus.email.EmailService;
 import com.psiplus.util.EmailTemplates;
@@ -14,6 +15,7 @@ import com.psiplus.util.EmailTemplates;
 import com.psiplus.repository.UsuarioRepository;
 import com.psiplus.repository.PacienteRepository;
 import com.psiplus.repository.EnderecoRepository;
+import com.psiplus.repository.PsicologoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -42,6 +44,9 @@ public class PacienteService {
     private EnderecoRepository enderecoRepository;
 
     @Autowired
+    private PsicologoRepository psicologoRepository;
+
+    @Autowired
     private EmailService emailService;
 
     public List<Paciente> listarTodos() {
@@ -52,8 +57,18 @@ public class PacienteService {
         return repository.findById(id).orElse(null);
     }
 
+
     @Transactional
     public Paciente salvar(Paciente paciente) {
+        // Verificar se paciente tem psicologo setado
+        if (paciente.getPsicologo() != null && paciente.getPsicologo().getPsicologoId() != null) {
+            Psicologo psicologo = psicologoRepository.findById(paciente.getPsicologo().getPsicologoId())
+                    .orElseThrow(() -> new RuntimeException("Psicólogo não encontrado"));
+            paciente.setPsicologo(psicologo);
+        } else {
+            paciente.setPsicologo(null);
+        }
+
         Usuario usuario = paciente.getUsuario();
 
         if (usuario != null) {

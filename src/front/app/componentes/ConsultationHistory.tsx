@@ -7,45 +7,23 @@ import axios from "axios";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
-interface Anotacao {
-    data: string; // ou data_registro
-    hora: string; // ou hora_registro
-    conteudo: string; // ou anotacao
+interface ConsultationHistoryProps {
+    pacienteId: number;
+    historicoClinico: Anotacao[];
 }
 
-const ConsultationHistory: React.FC = () => {
-    const navigate = useNavigate();
-    const { id } = useParams();
-    const pacienteId = Number(id);
+const ConsultationHistory: React.FC<ConsultationHistoryProps> = ({ pacienteId, historicoClinico }) => {
+    const [anotacoes, setAnotacoes] = useState<Anotacao[]>(historicoClinico);    const navigate = useNavigate();
 
     const [modoEdicao, setModoEdicao] = useState(false);
-    const [anotacoes, setAnotacoes] = useState<Anotacao[]>([]);
     const [novoConteudo, setNovoConteudo] = useState("");
     const [dataConsulta, setDataConsulta] = useState("");
     const [horaConsulta, setHoraConsulta] = useState("");
 
-    // Buscar os registros do paciente
-    useEffect(() => {
-        if (!pacienteId) return;
-
-        axios.get(`http://localhost:8080/registros/${pacienteId}`)
-            .then((res) => {
-                const registros: Anotacao[] = res.data.map((registro: any) => ({
-                    data: registro.data_registro,
-                    hora: registro.hora_registro,
-                    conteudo: registro.anotacao,
-                }));
-                setAnotacoes(registros);
-            })
-            .catch((err) => {
-                console.error("Erro ao carregar registros:", err);
-            });
-    }, [pacienteId]);
-
     const handleAdicionarAnotacao = () => {
         const agora = new Date();
         const dataISO = agora.toISOString().split("T")[0]; // yyyy-mm-dd
-        const hora = agora.toTimeString().slice(0, 5); // hh:mm
+        const hora = agora.toTimeString().split(" ")[0]; // "HH:mm:ss"
 
         setDataConsulta(dataISO);
         setHoraConsulta(hora);
@@ -55,20 +33,21 @@ const ConsultationHistory: React.FC = () => {
     const handleSalvar = async () => {
         if (!novoConteudo.trim()) return;
 
-        const dataHoraCompleta = `${dataConsulta}T${horaConsulta}:00`;
+        const horaCompleta = horaConsulta.length === 5 ? horaConsulta + ":00" : horaConsulta;
+
         const nova: Anotacao = {
-            data: new Date(dataHoraCompleta).toISOString(),
+            data: dataConsulta,
+            hora: horaCompleta,
             conteudo: novoConteudo.trim(),
         };
 
         const novasAnotacoes = [nova, ...anotacoes];
 
         try {
-            // Enviar as novas anotações, não as antigas!
             await axios.post(`http://localhost:8080/registros`, {
-                pacienteId: pacienteId,
+                pacienteId,
                 data: dataConsulta,
-                hora: horaConsulta,
+                hora: horaCompleta,
                 conteudo: novoConteudo.trim(),
             });
             setAnotacoes(novasAnotacoes);
@@ -79,13 +58,37 @@ const ConsultationHistory: React.FC = () => {
         }
     };
 
-    const anotacoesOrdenadas = [...anotacoes].sort(
-        (a, b) => new Date(b.data).getTime() - new Date(a.data).getTime()
-    );
+    useEffect(() => {
+        if (!pacienteId) return;
 
-    const formatarDataHora = (iso: string) => {
-        const data = new Date(iso);
-        return `${data.toLocaleDateString("pt-BR")} - ${data.toLocaleTimeString("pt-BR", {
+        axios.get(`http://localhost:8080/registros/${pacienteId}`)
+            .then((res) => {
+                setAnotacoes(res.data);
+            })
+            .catch((err) => {
+                console.error("Erro ao carregar registros:", err);
+            });
+    }, [pacienteId]);
+
+    const anotacoesOrdenadas = [...anotacoes].sort((a, b) => {
+        const horaALimpa = typeof a.hora === "string" ? a.hora.split(".")[0] : "00:00:00";
+        const horaBLimpa = typeof b.hora === "string" ? b.hora.split(".")[0] : "00:00:00";
+
+        const dataHoraA = new Date(`${a.data}T${horaALimpa}`);
+        const dataHoraB = new Date(`${b.data}T${horaBLimpa}`);
+        return dataHoraB.getTime() - dataHoraA.getTime();
+    });
+
+    const formatarDataHora = (data: string, hora?: string) => {
+        if (!hora || typeof hora !== "string") return "Data inválida";
+
+        // Limpa possíveis milissegundos, se houver
+        const horaLimpa = hora.split(".")[0];
+
+        const dataHora = new Date(`${data}T${horaLimpa}`);
+        if (isNaN(dataHora.getTime())) return "Data inválida";
+
+        return `${dataHora.toLocaleDateString("pt-BR")} - ${dataHora.toLocaleTimeString("pt-BR", {
             hour: "2-digit",
             minute: "2-digit",
         })}`;
@@ -181,7 +184,7 @@ const ConsultationHistory: React.FC = () => {
                                     onClick={() => toggleRegistro(index)}
                                 >
                                   <span className="text-sm font-semibold">
-                                    {formatarDataHora(anotacao.data)}
+                                    {formatarDataHora(anotacao.data, anotacao.hora)}
                                   </span>
                                     <span className="text-xl">
                                     <span className="text-xl">

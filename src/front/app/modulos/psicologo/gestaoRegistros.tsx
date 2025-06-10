@@ -8,10 +8,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import HistoryIcon from "@mui/icons-material/History";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
-import { IoIosArrowDown } from "react-icons/io";
 import { useState, useEffect } from "react";
-import EditIcon from '@mui/icons-material/Edit';
-import LockIcon from "@mui/icons-material/Lock";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useNavigate, useParams } from "react-router";
 import axios from "axios";
@@ -60,8 +57,8 @@ export function GestaoRegistros() {
 
         const dataPaciente = pacienteRes.data;
         const registros = registrosRes.data.map((reg: any) => ({
-          data: reg.dataRegistro,
-          hora: reg.horaRegistro,
+          data: reg.data_registro,
+          hora: reg.hora_registro,
           conteudo: reg.anotacao
         }));
 
@@ -84,6 +81,7 @@ export function GestaoRegistros() {
   function leave() {
     sessionStorage.removeItem("sessaoPsicologo");
     sessionStorage.removeItem("sessaoPaciente");
+    sessionStorage.removeItem("sessionData");
     navigate("/")
   }
 
@@ -155,6 +153,7 @@ export function GestaoRegistros() {
                   </button>
 
                   <button
+                      onClick={() => navigate(`/psicologo/calendarioEmocoes/${id}`)}
                       className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-[#2B2F42] w-full">
                     <div className="bg-[#F4F7FF] rounded-md p-1">
                       <SentimentVerySatisfiedIcon style={{color: "#858EBD"}}/>
@@ -166,7 +165,10 @@ export function GestaoRegistros() {
 
               {/* Registros */}
               <div className="flex-1">
-                <ConsultationHistory />
+                <ConsultationHistory
+                    pacienteId={Number(id)}
+                    historicoClinico={paciente.historicoClinico || []}
+                />
               </div>
             </div>
           </div>

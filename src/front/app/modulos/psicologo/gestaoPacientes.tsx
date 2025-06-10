@@ -213,6 +213,7 @@ export default function GestaoPacientes() {
     function leave() {
         sessionStorage.removeItem("sessaoPsicologo");
         sessionStorage.removeItem("sessaoPaciente");
+        sessionStorage.removeItem("sessionData");
         navigate("/")
     }
 
@@ -283,6 +284,7 @@ export default function GestaoPacientes() {
                     </button>
 
                     <button
+                        onClick={() => navigate(`/psicologo/calendarioEmocoes/${id}`)}
                         className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-[#2B2F42] w-full">
                       <div className="bg-[#F4F7FF] rounded-md p-1">
                         <SentimentVerySatisfiedIcon style={{color: "#858EBD"}}/>

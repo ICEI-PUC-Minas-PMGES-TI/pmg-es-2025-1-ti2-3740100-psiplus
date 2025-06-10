@@ -2,19 +2,20 @@ package com.psiplus.controller;
 import java.util.HashMap;
 import java.util.Map;
 
-import back.src.main.java.com.psiplus.DTO.RedefinicaoSenhaDTO;
-import org.springframework.http.HttpStatus;
 import com.psiplus.DTO.PacienteDTO;
+import com.psiplus.DTO.RedefinicaoSenhaDTO;
 import com.psiplus.model.Paciente;
 import com.psiplus.model.LoginRequest;
-import com.psiplus.model.Psicologo;
 import com.psiplus.service.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -25,8 +26,8 @@ public class PacienteController {
     private PacienteService service;
 
     @GetMapping
-    public List<Paciente> listar() {
-        return service.listarTodos();
+    public List<PacienteDTO> listar(@RequestParam(required = false) String nome) {
+        return nome != null ? service.buscarPorNome(nome) : service.listarResumo();
     }
 
     @GetMapping("/{id}")
@@ -61,18 +62,13 @@ public class PacienteController {
         if (existente == null) {
             return ResponseEntity.notFound().build();
         }
-
-        // Preserva os IDs do usuário e endereço existentes
         if (existente.getUsuario() != null) {
             pacienteAtualizado.getUsuario().setUsuarioId(existente.getUsuario().getUsuarioId());
-
             if (existente.getUsuario().getEndereco() != null) {
                 pacienteAtualizado.getUsuario().getEndereco().setId(existente.getUsuario().getEndereco().getId());
             }
         }
-
         pacienteAtualizado.setPacienteId(id);
-
         Paciente salvo = service.salvar(pacienteAtualizado);
         return ResponseEntity.ok(salvo);
     }
@@ -110,9 +106,8 @@ public class PacienteController {
         boolean sucesso = service.redefinirSenha(dto.getEmail(), dto.getSenhaAntiga(), dto.getNovaSenha(), dto.getConfirmarSenha());
         if (sucesso) {
             return ResponseEntity.ok("Senha redefinida com sucesso.");
-        }else {
+        } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Senha antiga incorreta ou paciente não encontrado.");
         }
     }
-
 }

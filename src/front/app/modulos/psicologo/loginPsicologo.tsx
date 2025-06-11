@@ -7,12 +7,15 @@ import HomeLogo from "~/componentes/HomeLogo";
 import {useNavigate} from "react-router";
 import {useState} from "react";
 import axios from "axios";
+import Popup from "~/componentes/Popup";
 
 export function LoginPsicologo() {
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
     const [erro, setErro] = useState("");
+    const [mensagemPopup, setMensagemPopup] = useState("");
+    const [mostrarPopup, setMostrarPopup] = useState(false);
 
     function fazerLogin(e: React.FormEvent) {
         e.preventDefault();
@@ -35,8 +38,17 @@ export function LoginPsicologo() {
                 navigate("/psicologo/agenda");
             })
             .catch((error) => {
-                console.error("Erro ao salvar os dados no backend:", error);
-                alert("Houve um erro ao salvar os dados.");
+                if (error.response) {
+                    if (error.response.status === 401) {
+                        setMensagemPopup("Email ou senha inválidos.");
+                    } else {
+                        setMensagemPopup("Erro interno do servidor. Tente novamente mais tarde.");
+                    }
+                } else {
+                    setMensagemPopup("Não foi possível conectar ao servidor. Verifique sua conexão.");
+                }
+
+                setMostrarPopup(true);
             });
     }
   return (
@@ -70,6 +82,16 @@ export function LoginPsicologo() {
                 </FormPadrao>
             </div>
         </div>
+
+        {mostrarPopup && (
+            <Popup
+                titulo="Erro no login"
+                mensagem={mensagemPopup}
+                onClose={() => {
+                    setMostrarPopup(false);
+                }}
+            />
+        )}
     </Main>
   );
 }

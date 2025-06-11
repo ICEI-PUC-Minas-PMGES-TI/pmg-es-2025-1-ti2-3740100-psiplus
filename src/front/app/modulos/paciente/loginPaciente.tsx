@@ -7,12 +7,15 @@ import HomeLogo from "~/componentes/HomeLogo";
 import {useNavigate} from "react-router";
 import {useState} from "react";
 import axios from "axios";
+import Popup from "~/componentes/Popup";
 
 export function LoginPaciente() {
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
     const [erro, setErro] = useState("");
+    const [mensagemPopup, setMensagemPopup] = useState("");
+    const [mostrarPopup, setMostrarPopup] = useState(false);
 
     function fazerLogin(e: React.FormEvent) {
         e.preventDefault();
@@ -46,12 +49,17 @@ export function LoginPaciente() {
                 }
             })
             .catch((error) => {
-                if (error.response && error.response.status === 401) {
-                    setErro("E-mail ou senha incorretos");
+                if (error.response) {
+                    if (error.response.status === 401) {
+                        setMensagemPopup("Email ou senha inválidos.");
+                    } else {
+                        setMensagemPopup("Erro interno do servidor. Tente novamente mais tarde.");
+                    }
                 } else {
-                    console.error("Erro ao salvar os dados no backend:", error);
-                    setErro("Houve um erro ao salvar os dados.");
+                    setMensagemPopup("Não foi possível conectar ao servidor. Verifique sua conexão.");
                 }
+
+                setMostrarPopup(true);
             });
     }
     return (
@@ -84,6 +92,15 @@ export function LoginPaciente() {
                     </FormPadrao>
                 </div>
             </div>
+            {mostrarPopup && (
+                <Popup
+                    titulo="Erro no login"
+                    mensagem={mensagemPopup}
+                    onClose={() => {
+                        setMostrarPopup(false);
+                    }}
+                />
+            )}
         </Main>
     );
 }

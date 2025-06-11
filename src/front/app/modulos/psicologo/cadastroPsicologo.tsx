@@ -85,7 +85,7 @@ export function CadastroPsicologo() {
           };
 
           sessionStorage.setItem("sessaoPsicologo", JSON.stringify(dadosSessao));
-          navigate("/psicologo/agenda");
+          navigate("/psicologo/login");
       })
           .catch((error) => {
             console.error("Erro ao salvar os dados no backend:", error);

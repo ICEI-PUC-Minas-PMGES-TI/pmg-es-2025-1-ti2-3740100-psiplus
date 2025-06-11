@@ -30,8 +30,109 @@ export function AgendaPaciente(){
     const [dataBase, setDataBase] = useState(new Date());
     const [mesLateral, setMesLateral] = useState(new Date());
     const [excecoes, setExcecoes] = useState<any[]>([]);
-    const [psicologoId, setPsicologoId] = useState<number | null>(null);
+    const [pacienteId, setPacienteId] = useState<number | null>(null);
     const [consultas, setConsultas] = useState([]);
+
+    useEffect(() => {
+        const sessao = JSON.parse(sessionStorage.getItem("sessaoPaciente") || "{}");
+        if (sessao?.usuarioId) {
+            setPacienteId(sessao.usuarioId);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (!pacienteId) return;
+
+        const carregarExcecoes = async () => {
+            try {
+                const data = await listarExcecoesDisponibilidade(pacienteId);
+                const excecoesFormatadas = data.map((excecao: any) => ({
+                    ...excecao,
+                    pacienteId,
+                    id: excecao.id,
+                    start: new Date(excecao.dataHoraInicio),
+                    end: new Date(excecao.dataHoraFim),
+                    motivo: excecao.motivo ?? null,
+                    recorrenteRelacionadaId: excecao.recorrenteRelacionada ? excecao.recorrenteRelacionada.recorrenteId : null,
+                }));
+                setExcecoes(excecoesFormatadas);
+            } catch (error) {
+                console.error("Erro ao carregar exceções:", error);
+            }
+        };
+
+        const carregarConsultas = async () => {
+            try {
+                const { data: consultasBackend } = await axios.get(`http://localhost:8080/consultas/paciente/${pacienteId}`);
+                consultasBackend.sort((a, b) => {
+                    if (a.pacienteId !== b.pacienteId) return a.pacienteId - b.pacienteId;
+                    if (a.data !== b.data) return a.data.localeCompare(b.data);
+                    return a.horarioInicio.localeCompare(b.horarioInicio);
+                });
+
+                const gruposUnificados = [];
+                for (let i = 0; i < consultasBackend.length; i++) {
+                    const atual = consultasBackend[i];
+                    const [hIni, mIni] = atual.horarioInicio.split(":").map(Number);
+                    const [hFim, mFim] = atual.horarioFim.split(":").map(Number);
+                    const dataPartes = atual.data.split("-");
+                    const dataConsulta = new Date(Number(dataPartes[0]), Number(dataPartes[1]) - 1, Number(dataPartes[2]));
+                    const inicio = new Date(dataConsulta);
+                    inicio.setHours(hIni, mIni, 0, 0);
+                    const fim = new Date(dataConsulta);
+                    fim.setHours(hFim, mFim, 0, 0);
+
+                    const ultimoGrupo = gruposUnificados[gruposUnificados.length - 1];
+                    const mesmaPessoa = ultimoGrupo && ultimoGrupo.pacienteId === atual.pacienteId;
+                    const mesmaData = ultimoGrupo && ultimoGrupo.data === atual.data;
+                    const continua = ultimoGrupo && ultimoGrupo.horarioFim === atual.horarioInicio;
+
+                    if (mesmaPessoa && mesmaData && continua) {
+                        ultimoGrupo.horarioFim = atual.horarioFim;
+                        ultimoGrupo.end = fim;
+                    } else {
+                        gruposUnificados.push({
+                            id: atual.id,
+                            pacienteId: atual.pacienteId,
+                            data: atual.data,
+                            horarioInicio: atual.horarioInicio,
+                            horarioFim: atual.horarioFim,
+                            start: inicio,
+                            end: fim,
+                        });
+                    }
+                }
+
+                const consultasComNome = await Promise.all(
+                    gruposUnificados.map(async (consulta) => {
+                        try {
+                            const resPaciente = await axios.get(`http://localhost:8080/pacientes/${consulta.pacienteId}`);
+                            const nomePaciente = resPaciente.data.usuario.nome;
+                            return {
+                                id: consulta.id,
+                                title: `Consulta agendada`,
+                                start: consulta.start,
+                                end: consulta.end,
+                            };
+                        } catch (error) {
+                            console.error(`Erro ao buscar nome do paciente ${consulta.pacienteId}:`, error);
+                            return null;
+                        }
+                    })
+                );
+                setConsultas(consultasComNome.filter(Boolean));
+            } catch (error) {
+                console.error("Erro ao buscar consultas:", error);
+            }
+        };
+
+        carregarConsultas();
+
+    }, [pacienteId]);
+
+    const agendaEventos = React.useMemo(() => {
+        return [...consultas];
+    }, [consultas]);
 
     const semanaAnterior = () => {
         const novaData = new Date(dataBase);
@@ -105,6 +206,8 @@ export function AgendaPaciente(){
     //Calendário lateral
     const [dataSelecionada, setDataSelecionada] = useState(new Date());
     const [visualizacao, setVisualizacao] = useState<View>("week");
+
+    const consultasDoDia = agendaEventos.filter((evento) => isSameDay(evento.start, dataSelecionada));
 
     const diasDoMes = eachDayOfInterval({
         start: startOfWeek(startOfMonth(mesLateral), { weekStartsOn: 0 }), // Domingo anterior ou do dia 1
@@ -186,6 +289,7 @@ export function AgendaPaciente(){
                                 header: CustomHeader,
                                 event: EventoCalendario
                             }}
+                            events={agendaEventos}
                             eventPropGetter={estiloEvento}
                             messages={{
                                 week: "Semana",
@@ -273,6 +377,28 @@ export function AgendaPaciente(){
                     </div>
 
                     {/* Consultas do dia */}
+
+                    <div className="mt-8">
+                        <h2 className="text-base font-bold text-[#161736] mb-4">Eventos do dia</h2>
+                        {consultasDoDia.length === 0 ? (
+                            <p className="text-sm text-[#8C9BB0]">Nenhuma consulta</p>
+                        ) : (
+                            consultasDoDia.map((consulta, idx) => (
+                                <div key={idx} className="flex items-center bg-[#EDF0F5] rounded-lg px-3 py-2 mb-2">
+                                    <div className="w-10 h-10 bg-[#ADD9E2] rounded-full mr-3 flex items-center justify-center font-bold text-[#0088A3]">
+                                        {consulta.title.charAt(0)}
+                                    </div>
+                                    <div>
+                                        <p className="font-medium text-sm text-[#161736]">{consulta.title}</p>
+                                        <p className="text-xs text-[#8C9BB0] flex items-center gap-1">
+                                            <span className="w-2 h-2 bg-[#F79824] rounded-full inline-block"></span>
+                                            {format(consulta.start, "HH:mm")} - {format(consulta.end, "HH:mm")}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
 
                 </div>
 

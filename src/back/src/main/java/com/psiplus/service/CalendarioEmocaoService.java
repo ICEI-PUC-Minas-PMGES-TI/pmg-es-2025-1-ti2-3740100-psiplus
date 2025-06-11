@@ -25,14 +25,16 @@ public class CalendarioEmocaoService {
     }
 
     public List<CalendarioEmocaoDTO> listarPorPacienteId(Long pacienteId) {
-        return calendarioEmocaoRepository.findByPaciente_PacienteId(pacienteId)
+        List<CalendarioEmocaoDTO> dtos = calendarioEmocaoRepository.findByPacienteIdComTipoEmocao(pacienteId)
                 .stream()
                 .map(this::toDTO)
                 .toList();
+        dtos.forEach(dto -> System.out.println("DTO id: " + dto.getId() + ", sentimento: " + dto.getSentimento() + ", notas: " + dto.getNotas()));
+        return dtos;
     }
 
     public List<CalendarioEmocaoDTO> listarPorPacienteEData(Long pacienteId, LocalDate data) {
-        return calendarioEmocaoRepository.findByPaciente_PacienteIdAndData(pacienteId, data)
+        return calendarioEmocaoRepository.findByPacienteIdAndDataComTipoEmocao(pacienteId, data)
                 .stream()
                 .map(this::toDTO)
                 .toList();
@@ -43,6 +45,7 @@ public class CalendarioEmocaoService {
         dto.setId(entity.getId());
         dto.setPacienteId(entity.getPaciente().getPacienteId());
         dto.setTipoEmocaoId(entity.getTipoEmocao().getId());
+        dto.setTipoEmocaoNome(entity.getTipoEmocao().getNome());
         dto.setData(entity.getData());
         dto.setHora(entity.getHora());
         dto.setSentimento(entity.getSentimento());

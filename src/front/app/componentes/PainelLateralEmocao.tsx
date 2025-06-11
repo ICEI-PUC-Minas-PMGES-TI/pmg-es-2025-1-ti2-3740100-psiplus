@@ -33,6 +33,10 @@ export default function PainelLateralEmocao({ evento, onClose }: PainelLateralEm
     const dataFormatada = format(new Date(evento.data), "dd/MM/yyyy", { locale: ptBR });
     const horaFormatada = evento.hora?.slice(0, 5);
 
+    console.log('Sentimento:', evento.sentimento);
+    console.log('Notas:', evento.notas);
+    console.log('Evento recebido:', evento);
+
     return (
         <div className="fixed top-0 right-0 w-full max-w-md h-screen bg-white shadow-lg z-50 flex flex-col">
             {/* Botão fechar - canto superior direito */}
@@ -45,9 +49,13 @@ export default function PainelLateralEmocao({ evento, onClose }: PainelLateralEm
             {/* Linha com "Emoção Diária" + ícone */}
             <div className="flex items-center justify-between px-4 pb-3 border-b border-gray-200">
                 <span className="text-[#7D8FB3] font-semibold text-lg">Emoção Diária</span>
-                {(evento.tipoEmocao?.nome && iconesEmocoes[evento.tipoEmocao.nome.toLowerCase()]) ?? (
-                    <span className="text-sm text-gray-400">?</span>
-                )}
+                <div className="flex items-center gap-2">
+                    {evento.tipoEmocao?.nome && iconesEmocoes[evento.tipoEmocao.nome.toLowerCase()] ? (
+                        iconesEmocoes[evento.tipoEmocao.nome.toLowerCase()]
+                    ) : (
+                        <span className="text-sm text-gray-400">?</span>
+                    )}
+                </div>
             </div>
 
             {/* Conteúdo com rolagem */}
@@ -67,7 +75,7 @@ export default function PainelLateralEmocao({ evento, onClose }: PainelLateralEm
                 {/* Sentimento */}
                 <div className="flex items-start space-x-3 p-4 border-b border-gray-200">
                     <TagFacesIcon className="text-gray-300 mt-1" />
-                    <p className="text-[#7D8FB3] text-sm leading-relaxed whitespace-pre-line">
+                    <p className="text-gray-500 text-sm leading-relaxed whitespace-pre-line">
                         {evento.sentimento}
                     </p>
                 </div>

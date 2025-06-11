@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/emocoes")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:8080", allowCredentials = "true")
 public class CalendarioEmocaoController {
 
     @Autowired
@@ -21,11 +21,6 @@ public class CalendarioEmocaoController {
     public CalendarioEmocaoDTO criarEmocao(@RequestBody CalendarioEmocao emocao) {
         CalendarioEmocao salvo = calendarioEmocaoService.salvar(emocao);
         return calendarioEmocaoService.toDTO(salvo);
-    }
-
-    @GetMapping
-    public List<CalendarioEmocao> listarTodos() {
-        return calendarioEmocaoService.listarTodos();
     }
 
     @GetMapping("/paciente/{pacienteId}")

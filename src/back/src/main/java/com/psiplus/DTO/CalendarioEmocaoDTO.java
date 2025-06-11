@@ -8,6 +8,7 @@ public class CalendarioEmocaoDTO {
     private Long id;
     private Long pacienteId;
     private Long tipoEmocaoId;
+    private String tipoEmocaoNome;
     private LocalDate data;
     private LocalTime hora;
     private String sentimento;
@@ -37,6 +38,14 @@ public class CalendarioEmocaoDTO {
 
     public void setTipoEmocaoId(Long tipoEmocaoId) {
         this.tipoEmocaoId = tipoEmocaoId;
+    }
+
+    public String getTipoEmocaoNome() {
+        return tipoEmocaoNome;
+    }
+
+    public void setTipoEmocaoNome(String tipoEmocaoNome) {
+        this.tipoEmocaoNome = tipoEmocaoNome;
     }
 
     public LocalDate getData() {

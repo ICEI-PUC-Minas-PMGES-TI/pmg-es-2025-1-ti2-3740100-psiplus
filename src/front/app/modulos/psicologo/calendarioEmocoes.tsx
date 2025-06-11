@@ -15,6 +15,7 @@ import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
 import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
 import PainelLateralEmocao from "~/componentes/PainelLateralEmocao";
+import { iconesEmocoes } from "~/componentes/iconesEmocoes";
 
 //Imports da agenda
 import localizer from "~/utils/calendarConfig";
@@ -40,6 +41,19 @@ interface Paciente {
     usuario: Usuario;
 }
 
+interface EventoEmocao {
+    id: number;
+    paciente: Paciente;
+    data: string;
+    hora: string;
+    tipoEmocao: {
+        nome: string;
+        icone: string;
+    };
+    sentimento: string;
+    notas: string;
+}
+
 export default function CalendarioEmocoes() {
     const navigate = useNavigate();
     const { id } = useParams();
@@ -48,32 +62,68 @@ export default function CalendarioEmocoes() {
     const [mesLateral, setMesLateral] = useState(new Date());
     const [visualizacao, setVisualizacao] = useState<View>("week");
     const [eventoSelecionado, setEventoSelecionado] = useState<EventoEmocao | null>(null);
+    const [paciente, setPaciente] = useState<Paciente>({ usuario: { nome: "", email: "" } });
+    const [eventos, setEventos] = useState<Array<{
+        start: Date;
+        end: Date;
+        emocao: string;
+        original: EventoEmocao;
+    }>>([]);
 
-    //Buscar dados do paciente
-    const [paciente, setPaciente] = useState<Paciente>({
-        usuario: { nome: "", email: "" },
-    });
-
+    // Buscar paciente
     useEffect(() => {
         if (!id) return;
-
-        const carregarPaciente = async () => {
-            try {
-                const response = await axios.get(`http://localhost:8080/pacientes/${id}`);
-                setPaciente({
-                    usuario: {
-                        nome: response.data.usuario.nome,
-                        email: response.data.usuario.email,
-                    },
-                });
-            } catch (error) {
-                console.error("Erro ao buscar paciente:", error);
-            }
-        };
-
-        carregarPaciente();
+        axios.get(`http://localhost:8080/pacientes/${id}`).then(res => {
+            setPaciente({ usuario: res.data.usuario });
+        });
     }, [id]);
 
+    // Buscar eventos emocionais do paciente
+    useEffect(() => {
+        if (!id) return;
+        if (!paciente.usuario.nome) return;  // espera paciente carregado
+
+        axios.get(`http://localhost:8080/api/emocoes/paciente/${id}`).then(res => {
+            console.log('Resposta bruta da API:', res.data);
+            const eventosTransformados = res.data.map((e: any) => {
+                console.log('Evento recebido:', e);
+                // parse datas
+                const [ano, mes, dia] = e.data.split('-').map(Number);
+                const [hora, minuto] = e.hora.split(':').map(Number);
+
+                const inicio = new Date(ano, mes - 1, dia, hora, minuto);
+                const fim = new Date(inicio.getTime() + 60 * 60 * 1000);
+
+                // monta evento usando paciente do estado
+                const evento: EventoEmocao = {
+                    id: e.id,
+                    paciente: paciente,  // usa o paciente atual
+                    data: e.data,
+                    hora: e.hora,
+                    tipoEmocao: {
+                        nome: e.tipoEmocaoNome,
+                        icone: e.tipoEmocaoNome,
+                    },
+                    sentimento: e.sentimento,
+                    notas: e.notas
+                };
+
+                return {
+                    start: inicio,
+                    end: fim,
+                    emocao: e.tipoEmocaoNome.toLowerCase(),
+                    original: evento,
+                };
+            });
+            setEventos(eventosTransformados);
+        });
+    }, [id, paciente]);
+
+    // Função de clique em evento do calendário
+    const aoSelecionarEvento = (event: any) => {
+        const e = event.original;
+        setEventoSelecionado(e);
+    };
 
     {/* Ajustar menu lateral internoabrindo e fechando */}
     type BotaoLateralProps = {
@@ -138,17 +188,6 @@ export default function CalendarioEmocoes() {
 
         return `${diaInicio} - ${diaFim} de ${mesCapitalizado}`;
     }
-
-    // Eventos
-    const eventos = [
-        { start: new Date(2025, 5, 8, 9, 0), end: new Date(2025, 5, 8, 10, 0), emocao: "feliz" },
-        { start: new Date(2025, 5, 3, 8, 0), end: new Date(2025, 5, 3, 9, 0), emocao: "neutro" },
-        { start: new Date(2025, 5, 3, 19, 0), end: new Date(2025, 5, 3, 20, 0), emocao: "raiva" },
-        { start: new Date(2025, 5, 3, 9, 0), end: new Date(2025, 5, 3, 10, 0), emocao: "feliz" },
-        { start: new Date(2025, 5, 3, 11, 0), end: new Date(2025, 5, 3, 12, 0), emocao: "triste" },
-        { start: new Date(2025, 5, 3, 15, 0), end: new Date(2025, 5, 3, 16, 0), emocao: "neutro" },
-        { start: new Date(2025, 5, 4, 8, 0), end: new Date(2025, 5, 4, 9, 0), emocao: "feliz" },
-    ];
 
     const MeuEvento = ({ event }) => {
         let Icone;
@@ -364,23 +403,8 @@ export default function CalendarioEmocoes() {
                                     onNavigate={(novaData) => setDataBase(novaData)}
                                     view={visualizacao}
                                     onView={(view) => setVisualizacao(view)}
-
                                     onSelectEvent={(event) => {
-                                        const data = format(event.start, "yyyy-MM-dd");
-                                        const hora = format(event.start, "HH:mm:ss");
-
-                                        setEventoSelecionado({
-                                            id: 0,
-                                            paciente: paciente, // ou null, se não estiver usando
-                                            tipoEmocao: {
-                                                nome: event.emocao,
-                                                icone: event.emocao, // usamos o mesmo nome como ícone por enquanto
-                                            },
-                                            data,
-                                            hora,
-                                            sentimento: "",
-                                            notas: "",
-                                        });
+                                        setEventoSelecionado(event.original);
                                     }}
                                 />
                             </div>

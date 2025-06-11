@@ -1,5 +1,13 @@
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { iconesEmocoes } from "~/componentes/iconesEmocoes";
+
+// Ícones do MUI
+import CloseIcon from "@mui/icons-material/Close";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import EditNoteIcon from "@mui/icons-material/EditNote";
+import TagFacesIcon from "@mui/icons-material/TagFaces";
 
 interface EventoEmocao {
     id: number;
@@ -8,61 +16,69 @@ interface EventoEmocao {
         nome: string;
         icone: string;
     };
-    data: string; // formato ISO: "2025-06-09"
-    hora: string; // formato: "14:30:00"
+    data: string;
+    hora: string;
     sentimento: string;
     notas: string;
 }
 
 interface PainelLateralEmocaoProps {
     evento: EventoEmocao | null;
+    onClose?: () => void;
 }
 
-export default function PainelLateralEmocao({ evento }: PainelLateralEmocaoProps) {
-    const dataHoraFormatada =
-        evento?.data && evento?.hora
-            ? format(new Date(`${evento.data}T${evento.hora}`), "dd 'de' MMMM 'às' HH:mm", { locale: ptBR })
-            : "Data ou hora não disponível";
+export default function PainelLateralEmocao({ evento, onClose }: PainelLateralEmocaoProps) {
+    if (!evento) return null;
 
-    if (!evento) {
-        return <div className="p-4">Nenhum evento selecionado.</div>;
-    }
+    const dataFormatada = format(new Date(evento.data), "dd/MM/yyyy", { locale: ptBR });
+    const horaFormatada = evento.hora?.slice(0, 5);
 
     return (
-        <div className="p-4 w-full max-w-md bg-white rounded shadow">
-            <h2 className="text-xl font-semibold mb-4">Detalhes da Emoção</h2>
+        <div className="fixed top-0 right-0 w-full max-w-md h-screen bg-white shadow-lg z-50 flex flex-col">
+            {/* Botão fechar - canto superior direito */}
+            <div className="flex justify-end p-4">
+                <button onClick={onClose}>
+                    <CloseIcon className="text-[#7D8FB3] cursor-pointer hover:text-black transition-colors duration-200" />
+                </button>
+            </div>
 
-            <div className="flex items-center space-x-4 mb-4">
-                {/* Ícone da emoção */}
-                {evento.tipoEmocao?.icone ? (
-                    <img
-                        src={`/icones-emocoes/${evento.tipoEmocao.icone}_preenchido.svg`}
-                        alt={evento.tipoEmocao.nome}
-                        className="w-12 h-12"
-                    />
-                ) : (
-                    <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-sm text-white">
-                        ?
-                    </div>
+            {/* Linha com "Emoção Diária" + ícone */}
+            <div className="flex items-center justify-between px-4 pb-3 border-b border-gray-200">
+                <span className="text-[#7D8FB3] font-semibold text-lg">Emoção Diária</span>
+                {(evento.tipoEmocao?.nome && iconesEmocoes[evento.tipoEmocao.nome.toLowerCase()]) ?? (
+                    <span className="text-sm text-gray-400">?</span>
                 )}
-                <div>
-                    <p className="text-lg font-semibold">{evento.tipoEmocao.nome}</p>
-                    <p className="text-sm text-gray-500">{dataHoraFormatada}</p>
+            </div>
+
+            {/* Conteúdo com rolagem */}
+            <div className="flex-1 overflow-y-auto">
+                {/* Data e Hora */}
+                <div className="grid grid-cols-2 gap-2 px-4 py-3 border-b border-gray-200 text-sm text-gray-700">
+                    <div className="flex items-center space-x-2">
+                        <CalendarTodayIcon fontSize="small" className="text-[#C3CAD9]" />
+                        <span>{dataFormatada}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <AccessTimeIcon fontSize="small" className="text-[#C3CAD9]" />
+                        <span>{horaFormatada}</span>
+                    </div>
                 </div>
-            </div>
 
-            <hr className="border-gray-200 mb-4" />
+                {/* Sentimento */}
+                <div className="flex items-start space-x-3 p-4 border-b border-gray-200">
+                    <TagFacesIcon className="text-gray-300 mt-1" />
+                    <p className="text-[#7D8FB3] text-sm leading-relaxed whitespace-pre-line">
+                        {evento.sentimento}
+                    </p>
+                </div>
 
-            <div className="mb-4">
-                <h3 className="font-semibold mb-1">Sentimento</h3>
-                <p className="text-gray-700">{evento.sentimento || "Não informado."}</p>
-            </div>
-
-            <hr className="border-gray-200 mb-4" />
-
-            <div>
-                <h3 className="font-semibold mb-1">Observações</h3>
-                <p className="text-gray-700">{evento.notas || "Nenhuma observação adicionada."}</p>
+                {/* Notas */}
+                <div className="flex items-start space-x-3 p-4">
+                    <EditNoteIcon className="text-gray-300 mt-1" />
+                    <p className="text-gray-500 text-sm leading-relaxed whitespace-pre-line">
+                        {evento.notas}
+                    </p>
+                </div>
             </div>
         </div>
     );

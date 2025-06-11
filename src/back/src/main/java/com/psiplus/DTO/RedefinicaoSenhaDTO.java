@@ -1,4 +1,4 @@
-package back.src.main.java.com.psiplus.DTO;
+package com.psiplus.DTO;
 
 public class RedefinicaoSenhaDTO {
     private String email;

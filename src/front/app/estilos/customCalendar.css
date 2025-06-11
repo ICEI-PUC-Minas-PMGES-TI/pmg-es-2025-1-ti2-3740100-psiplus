@@ -114,7 +114,7 @@
 
 .rbc-event {
     background-color: #FFF4E9 !important;
-    border: none !important; /* Zera todas as bordas */
+    border: none !important;
     border-left: 4px solid #F79824 !important;
     border-radius: 0 !important;
     color: #F79824 !important;
@@ -126,9 +126,16 @@
     justify-content: center !important;
 }
 
+.rbc-event.evento-disponivel {
+    background-color: #D1FAE5 !important;
+    border-left: 4px solid #10B981 !important;
+    color: #065F46 !important;
+    font-weight: 600 !important;
+}
+
 .rbc-event-disponivel {
     background-color: #e0faff !important;
-    border: none !important; /* Zera todas as bordas */
+    border: none !important;
     border-left: 4px solid #0088a3 !important;
     border-radius: 0 !important;
     color: #0088a3 !important;

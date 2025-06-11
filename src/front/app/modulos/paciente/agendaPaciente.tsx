@@ -32,6 +32,7 @@ export function AgendaPaciente(){
     const [excecoes, setExcecoes] = useState<any[]>([]);
     const [pacienteId, setPacienteId] = useState<number | null>(null);
     const [consultas, setConsultas] = useState([]);
+    const [disponiveis, setDisponiveis] = useState([]);
 
     useEffect(() => {
         const sessao = JSON.parse(sessionStorage.getItem("sessaoPaciente") || "{}");
@@ -43,25 +44,7 @@ export function AgendaPaciente(){
     useEffect(() => {
         if (!pacienteId) return;
 
-        const carregarExcecoes = async () => {
-            try {
-                const data = await listarExcecoesDisponibilidade(pacienteId);
-                const excecoesFormatadas = data.map((excecao: any) => ({
-                    ...excecao,
-                    pacienteId,
-                    id: excecao.id,
-                    start: new Date(excecao.dataHoraInicio),
-                    end: new Date(excecao.dataHoraFim),
-                    motivo: excecao.motivo ?? null,
-                    recorrenteRelacionadaId: excecao.recorrenteRelacionada ? excecao.recorrenteRelacionada.recorrenteId : null,
-                }));
-                setExcecoes(excecoesFormatadas);
-            } catch (error) {
-                console.error("Erro ao carregar exceções:", error);
-            }
-        };
-
-        const carregarConsultas = async () => {
+        const carregarEventosCalendario = async () => {
             try {
                 const { data: consultasBackend } = await axios.get(`http://localhost:8080/consultas/paciente/${pacienteId}`);
                 consultasBackend.sort((a, b) => {
@@ -75,21 +58,18 @@ export function AgendaPaciente(){
                     const atual = consultasBackend[i];
                     const [hIni, mIni] = atual.horarioInicio.split(":").map(Number);
                     const [hFim, mFim] = atual.horarioFim.split(":").map(Number);
-                    const dataPartes = atual.data.split("-");
-                    const dataConsulta = new Date(Number(dataPartes[0]), Number(dataPartes[1]) - 1, Number(dataPartes[2]));
-                    const inicio = new Date(dataConsulta);
-                    inicio.setHours(hIni, mIni, 0, 0);
-                    const fim = new Date(dataConsulta);
-                    fim.setHours(hFim, mFim, 0, 0);
+                    const [ano, mes, dia] = atual.data.split("-").map(Number);
+                    const inicio = new Date(ano, mes - 1, dia, hIni, mIni);
+                    const fim = new Date(ano, mes - 1, dia, hFim, mFim);
 
-                    const ultimoGrupo = gruposUnificados[gruposUnificados.length - 1];
-                    const mesmaPessoa = ultimoGrupo && ultimoGrupo.pacienteId === atual.pacienteId;
-                    const mesmaData = ultimoGrupo && ultimoGrupo.data === atual.data;
-                    const continua = ultimoGrupo && ultimoGrupo.horarioFim === atual.horarioInicio;
+                    const ultimo = gruposUnificados[gruposUnificados.length - 1];
+                    const mesmaPessoa = ultimo && ultimo.pacienteId === atual.pacienteId;
+                    const mesmaData = ultimo && ultimo.data === atual.data;
+                    const continua = ultimo && ultimo.horarioFim === atual.horarioInicio;
 
                     if (mesmaPessoa && mesmaData && continua) {
-                        ultimoGrupo.horarioFim = atual.horarioFim;
-                        ultimoGrupo.end = fim;
+                        ultimo.horarioFim = atual.horarioFim;
+                        ultimo.end = fim;
                     } else {
                         gruposUnificados.push({
                             id: atual.id,
@@ -103,36 +83,55 @@ export function AgendaPaciente(){
                     }
                 }
 
-                const consultasComNome = await Promise.all(
-                    gruposUnificados.map(async (consulta) => {
-                        try {
-                            const resPaciente = await axios.get(`http://localhost:8080/pacientes/${consulta.pacienteId}`);
-                            const nomePaciente = resPaciente.data.usuario.nome;
-                            return {
-                                id: consulta.id,
-                                title: `Consulta agendada`,
-                                start: consulta.start,
-                                end: consulta.end,
-                            };
-                        } catch (error) {
-                            console.error(`Erro ao buscar nome do paciente ${consulta.pacienteId}:`, error);
-                            return null;
-                        }
-                    })
-                );
-                setConsultas(consultasComNome.filter(Boolean));
+                const eventosConsultas = gruposUnificados.map((consulta) => ({
+                    id: consulta.id,
+                    title: "Consulta",
+                    start: consulta.start,
+                    end: consulta.end,
+                    backgroundColor: "#FECACA",
+                    borderColor: "#DC2626",
+                }));
+
+                setConsultas(eventosConsultas);
+
+                const { data: disponibilidadeMensal } = await axios.get(`http://localhost:8080/consultas/disponibilidade-mensal?pacienteId=${pacienteId}`);
+                setDisponiveis(disponibilidadeMensal);
+
             } catch (error) {
-                console.error("Erro ao buscar consultas:", error);
+                console.error("Erro ao carregar calendário:", error);
             }
         };
 
-        carregarConsultas();
+        carregarEventosCalendario();
 
     }, [pacienteId]);
 
+    const disponiveisFormatados = React.useMemo(() => {
+        const eventos = [];
+
+        Object.entries(disponiveis).forEach(([dataStr, horarios]) => {
+            horarios.forEach(horario => {
+                const inicio = new Date(horario.inicio);
+                const fim = new Date(horario.fim);
+
+                eventos.push({
+                    title: "Disponível",
+                    start: inicio,
+                    end: fim,
+                    className: "rbc-event.evento-disponivel",
+                    tipo: "disponivel",
+                });
+            });
+        });
+
+        return eventos;
+    }, [disponiveis]);
+
+
+
     const agendaEventos = React.useMemo(() => {
-        return [...consultas];
-    }, [consultas]);
+        return [...disponiveisFormatados, ...consultas];
+    }, [consultas, disponiveisFormatados]);
 
     const semanaAnterior = () => {
         const novaData = new Date(dataBase);
@@ -190,8 +189,29 @@ export function AgendaPaciente(){
         );
     };
 
-    const estiloEvento = () => {
+    const estiloEvento = (event) => {
+        if (event.tipo === "disponivel") {
+            return {
+                className: "rbc-event evento-disponivel",
+                style: {
+                    minHeight: '80px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    padding: '2px 4px',
+                    fontSize: '0.75rem',
+                    backgroundColor: '#D1FAE5',
+                    borderLeft: '4px solid #10B981',
+                    color: '#065F46',
+                    fontWeight: '600',
+                    boxShadow: 'none',
+                    borderRadius: '0',
+                    border: 'none',
+                }
+            };
+        }
         return {
+            className: "rbc-event",
             style: {
                 minHeight: '80px',
                 display: 'flex',
@@ -199,15 +219,27 @@ export function AgendaPaciente(){
                 justifyContent: 'center',
                 padding: '2px 4px',
                 fontSize: '0.75rem',
+                backgroundColor: '#FFF4E9',       // seu fundo padrão das consultas
+                borderLeft: '4px solid #F79824',  // borda laranja
+                color: '#F79824',
+                fontWeight: '500',
+                boxShadow: 'none',
+                borderRadius: '0',
+                border: 'none',
             }
         };
     };
+
+
 
     //Calendário lateral
     const [dataSelecionada, setDataSelecionada] = useState(new Date());
     const [visualizacao, setVisualizacao] = useState<View>("week");
 
-    const consultasDoDia = agendaEventos.filter((evento) => isSameDay(evento.start, dataSelecionada));
+    const consultasDoMes = agendaEventos
+        .filter(evento => !evento.tipo) // só os eventos que não são "disponivel" (assumindo que consultas não têm tipo)
+        .filter(evento => isSameMonth(evento.start, dataSelecionada));
+
 
     const diasDoMes = eachDayOfInterval({
         start: startOfWeek(startOfMonth(mesLateral), { weekStartsOn: 0 }), // Domingo anterior ou do dia 1
@@ -376,29 +408,29 @@ export function AgendaPaciente(){
                         </div>
                     </div>
 
-                    {/* Consultas do dia */}
-
+                    {/* Consultas do mês */}
                     <div className="mt-8">
-                        <h2 className="text-base font-bold text-[#161736] mb-4">Eventos do dia</h2>
-                        {consultasDoDia.length === 0 ? (
+                        <h2 className="text-base font-bold text-[#161736] mb-4">Consultas do mês</h2>
+                        {consultasDoMes.length === 0 ? (
                             <p className="text-sm text-[#8C9BB0]">Nenhuma consulta</p>
                         ) : (
-                            consultasDoDia.map((consulta, idx) => (
+                            consultasDoMes.map((consulta, idx) => (
                                 <div key={idx} className="flex items-center bg-[#EDF0F5] rounded-lg px-3 py-2 mb-2">
                                     <div className="w-10 h-10 bg-[#ADD9E2] rounded-full mr-3 flex items-center justify-center font-bold text-[#0088A3]">
                                         {consulta.title.charAt(0)}
                                     </div>
                                     <div>
-                                        <p className="font-medium text-sm text-[#161736]">{consulta.title}</p>
+                                        <p className="font-medium text-sm text-[#161736]">{consulta.title} {format(consulta.start, "dd/MM")}</p>
                                         <p className="text-xs text-[#8C9BB0] flex items-center gap-1">
                                             <span className="w-2 h-2 bg-[#F79824] rounded-full inline-block"></span>
-                                            {format(consulta.start, "HH:mm")} - {format(consulta.end, "HH:mm")}
+                                            {format(consulta.start, "dd/MM")} - {format(consulta.start, "HH:mm")} às {format(consulta.end, "HH:mm")}
                                         </p>
                                     </div>
                                 </div>
                             ))
                         )}
                     </div>
+
 
                 </div>
 

@@ -4,9 +4,11 @@ import com.psiplus.DTO.HorarioDisponivelDTO;
 import com.psiplus.model.Consulta;
 import com.psiplus.model.DisponibilidadeRecorrente;
 import com.psiplus.model.ExcecaoDisponibilidade;
+import com.psiplus.model.Paciente;
 import com.psiplus.repository.ConsultaRepository;
 import com.psiplus.repository.DisponibilidadeRecorrenteRepository;
 import com.psiplus.repository.ExcecaoDisponibilidadeRepository;
+import com.psiplus.repository.PacienteRepository;
 import com.psiplus.util.TipoExcecao;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +26,13 @@ public class DisponibilidadeService {
     private final DisponibilidadeRecorrenteRepository disponibilidadeRecorrenteRepository;
     private final ExcecaoDisponibilidadeService excecaoDisponibilidadeService;
     private final ConsultaRepository consultaRepository;
+    private final PacienteRepository pacienteRepository;
 
-    public DisponibilidadeService(DisponibilidadeRecorrenteRepository disponibilidadeRecorrenteRepository, ExcecaoDisponibilidadeRepository excecaoDisponibilidadeRepository, ExcecaoDisponibilidadeService excecaoDisponibilidadeService, ConsultaRepository consultaRepository) {
+    public DisponibilidadeService(DisponibilidadeRecorrenteRepository disponibilidadeRecorrenteRepository, ExcecaoDisponibilidadeRepository excecaoDisponibilidadeRepository, ExcecaoDisponibilidadeService excecaoDisponibilidadeService, ConsultaRepository consultaRepository, PacienteRepository pacienteRepository) {
         this.disponibilidadeRecorrenteRepository = disponibilidadeRecorrenteRepository;
         this.excecaoDisponibilidadeService = excecaoDisponibilidadeService;
         this.consultaRepository = consultaRepository;
+        this.pacienteRepository = pacienteRepository;
     }
 
 
@@ -135,5 +139,26 @@ public class DisponibilidadeService {
 
         return resultado;
     }
+
+    public Map<LocalDate, List<HorarioDisponivelDTO>> buscarDisponibilidadeMensal(Long pacienteId) {
+        Paciente paciente = pacienteRepository.findById(pacienteId)
+                .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
+
+        Long psicologoId = paciente.getPsicologo().getPsicologoId();
+        LocalDate hoje = LocalDate.now();
+        LocalDate fimMes = hoje.withDayOfMonth(hoje.lengthOfMonth());
+
+        Map<LocalDate, List<HorarioDisponivelDTO>> mapa = new HashMap<>();
+
+        for (LocalDate dia = hoje; !dia.isAfter(fimMes); dia = dia.plusDays(1)) {
+            List<HorarioDisponivelDTO> horarios = buscarHorariosDisponiveis(psicologoId, dia);
+            if (!horarios.isEmpty()) {
+                mapa.put(dia, horarios);
+            }
+        }
+
+        return mapa;
+    }
+
 
 }

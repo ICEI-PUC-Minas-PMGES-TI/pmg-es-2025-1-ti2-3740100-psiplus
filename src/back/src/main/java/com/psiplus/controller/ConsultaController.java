@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/consultas")
@@ -45,4 +46,14 @@ public class ConsultaController {
         List<HorarioDisponivelDTO> horarios = disponibilidadeService.buscarHorariosDisponiveis(psicologoId, data);
         return ResponseEntity.ok(horarios);
     }
+
+    @GetMapping("/disponibilidade-mensal")
+    public ResponseEntity<Map<LocalDate, List<HorarioDisponivelDTO>>> getDisponibilidadeMensal(
+            @RequestParam Long pacienteId) {
+
+        Map<LocalDate, List<HorarioDisponivelDTO>> mapaDisponibilidade = disponibilidadeService.buscarDisponibilidadeMensal(pacienteId);
+        return ResponseEntity.ok(mapaDisponibilidade);
+    }
+
+
 }

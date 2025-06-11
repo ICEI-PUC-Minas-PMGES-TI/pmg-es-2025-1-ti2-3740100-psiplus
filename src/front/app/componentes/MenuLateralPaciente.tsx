@@ -7,7 +7,7 @@ import IconAgendas from "../../public/assets/IconAgenda.png";
 import IconPacientes from "../../public/assets/IconPacientes.png";
 import BotaoAdd from "../../public/assets/BotaoAdd.png";
 import { CalendarDays, Users } from "lucide-react";
-
+import { useNavigate } from "react-router";
 
 type MenuLateralPacienteProps = {
     telaAtiva: "agenda" | "emoçoes";
@@ -15,6 +15,7 @@ type MenuLateralPacienteProps = {
 
 export default function MenuLateralPaciente({ telaAtiva }: MenuLateralPacienteProps) {
     const [nome, setNome] = useState("Carregando...");
+    const navigate = useNavigate();
 
     useEffect(() => {
 
@@ -73,7 +74,7 @@ export default function MenuLateralPaciente({ telaAtiva }: MenuLateralPacientePr
 
             {/* Emoções */}
             <BotaoPadrao
-                caminho={"/psicologo/calendarioEmocoes"}
+                caminho={undefined}
                 className={"!items-start text-[16px] !justify-start mt-[10px]"}
                 color="bg-white"
                 texto="Emoções"
@@ -81,6 +82,7 @@ export default function MenuLateralPaciente({ telaAtiva }: MenuLateralPacientePr
                 icone={<Users />}
                 iconeColor="text-black"
                 active={telaAtiva === "emoçoes"}
+                handleClick={() => navigate("/paciente/perfil")}
             />
 
             <div className="mt-auto flex flex-col items-center px-4 mb-8">

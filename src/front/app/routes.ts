@@ -7,6 +7,7 @@ import {
   export default [
     index("routes/inicioRoute.tsx"),
     route("paciente/login", "routes/paciente/loginPacienteRoute.tsx"),
+    route("paciente/perfil", "routes/paciente/perfilPacienteRoute.tsx"),
     route("paciente/redefinirSenha", "routes/paciente/redefinicaoSenhaRoute.tsx"),
     route("paciente/agenda", "routes/paciente/agendaPacienteRoute.tsx"),
     route("psicologo/login", "routes/psicologo/loginPsicologoRoute.tsx"),

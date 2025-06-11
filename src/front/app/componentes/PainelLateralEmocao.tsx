@@ -75,7 +75,7 @@ export default function PainelLateralEmocao({ evento, onClose }: PainelLateralEm
                 <div className="flex items-start space-x-3 p-4 border-b border-gray-200">
                     <TagFacesIcon className="text-gray-300 mt-1" />
                     <p className="text-gray-500 text-sm leading-relaxed whitespace-pre-line">
-                        {evento.sentimento}
+                        {evento.sentimento?.trim() || "Não possui registro"}
                     </p>
                 </div>
 
@@ -83,7 +83,7 @@ export default function PainelLateralEmocao({ evento, onClose }: PainelLateralEm
                 <div className="flex items-start space-x-3 p-4">
                     <EditNoteIcon className="text-gray-300 mt-1" />
                     <p className="text-gray-500 text-sm leading-relaxed whitespace-pre-line">
-                        {evento.notas}
+                        {evento.notas?.trim() || "Não possui registro"}
                     </p>
                 </div>
             </div>

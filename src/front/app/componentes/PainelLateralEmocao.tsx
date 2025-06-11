@@ -30,11 +30,10 @@ interface PainelLateralEmocaoProps {
 export default function PainelLateralEmocao({ evento, onClose }: PainelLateralEmocaoProps) {
     if (!evento) return null;
 
-    const dataFormatada = format(new Date(evento.data), "dd/MM/yyyy", { locale: ptBR });
-    const horaFormatada = evento.hora?.slice(0, 5);
+    const dataHora = new Date(`${evento.data}T${evento.hora}`);
+    const dataFormatada = format(dataHora, "dd/MM/yyyy", { locale: ptBR });
+    const horaFormatada = format(dataHora, "HH:mm", { locale: ptBR });
 
-    console.log('Sentimento:', evento.sentimento);
-    console.log('Notas:', evento.notas);
     console.log('Evento recebido:', evento);
 
     return (

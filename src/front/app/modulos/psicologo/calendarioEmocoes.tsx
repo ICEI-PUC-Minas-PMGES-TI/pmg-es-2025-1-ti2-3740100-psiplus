@@ -94,6 +94,15 @@ export default function CalendarioEmocoes() {
                 const inicio = new Date(ano, mes - 1, dia, hora, minuto);
                 const fim = new Date(inicio.getTime() + 60 * 60 * 1000);
 
+                console.log("Evento montado:", {
+                    id: e.id,
+                    start: inicio.toString(),
+                    iso: inicio.toISOString(),
+                    data: e.data,
+                    hora: e.hora
+                });
+
+
                 // monta evento usando paciente do estado
                 const evento: EventoEmocao = {
                     id: e.id,

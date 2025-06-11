@@ -47,7 +47,7 @@ export default function CalendarioEmocoes() {
     const [dataBase, setDataBase] = useState(new Date());
     const [mesLateral, setMesLateral] = useState(new Date());
     const [visualizacao, setVisualizacao] = useState<View>("week");
-    const [eventoSelecionado, setEventoSelecionado] = useState<any | null>(null);
+    const [eventoSelecionado, setEventoSelecionado] = useState<EventoEmocao | null>(null);
 
     //Buscar dados do paciente
     const [paciente, setPaciente] = useState<Paciente>({
@@ -388,7 +388,7 @@ export default function CalendarioEmocoes() {
                         {eventoSelecionado && (
                             <PainelLateralEmocao
                                 evento={eventoSelecionado}
-                                aoFechar={() => setEventoSelecionado(null)}
+                                onClose={() => setEventoSelecionado(null)}
                             />
                         )}
 

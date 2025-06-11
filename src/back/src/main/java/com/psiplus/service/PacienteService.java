@@ -1,6 +1,6 @@
 package com.psiplus.service;
 
-import back.src.main.java.com.psiplus.DTO.RedefinicaoSenhaDTO;
+import com.psiplus.DTO.RedefinicaoSenhaDTO;
 import com.psiplus.DTO.PacienteDTO;
 import com.psiplus.DTO.AnotacaoDTO;
 

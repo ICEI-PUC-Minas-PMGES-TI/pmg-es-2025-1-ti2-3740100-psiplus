@@ -15,7 +15,7 @@ import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
 import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
 import PainelLateralEmocao from "~/componentes/PainelLateralEmocao";
-import { iconesEmocoes } from "~/componentes/iconesEmocoes";
+import { iconesEmocoes } from "~/componentes/IconesEmocoes";
 
 //Imports da agenda
 import localizer from "~/utils/calendarConfig";
@@ -330,6 +330,7 @@ export default function CalendarioEmocoes() {
                                     visivel={menuAberto}
                                 />
                                 <BotaoLateral
+                                    onClick={() => navigate(`/psicologo/estatisticasEmocoes/${id}`)}
                                     icone={<BarChartIcon style={{ color: "#858EBD" }} />}
                                     texto="Estatísticas das Emoções"
                                     visivel={menuAberto}

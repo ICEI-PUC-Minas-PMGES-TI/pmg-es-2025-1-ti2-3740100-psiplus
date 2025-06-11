@@ -276,6 +276,7 @@ export default function GestaoPacientes() {
                     </button>
 
                     <button
+                        onClick={() => navigate(`/psicologo/estatisticasEmocoes/${id}`)}
                         className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-[#2B2F42] w-full">
                       <div className="bg-[#F4F7FF] rounded-md p-1">
                         <BarChartIcon style={{color: "#858EBD"}}/>

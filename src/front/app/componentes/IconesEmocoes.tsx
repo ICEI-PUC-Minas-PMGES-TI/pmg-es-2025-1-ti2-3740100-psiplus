@@ -1,5 +1,4 @@
-// src/components/iconesEmocoes.tsx
-import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAlt";
+// src/components/IconesEmocoes.tsx
 import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
 import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
 import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfied";

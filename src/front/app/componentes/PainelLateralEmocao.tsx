@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { iconesEmocoes } from "~/componentes/iconesEmocoes";
+import { iconesEmocoes } from "~/componentes/IconesEmocoes";
 
 // Ícones do MUI
 import CloseIcon from "@mui/icons-material/Close";

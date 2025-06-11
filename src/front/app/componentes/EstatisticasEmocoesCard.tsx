@@ -1,9 +1,13 @@
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, } from "chart.js";
+import { Line } from "react-chartjs-2";
 import { useState } from "react";
 import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
 import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
 import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfied";
 import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
 import { MenuItem, Select } from "@mui/material";
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip);
 
 interface Emocao {
     titulo: string;
@@ -46,6 +50,7 @@ export function EstatisticasEmocoesCard() {
         <div className="w-full px-2 mt-2">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-[17px] font-bold text-[#3A3F63]">ESTATÍSTICAS DAS EMOÇÕES</h2>
+                {/* Select */}
                 <Select
                     value={filtroTempo}
                     onChange={(e) => setFiltroTempo(e.target.value)}
@@ -78,11 +83,12 @@ export function EstatisticasEmocoesCard() {
                 </Select>
             </div>
 
+            {/* Cards de emoções */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {emocoes.map((emocao, index) => (
                     <div
                         key={index}
-                        className="flex items-center gap-4 p-4 bg-white rounded-xl shadow-md"
+                        className="flex items-center gap-4 p-3 bg-white rounded-xl shadow-md"
                     >
                         <div className="text-3xl" style={{ color: emocao.cor }}>
                             {emocao.icone}
@@ -93,6 +99,86 @@ export function EstatisticasEmocoesCard() {
                         </div>
                     </div>
                 ))}
+            </div>
+
+            {/* Gráfico de linha abaixo dos cards */}
+            <div className="mt-10 bg-white rounded-xl shadow-md p-4 relative">
+                <h3 className="text-[15px] font-semibold text-[#3A3F63] mb-4">Visão de emoções semanal</h3>
+                {/* Emojis no eixo Y */}
+                <div className="absolute top-[80px] left-3 flex flex-col justify-between h-[300px]">
+                    <SentimentVerySatisfiedIcon style={{ color: "#4E9B1E" }} /> {/* 😊 */}
+                    <SentimentNeutralIcon style={{ color: "#EDD418" }} />        {/* 😐 */}
+                    <SentimentDissatisfiedIcon style={{ color: "#55B3EE" }} />   {/* 😢 */}
+                    <SentimentVeryDissatisfiedIcon style={{ color: "#DC0606" }} /> {/* 😡 */}
+                </div>
+
+                <Line
+                    data={{
+                        labels: ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"],
+                        datasets: [
+                            {
+                                label: "Média da emoção",
+                                data: [1, 2, 1.5, 2.5, 2, 2.2, 1],
+                                borderColor: "#0088A3",
+                                backgroundColor: "rgba(19, 134, 201, 0.1)",
+                                fill: true,
+                                tension: 0.4,
+                                pointBackgroundColor: "#FFA500",
+                            },
+                        ],
+                    }}
+                    options={{
+                        responsive: true,
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        const valor = context.raw as number;
+                                        let icone = "🙂";
+                                        if (valor < 1.5) icone = "😢";
+                                        else if (valor < 2) icone = "😐";
+                                        else if (valor >= 2) icone = "😊";
+                                        return `Média: ${icone}`;
+                                    },
+                                },
+                            },
+                            legend: {
+                                display: false,
+                            },
+                        },
+                        scales: {
+                            y: {
+                                min: 0,
+                                max: 3,
+                                ticks: {
+                                    stepSize: 1,
+                                    display: false,
+                                },
+                                grid: {
+                                    drawTicks: false,
+                                    drawBorder: false,
+                                    color: (ctx) => {
+                                        const value = ctx.tick.value;
+                                        return [1, 2, 3, 4].includes(value) ? "#F0F0F0" : "transparent";
+                                    },
+                                },
+                            },
+                            x: {
+                                ticks: {
+                                    color: "#2E3261",
+                                    font: {
+                                        weight: "600",
+                                        size: 12
+                                    },
+                                },
+                                grid: {
+                                    display: false,
+                                },
+                            }
+
+                        },
+                    }}
+                />
             </div>
         </div>
     );

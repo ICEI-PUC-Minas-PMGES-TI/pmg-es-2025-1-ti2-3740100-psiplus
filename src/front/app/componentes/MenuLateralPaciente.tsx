@@ -88,7 +88,7 @@ export default function MenuLateralPaciente({ telaAtiva }: MenuLateralPacientePr
             <div className="mt-auto flex flex-col items-center px-4 mb-8">
 
                 <BotaoPadrao
-                    caminho={"/psicologo/agendarConsulta"}
+                    caminho={"/paciente/agendarConsulta"}
                     color="bg-[#0088A3]"
                     className="text-[16px] w-full min-w-[180px] whitespace-nowrap mt-2 hover:brightness-90"
                     texto="Nova consulta"

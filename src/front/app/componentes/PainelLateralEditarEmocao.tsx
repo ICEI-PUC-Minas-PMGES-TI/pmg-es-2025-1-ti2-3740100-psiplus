@@ -1,0 +1,124 @@
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { iconesEmocoes } from "~/componentes/iconesEmocoes";
+import {useState} from "react";
+
+// Ícones do MUI
+import CloseIcon from "@mui/icons-material/Close";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import EditNoteIcon from "@mui/icons-material/EditNote";
+import TagFacesIcon from "@mui/icons-material/TagFaces";
+
+interface EventoEmocao {
+    id: number;
+    paciente: any;
+    tipoEmocao: {
+        nome: string;
+        icone: string;
+    };
+    data: string;
+    hora: string;
+    sentimento: string;
+    notas: string;
+}
+
+interface PainelLateralEmocaoProps {
+    evento: EventoEmocao | null;
+    onClose?: () => void;
+}
+
+export default function PainelLateralEditarEmocao({ evento, onClose }: PainelLateralEmocaoProps) {
+
+    const agora = new Date();
+    const dataFormatada = format(agora, "dd/MM/yyyy", { locale: ptBR });
+    const horaFormatada = format(agora, "HH:mm", { locale: ptBR });
+    const [emocaoSelecionada, setEmocaoSelecionada] = useState<string | null> (null);
+    const [aberto, setAberto] = useState(false);
+    console.log('Evento recebido:', evento);
+    const alternarDropdown = () => setAberto(!aberto);
+    const selecionarEmocao = (nome:string) => {
+        setEmocaoSelecionada(nome);
+        setAberto(false);
+    }
+
+    return (
+        <div className="fixed top-0 right-0 w-full max-w-md h-screen bg-white shadow-lg z-50 flex flex-col">
+            {/* Botão fechar - canto superior direito */}
+            <div className="flex justify-end p-4">
+                <button onClick={onClose}>
+                    <CloseIcon className="text-[#7D8FB3] cursor-pointer hover:text-black transition-colors duration-200" />
+                </button>
+            </div>
+
+            {/* Linha com "Emoção Diária" + ícone */}
+            <div className="flex items-center justify-between px-4 pb-3 border-b border-gray-200">
+                <span className="text-[#7D8FB3] font-semibold text-lg">Emoção Diária</span>
+                <div className="relative">
+                    <button
+                        onClick={alternarDropdown}
+                        className="w-36 px-4 py-2 rounded-full border border-gray-300 hover:border-gray-400 transition flex items-center justify-between gap-2"
+                    >
+                        <span>{emocaoSelecionada ? iconesEmocoes[emocaoSelecionada] : iconesEmocoes["feliz"]}</span>
+                        <svg
+                            className={`w-4 h-4 transition-transform ${aberto ? "rotate-180" : ""}`}
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            viewBox="0 0 24 24"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    {aberto && (
+                        <div className="absolute top-full mt-2 bg-white border border-gray-200 rounded shadow p-2 flex flex-col z-10">
+                            {Object.entries(iconesEmocoes).map(([nome, icone]) => (
+                                <button
+                                    key={nome}
+                                    onClick={() => {
+                                        setEmocaoSelecionada(nome);
+                                        setAberto(false); // fecha o dropdown
+                                    }}
+                                    className="p-2 hover:bg-gray-100 rounded"
+                                >
+                                    {icone}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+            </div>
+                {/* Conteúdo com rolagem */}
+            <div className="flex-1 overflow-y-auto">
+                {/* Data e Hora */}
+                <div className="grid grid-cols-2 gap-2 px-4 py-3 border-b border-gray-200 text-sm text-gray-700">
+                    <div className="flex items-center space-x-2">
+                        <CalendarTodayIcon fontSize="small" className="text-[#C3CAD9]" />
+                        <span>{dataFormatada}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <AccessTimeIcon fontSize="small" className="text-[#C3CAD9]" />
+                        <span>{horaFormatada}</span>
+                    </div>
+                </div>
+
+                {/* Sentimento */}
+                <div className="flex items-start space-x-3 p-4 border-b border-gray-200">
+                    <TagFacesIcon className="text-gray-300 mt-1" />
+                    <p className="text-gray-500 text-sm leading-relaxed whitespace-pre-line">
+                        { "Como você está se sentindo hoje?"}
+                    </p>
+                </div>
+
+                {/* Notas */}
+                <div className="flex items-start space-x-3 p-4">
+                    <EditNoteIcon className="text-gray-300 mt-1" />
+                    <p className="text-gray-500 text-sm leading-relaxed whitespace-pre-line">
+                        { "Adicione uma nota."}
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
+}

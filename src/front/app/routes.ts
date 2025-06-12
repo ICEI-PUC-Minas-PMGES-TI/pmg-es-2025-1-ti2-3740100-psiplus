@@ -10,6 +10,7 @@ import {
     route("paciente/perfil", "routes/paciente/perfilPacienteRoute.tsx"),
     route("paciente/redefinirSenha", "routes/paciente/redefinicaoSenhaRoute.tsx"),
     route("paciente/agenda", "routes/paciente/agendaPacienteRoute.tsx"),
+    route("paciente/calendarioEmocoes", "routes/paciente/calendarioEmocoesPacienteRoute.tsx"),
     route("psicologo/login", "routes/psicologo/loginPsicologoRoute.tsx"),
     route("psicologo/cadastro", "routes/psicologo/cadastroPsicologoRoute.tsx"),
     route("psicologo/pacientes/", "routes/dashboardRoute.tsx"),

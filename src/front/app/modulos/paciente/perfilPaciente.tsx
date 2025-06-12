@@ -221,7 +221,7 @@ export default function perfilPaciente() {
         <Main>
           <div className="flex min-h-screen bg-white ">
             {/* Lado esquerdo com menu do paciente */}
-            <MenuLateralPaciente telaAtiva="emocoes" />
+            <MenuLateralPaciente telaAtiva="perfil" />
             <div className="w-px bg-gray-300"></div>
             <div className="m-5 w-4/5">
                 <div className="flex">

@@ -35,7 +35,7 @@ export default function PainelLateralEditarEmocao({ evento, onClose, pacienteId 
     agora.setMinutes(0, 0, 0);
     const dataFormatada = format(agora, "dd/MM/yyyy", { locale: ptBR });
     const horaFormatada = format(agora, "HH:mm", { locale: ptBR });
-    const [emocaoSelecionada, setEmocaoSelecionada] = useState<string | null> (null);
+    const [emocaoSelecionada, setEmocaoSelecionada] = useState<string | null> ("feliz");
     const [mensagem, setMensagem] = useState("");
     const[notas, setNotas] = useState("");
     const [aberto, setAberto] = useState(false);
@@ -46,36 +46,54 @@ export default function PainelLateralEditarEmocao({ evento, onClose, pacienteId 
     }
 
     const mapaEmocoes: { [key: string]: number } = {
-        "feliz": 4,
-        "normal": 3,
-        "triste": 2,
-        "raiva": 1,
+        "feliz": 1,
+        "normal": 2,
+        "triste": 3,
+        "raiva": 4,
     };
 
-    const tipoEmocaoId = mapaEmocoes[emocaoSelecionada];
-
-
-    const salvarEmocao = async (pacienteId: number, tipoEmocaoId: number) => {
+    const salvarEmocao = async (pacienteId: number) => {
         try {
             const agora = new Date();
-            const data = format(agora, "yyyy-MM-dd", { locale: ptBR }); // formato aceito pelo backend
-            const hora = format(agora, "HH:mm", { locale: ptBR });
+
+            // Arredonda para a hora cheia seguinte se passar de 30min
+            if (agora.getMinutes() >= 30) {
+                agora.setHours(agora.getHours() + 1);
+            }
+            agora.setMinutes(0, 0, 0);
+
+            const data = format(agora, "yyyy-MM-dd"); // formato aceito no backend
+            const hora = format(agora, "HH:mm");
+
+            const tipoEmocaoId = mapaEmocoes[emocaoSelecionada]; // Ex: 'feliz' → 4
 
             const emocaoPayload = {
-                paciente: { pacienteId }, // precisa bater com o esperado pelo seu backend
-                tipoEmocao: { id: tipoEmocaoId }, // idem aqui
+                pacienteId,
+                tipoEmocaoId,
                 data,
                 hora,
                 sentimento: mensagem,
                 notas,
             };
 
+            console.log("Payload enviado:", emocaoPayload);
+
             const resposta = await axios.post("http://localhost:8080/api/emocoes", emocaoPayload);
-            console.log("Emoção salva com sucesso:", resposta.data);
-        } catch (erro) {
+            console.log("✅ Emoção salva com sucesso:", resposta.data);
+
+            alert("Emoção salva com sucesso!");
+        } catch (erro: any) {
+            if (erro.response && erro.response.status === 409) {
+                alert("⚠️ Já existe uma emoção cadastrada nesse horário.");
+            } else if (erro.response && erro.response.status === 400) {
+                alert("❌ Dados inválidos enviados.");
+            } else {
+                alert("❌ Erro ao salvar emoção. Tente novamente.");
+            }
             console.error("Erro ao salvar emoção:", erro);
         }
     };
+
 
     return (
         <div className="fixed top-0 right-0 w-full max-w-md h-screen bg-white shadow-lg z-50 flex flex-col">
@@ -169,7 +187,7 @@ export default function PainelLateralEditarEmocao({ evento, onClose, pacienteId 
                         texto="Salvar"
                         className="cursor-pointer group bg-transparent !border-none !shadow-none !text-[#0088A3] flex items-center gap-1 hover:!text-[#006e85] text-base font-bold transition-colors"
                         icone={<Check color="#0088A3" />}
-                        handleClick={() => salvarEmocao(1, mapaEmocoes[emocaoSelecionada])}
+                        handleClick={() => salvarEmocao(pacienteId, mapaEmocoes[emocaoSelecionada])}
                     />
                 </div>
             </div>

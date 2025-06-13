@@ -1,7 +1,7 @@
 package com.psiplus.controller;
 
-import com.psiplus.dto.ContagemEmocaoDTO;
-import com.psiplus.dto.EventoEmocaoDTO;
+import com.psiplus.DTO.ContagemEmocaoDTO;
+import com.psiplus.DTO.EventoEmocaoDTO;
 import com.psiplus.repository.CalendarioEmocaoRepository;
 import com.psiplus.model.CalendarioEmocao;
 import org.springframework.beans.factory.annotation.Autowired;

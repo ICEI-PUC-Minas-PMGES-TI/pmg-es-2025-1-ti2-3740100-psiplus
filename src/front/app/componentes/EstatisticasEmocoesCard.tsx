@@ -240,10 +240,10 @@ export function EstatisticasEmocoesCard() {
                 <h3 className="text-[15px] font-semibold text-[#3A3F63] mb-4">Visão de emoções semanal</h3>
                 {/* Emojis no eixo Y */}
                 <div className="absolute top-[80px] left-3 flex flex-col justify-between h-[300px]">
-                    <SentimentVerySatisfiedIcon style={{ color: "#4E9B1E" }} /> {/* 😊 */}
-                    <SentimentNeutralIcon style={{ color: "#EDD418" }} />        {/* 😐 */}
-                    <SentimentDissatisfiedIcon style={{ color: "#55B3EE" }} />   {/* 😢 */}
-                    <SentimentVeryDissatisfiedIcon style={{ color: "#DC0606" }} /> {/* 😡 */}
+                    <Smile color="#4E9B1E" />   {/* 😊 */}
+                    <Meh color="#EDD418" />     {/* 😐 */}
+                    <Frown color="#55B3EE" />   {/* 😢 */}
+                    <Angry color="#DC0606" />   {/* 😡 */}
                 </div>
 
                 <Line

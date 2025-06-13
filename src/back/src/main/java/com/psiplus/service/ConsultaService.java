@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ConsultaService {
@@ -76,6 +77,16 @@ public class ConsultaService {
 
         return dto;
     }
+
+    public boolean excluirConsulta(Long id) {
+        Optional<Consulta> consultaOpt = consultaRepository.findById(id);
+        if (consultaOpt.isPresent()) {
+            consultaRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+
 
 
 }

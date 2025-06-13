@@ -1,4 +1,4 @@
-package com.psiplus.dto;
+package com.psiplus.DTO;
 
 public class ContagemEmocaoDTO {
     private String nome;

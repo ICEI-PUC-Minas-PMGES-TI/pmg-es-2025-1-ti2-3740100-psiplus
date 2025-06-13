@@ -70,4 +70,15 @@ public class ConsultaController {
         return ResponseEntity.ok(dto);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletarConsulta(@PathVariable Long id) {
+        boolean excluido = consultaService.excluirConsulta(id);
+        if (excluido) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
 }

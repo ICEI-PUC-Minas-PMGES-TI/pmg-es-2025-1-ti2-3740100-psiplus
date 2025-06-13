@@ -6,11 +6,12 @@ import axios from "axios";
 import {useNavigate, useParams} from "react-router";
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameDay, isToday, isSameMonth, startOfDay } from "date-fns";
 import { ptBR } from 'date-fns/locale';
-import {ChevronLeft, ChevronRight, Trash} from 'lucide-react';
+import {ChevronLeft, ChevronRight} from 'lucide-react';
 import ExitIcon from "../../../public/assets/ExitIcon.png";
 import Popup from "../../componentes/Popup";
 import PerfilUser from "../../../public/assets/PerfilUser.jpg";
 import CircularProgress from "@mui/material/CircularProgress";
+import CancelarConsultaButton from "~/componentes/CancelarConsultaButton";
 
 
 export default function EditarConsulta() {
@@ -210,7 +211,7 @@ export default function EditarConsulta() {
           <hr className="border-t-2 border-[#DFE5F1] my-2"/>
           <h1 className="pt-4 font-semibold text-[#161736] mx-2 text-[20px]">Editar Consulta Agendada</h1>
 
-          <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex mt-4 items-center justify-between flex-wrap gap-4">
             {/* Paciente */}
             <div className="flex items-center gap-4">
               <img className="w-12 h-12 rounded-full" src={PerfilUser} />
@@ -234,13 +235,12 @@ export default function EditarConsulta() {
             </div>
 
             {/* Botão cancelar */}
-            <button
-                onClick={() => console.log("Cancelar consulta", consulta.idConsulta)}
-                className="flex items-center gap-1 text-red-600 hover:text-red-800 font-medium"
-            >
-              <Trash/>
-              Cancelar Consulta
-            </button>
+            <CancelarConsultaButton
+                consultaId={id}
+                onConsultaCancelada={() => {
+                  navigate("/psicologo/agenda");
+                }}
+            />
           </div>
 
           {/* Calendário e horários */}

@@ -50,12 +50,11 @@ interface EventoEmocao {
 export function CalendarioEmocoesPaciente (){
 
     const navigate = useNavigate();
-    const { id } = useParams();
     const [dataBase, setDataBase] = useState(new Date());
     const [mesLateral, setMesLateral] = useState(new Date());
     const [visualizacao, setVisualizacao] = useState<View>("week");
     const [eventoSelecionado, setEventoSelecionado] = useState<EventoEmocao | null>(null);
-    const [paciente, setPaciente] = useState<Paciente>({ usuario: { nome: "", email: "" } });
+    const [pacienteId, setPacienteId] = useState<number | null>(null);
     const [eventos, setEventos] = useState<Array<{
         start: Date;
         end: Date;
@@ -65,20 +64,18 @@ export function CalendarioEmocoesPaciente (){
     const [mostrar, setMostrar] = useState(false);
 
 
-    // Buscar paciente
     useEffect(() => {
-        if (!id) return;
-        axios.get(`http://localhost:8080/pacientes/${id}`).then(res => {
-            setPaciente({ usuario: res.data.usuario });
-        });
-    }, [id]);
+        const sessao = JSON.parse(sessionStorage.getItem("sessaoPaciente") || "{}");
+        if (sessao?.usuarioId) {
+            setPacienteId(sessao.usuarioId);
+        }
+    }, []);
 
     // Buscar eventos emocionais do paciente
     useEffect(() => {
-        if (!id) return;
-        if (!paciente.usuario.nome) return;  // espera paciente carregado
+        if (!pacienteId) return;
 
-        axios.get(`http://localhost:8080/api/emocoes/paciente/${id}`).then(res => {
+        axios.get(`http://localhost:8080/api/emocoes/paciente/${pacienteId}`).then(res => {
             console.log('Resposta bruta da API:', res.data);
             const eventosTransformados = res.data.map((e: any) => {
                 console.log('Evento recebido:', e);
@@ -101,7 +98,7 @@ export function CalendarioEmocoesPaciente (){
                 // monta evento usando paciente do estado
                 const evento: EventoEmocao = {
                     id: e.id,
-                    paciente: paciente,  // usa o paciente atual
+                    pacienteId: pacienteId,  // usa o paciente atual
                     data: e.data,
                     hora: e.hora,
                     tipoEmocao: {
@@ -121,7 +118,7 @@ export function CalendarioEmocoesPaciente (){
             });
             setEventos(eventosTransformados);
         });
-    }, [id, paciente]);
+    }, [pacienteId]);
 
     // Função de clique em evento do calendário
     const aoSelecionarEvento = (event: any) => {
@@ -360,6 +357,7 @@ export function CalendarioEmocoesPaciente (){
                     </div>
                     {mostrar && (
                         <PainelLateralEditarEmocao
+                            pacienteId={pacienteId}
                             onClose={() => setMostrar(false)}
                         />
                     )}

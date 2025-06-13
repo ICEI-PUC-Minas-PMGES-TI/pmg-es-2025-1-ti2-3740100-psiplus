@@ -1,30 +1,43 @@
 package com.psiplus.controller;
 
+import com.psiplus.DTO.CalendarioEmocaoDTO;
+import com.psiplus.repository.PacienteRepository;
+import com.psiplus.repository.TipoEmocaoRepository;
+import com.psiplus.util.EmocaoDuplicadaException;
+import com.psiplus.util.EntidadeNaoEncontradaException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 
-// Importa suas classes do projeto:
-import com.psiplus.model.CalendarioEmocao;
-import com.psiplus.dto.CalendarioEmocaoDTO;
 import com.psiplus.service.CalendarioEmocaoService;
-import com.psiplus.dto.ContagemEmocaoDTO;
-import com.psiplus.repository.CalendarioEmocaoRepository;
 
 
 @RestController
 @RequestMapping("/api/emocoes")
-@CrossOrigin(origins = "http://localhost:8080", allowCredentials = "true")
 public class CalendarioEmocaoController {
 
     @Autowired
     private CalendarioEmocaoService calendarioEmocaoService;
+    @Autowired
+    private PacienteRepository pacienteRepository;
+    @Autowired
+    private TipoEmocaoRepository tipoEmocaoRepository;
 
     @PostMapping
-    public CalendarioEmocaoDTO criarEmocao(@RequestBody CalendarioEmocao emocao) {
-        CalendarioEmocao salvo = calendarioEmocaoService.salvar(emocao);
-        return calendarioEmocaoService.toDTO(salvo);
+    public ResponseEntity<?> criarEmocao(@RequestBody CalendarioEmocaoDTO dto) {
+        try {
+            CalendarioEmocaoDTO salvo = calendarioEmocaoService.criarEmocao(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
+        } catch (EmocaoDuplicadaException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (EntidadeNaoEncontradaException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro inesperado: " + e.getMessage());
+        }
     }
 
     @GetMapping("/paciente/{pacienteId}")

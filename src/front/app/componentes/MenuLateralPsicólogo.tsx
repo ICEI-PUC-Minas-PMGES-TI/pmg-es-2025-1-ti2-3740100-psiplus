@@ -6,11 +6,11 @@ import BotaoPadrao from "~/componentes/BotaoPadrao";
 import IconAgendas from "../../public/assets/IconAgenda.png";
 import IconPacientes from "../../public/assets/IconPacientes.png";
 import BotaoAdd from "../../public/assets/BotaoAdd.png";
-import { CalendarDays, Users } from "lucide-react";
+import { CalendarDays, ChartColumn, ChartNoAxesCombined, Users } from "lucide-react";
 
 
 type MenuLateralPsicologoProps = {
-    telaAtiva: "agenda" | "pacientes";
+    telaAtiva: "agenda" | "pacientes" | "estatistica";
 };
 
 export default function MenuLateralPsicologo({ telaAtiva }: MenuLateralPsicologoProps) {
@@ -88,6 +88,18 @@ export default function MenuLateralPsicologo({ telaAtiva }: MenuLateralPsicologo
                 icone={<Users />}
                 iconeColor="text-black"
                 active={telaAtiva === "pacientes"}
+            />
+
+            { /*Estatisticas */}
+            <BotaoPadrao
+                caminho={"/psicologo/estatisticasPacientes"}
+                className={"!items-start text-[16px] !justify-start mt-[10px]"}
+                color="bg-white"
+                texto="Estatisticas"
+                textoColor="text-black"
+                icone={<ChartColumn />}
+                active={telaAtiva === "estatistica"}
+
             />
 
             <div className="mt-auto flex flex-col items-center px-4 mb-8">

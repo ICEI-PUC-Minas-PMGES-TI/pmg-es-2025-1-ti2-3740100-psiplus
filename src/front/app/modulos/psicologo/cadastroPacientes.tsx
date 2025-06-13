@@ -10,7 +10,7 @@ import axios from "axios";
 import Popup from "../../componentes/Popup";
 
 export default function CadastroPacientes() {
-  const navigate = useNavigate(); // <-- E isso
+  const navigate = useNavigate();
   const [telefone, setTelefone] = useState("");
   const [dataNascimento, setDataNascimento] = useState("");
   const [cpfCnpj, setCpfCnpj] = useState("");

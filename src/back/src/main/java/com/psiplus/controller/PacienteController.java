@@ -2,9 +2,12 @@ package com.psiplus.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.psiplus.DTO.PacienteComPsicologoDTO;
 import com.psiplus.DTO.PacienteDTO;
+import com.psiplus.DTO.PsicologoDTO;
 import com.psiplus.DTO.RedefinicaoSenhaDTO;
 import com.psiplus.model.Paciente;
+import com.psiplus.model.Psicologo;
 import com.psiplus.model.LoginRequest;
 import com.psiplus.service.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +41,16 @@ public class PacienteController {
         }
         return ResponseEntity.ok(paciente);
     }
+
+    @GetMapping("/{id}/com-psicologo")
+    public ResponseEntity<PacienteComPsicologoDTO> buscarComPsicologo(@PathVariable Long id) {
+        Paciente paciente = service.buscarPorId(id);
+        if (paciente == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(new PacienteComPsicologoDTO(paciente));
+    }
+
 
     @PostMapping
     public ResponseEntity<Paciente> salvar(@RequestBody Paciente paciente) {

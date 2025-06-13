@@ -1,6 +1,7 @@
 package com.psiplus.controller;
 
 import com.psiplus.DTO.AgendamentoDTO;
+import com.psiplus.DTO.ConsultaDTO;
 import com.psiplus.DTO.HorarioDisponivelDTO;
 import com.psiplus.model.Consulta;
 import com.psiplus.service.ConsultaService;
@@ -38,6 +39,14 @@ public class ConsultaController {
         return consultaService.listarPorPsicologo(id);
     }
 
+    @PutMapping("/reagendar/{id}")
+    public ResponseEntity<Consulta> reagendarConsulta(
+            @PathVariable Long id,
+            @RequestBody AgendamentoDTO dto) {
+        Consulta consultaAtualizada = consultaService.reagendarConsulta(id, dto);
+        return ResponseEntity.ok(consultaAtualizada);
+    }
+
     @GetMapping("/horarios-disponiveis")
     public ResponseEntity<List<HorarioDisponivelDTO>> getHorariosDisponiveis(
             @RequestParam Long psicologoId,
@@ -55,5 +64,10 @@ public class ConsultaController {
         return ResponseEntity.ok(mapaDisponibilidade);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ConsultaDTO> buscarConsultaComDetalhes(@PathVariable Long id) {
+        ConsultaDTO dto = consultaService.buscarConsultaDetalhada(id);
+        return ResponseEntity.ok(dto);
+    }
 
 }

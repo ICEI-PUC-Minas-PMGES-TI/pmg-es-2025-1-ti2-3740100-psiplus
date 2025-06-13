@@ -398,6 +398,10 @@ export default function Agenda() {
                 onView={(view) => setVisualizacao(view)}
                 selectable={true}
                 onSelectSlot={handleSelectSlot}
+                onSelectEvent={(event) => {
+                  if (event.tipo && event.tipo == "indisponivel-excecao") return
+                  navigate("/psicologo/editarConsulta/" + event.id)
+                }}
               />
             </div>
           </div>

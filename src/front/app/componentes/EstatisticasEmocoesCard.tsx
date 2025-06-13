@@ -237,7 +237,7 @@ export function EstatisticasEmocoesCard() {
 
             {/* Gráfico de linha abaixo dos cards */}
             <div className="mt-10 bg-white rounded-xl shadow-md p-4 relative">
-                <h3 className="text-[15px] font-semibold text-[#3A3F63] mb-4">Visão de emoções semanal</h3>
+                <h3 className="text-[15px] font-semibold text-[#3A3F63] mb-4">Visão de emoções</h3>
                 {/* Emojis no eixo Y */}
                 <div className="absolute top-[80px] left-3 flex flex-col justify-between h-[300px]">
                     <Smile color="#4E9B1E" />   {/* 😊 */}

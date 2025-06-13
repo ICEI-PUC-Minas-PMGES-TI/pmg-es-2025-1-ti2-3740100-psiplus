@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,28 +42,43 @@ public interface CalendarioEmocaoRepository extends JpaRepository<CalendarioEmoc
 
 
     @Query("""
-    SELECT c FROM CalendarioEmocao c JOIN FETCH c.tipoEmocao
+    SELECT c FROM CalendarioEmocao c 
+    JOIN FETCH c.tipoEmocao 
+    WHERE c.paciente.id = :pacienteId 
+    AND c.data >= :inicioDoDia 
+    AND c.data < :fimDoDia
+    """)
+    List<CalendarioEmocao> buscarEventosPorDia(
+            @Param("pacienteId") Long pacienteId,
+            @Param("inicioDoDia") LocalDateTime inicioDoDia,
+            @Param("fimDoDia") LocalDateTime fimDoDia
+    );
+
+    @Query("""
+    SELECT c FROM CalendarioEmocao c
+    JOIN FETCH c.tipoEmocao
     WHERE c.paciente.id = :pacienteId
-    AND (
-        (c.data > :dataInicio)
-        OR (c.data = :dataInicio AND c.hora >= :horaInicio)
-    )
-    AND (
-        (c.data < :dataFim)
-        OR (c.data = :dataFim AND c.hora <= :horaFim)
-    )
-""")
-    List<CalendarioEmocao> findByPacienteIdBetweenDataHora(
+    AND c.data BETWEEN :dataInicio AND :dataFim
+    """)
+    List<CalendarioEmocao> findByPacienteIdAndDataBetween(
             @Param("pacienteId") Long pacienteId,
             @Param("dataInicio") LocalDate dataInicio,
-            @Param("horaInicio") LocalTime horaInicio,
-            @Param("dataFim") LocalDate dataFim,
-            @Param("horaFim") LocalTime horaFim
+            @Param("dataFim") LocalDate dataFim
+    );
+
+    @Query("""
+SELECT c FROM CalendarioEmocao c
+JOIN FETCH c.tipoEmocao
+WHERE c.paciente.id = :pacienteId
+AND c.data BETWEEN :dataInicio AND :dataFim
+""")
+    List<CalendarioEmocao> buscarEventosComTipoEmocaoPorPeriodo(
+            @Param("pacienteId") Long pacienteId,
+            @Param("dataInicio") LocalDate dataInicio,
+            @Param("dataFim") LocalDate dataFim
     );
 
     Optional<CalendarioEmocao> findByPaciente_PacienteIdAndDataAndHora(Long pacienteId, LocalDate data, LocalTime hora);
 
     boolean existsByPaciente_PacienteIdAndDataAndHora(Long pacienteId, LocalDate data, LocalTime hora);
-
 }
-

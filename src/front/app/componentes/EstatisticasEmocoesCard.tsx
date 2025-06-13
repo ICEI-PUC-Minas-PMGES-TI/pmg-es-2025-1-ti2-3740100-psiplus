@@ -179,7 +179,6 @@ export function EstatisticasEmocoesCard() {
         }
     }
 
-
     return (
         <div className="w-full px-2 mt-2">
             <div className="flex justify-between items-center mb-6">
@@ -238,13 +237,6 @@ export function EstatisticasEmocoesCard() {
             {/* Gráfico de linha abaixo dos cards */}
             <div className="mt-10 bg-white rounded-xl shadow-md p-4 relative">
                 <h3 className="text-[15px] font-semibold text-[#3A3F63] mb-4">Visão de emoções</h3>
-                {/* Emojis no eixo Y */}
-                <div className="absolute top-[80px] left-3 flex flex-col justify-between h-[300px]">
-                    <Smile color="#4E9B1E" />   {/* 😊 */}
-                    <Meh color="#EDD418" />     {/* 😐 */}
-                    <Frown color="#55B3EE" />   {/* 😢 */}
-                    <Angry color="#DC0606" />   {/* 😡 */}
-                </div>
 
                 <Line
                     data={{
@@ -268,16 +260,17 @@ export function EstatisticasEmocoesCard() {
                                 callbacks: {
                                     label: function (context) {
                                         const valor = context.raw as number;
-                                        let icone = "🙂";
-                                        if (valor < 1.5) icone = "😢";
-                                        else if (valor < 2) icone = "😐";
-                                        else if (valor >= 2) icone = "😊";
-                                        return `Média: ${valor.toFixed(1)} ${icone}`;
+                                        let icone = "😐"; // neutro como padrão
+
+                                        if (valor === 0) icone = "😡";        // Raiva
+                                        else if (valor < 1.5) icone = "😢";   // Tristeza
+                                        else if (valor < 2) icone = "😐";     // Neutro
+                                        else if (valor >= 2) icone = "😊";    // Alegria
                                     },
                                 },
                             },
                             legend: {
-                                display: false,
+                                display: true,
                             },
                         },
                         scales: {
@@ -286,15 +279,20 @@ export function EstatisticasEmocoesCard() {
                                 max: 3,
                                 ticks: {
                                     stepSize: 1,
-                                    display: false,
+                                    callback: function(value) {
+                                        switch (value) {
+                                            case 0: return "😡";
+                                            case 1: return "😢";
+                                            case 2: return "😐";
+                                            case 3: return "😊";
+                                            default: return "";
+                                        }
+                                    },
                                 },
                                 grid: {
                                     drawTicks: false,
                                     drawBorder: false,
-                                    color: (ctx) => {
-                                        const value = ctx.tick.value;
-                                        return [1, 2, 3, 4].includes(value) ? "#F0F0F0" : "transparent";
-                                    },
+                                    color: "#F0F0F0",
                                 },
                             },
                             x: {

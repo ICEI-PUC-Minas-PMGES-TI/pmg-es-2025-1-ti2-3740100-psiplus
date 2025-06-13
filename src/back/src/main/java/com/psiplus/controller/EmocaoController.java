@@ -29,20 +29,22 @@ public class EmocaoController {
             @RequestParam String periodo,
             @RequestParam Long pacienteId
     ) {
+        LocalDate hoje = LocalDate.now();
         LocalDate dataInicio;
-        LocalDate dataFim = LocalDate.now();
+        LocalDate dataFim;
 
         switch (periodo.toLowerCase()) {
             case "dia":
-                dataInicio = dataFim;
+                dataInicio = hoje;
+                dataFim = hoje;
                 break;
             case "semana":
-                // Segunda-feira da semana atual
-                dataInicio = dataFim.with(java.time.DayOfWeek.MONDAY);
+                dataInicio = hoje.with(java.time.DayOfWeek.MONDAY);
+                dataFim = dataInicio.plusDays(6); // pega até domingo
                 break;
             case "mes":
-                // Primeiro dia do mês atual
-                dataInicio = dataFim.withDayOfMonth(1);
+                dataInicio = hoje.withDayOfMonth(1);
+                dataFim = dataInicio.withDayOfMonth(dataInicio.lengthOfMonth());
                 break;
             default:
                 throw new IllegalArgumentException("Período inválido: use 'dia', 'semana' ou 'mes'");
@@ -58,16 +60,20 @@ public class EmocaoController {
     ) {
         LocalDate hoje = LocalDate.now();
         LocalDate dataInicio;
+        LocalDate dataFim;
 
         switch (periodo.toLowerCase()) {
             case "dia":
                 dataInicio = hoje;
+                dataFim = hoje;
                 break;
             case "semana":
                 dataInicio = hoje.with(java.time.DayOfWeek.MONDAY);
+                dataFim = dataInicio.plusDays(6);  // Final da semana (domingo)
                 break;
             case "mes":
                 dataInicio = hoje.withDayOfMonth(1);
+                dataFim = dataInicio.withDayOfMonth(dataInicio.lengthOfMonth()); // Último dia do mês
                 break;
             default:
                 throw new IllegalArgumentException("Período inválido: use 'dia', 'semana' ou 'mes'");
@@ -76,12 +82,10 @@ public class EmocaoController {
         LocalTime horaInicio = LocalTime.MIN; // 00:00:00
         LocalTime horaFim = LocalTime.MAX;    // 23:59:59.999999999
 
-        List<CalendarioEmocao> eventos = calendarioRepo.findByPacienteIdBetweenDataHora(
+        List<CalendarioEmocao> eventos = calendarioRepo.buscarEventosComTipoEmocaoPorPeriodo(
                 pacienteId,
                 dataInicio,
-                horaInicio,
-                hoje,
-                horaFim
+                dataFim
         );
 
         return eventos.stream()

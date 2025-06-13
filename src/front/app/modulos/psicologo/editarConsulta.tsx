@@ -211,7 +211,7 @@ export default function EditarConsulta() {
           <hr className="border-t-2 border-[#DFE5F1] my-2"/>
           <h1 className="pt-4 font-semibold text-[#161736] mx-2 text-[20px]">Editar Consulta Agendada</h1>
 
-          <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex mt-4 items-center justify-between flex-wrap gap-4">
             {/* Paciente */}
             <div className="flex items-center gap-4">
               <img className="w-12 h-12 rounded-full" src={PerfilUser} />

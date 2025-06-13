@@ -15,7 +15,6 @@ import com.psiplus.repository.CalendarioEmocaoRepository;
 
 @RestController
 @RequestMapping("/api/emocoes")
-@CrossOrigin(origins = "http://localhost:8080", allowCredentials = "true")
 public class CalendarioEmocaoController {
 
     @Autowired

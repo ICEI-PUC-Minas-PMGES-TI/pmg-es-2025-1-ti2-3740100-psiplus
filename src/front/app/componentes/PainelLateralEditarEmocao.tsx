@@ -1,8 +1,9 @@
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import { iconesEmocoes } from "~/componentes/IconesEmocoes";
 import {useState} from "react";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
+import axios from "axios";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 import { X, Calendar, Clock, Edit2, Smile, Check } from 'lucide-react';
 import InputPadrao from "~/componentes/InputPadrao";
@@ -25,7 +26,7 @@ interface PainelLateralEmocaoProps {
     onClose?: () => void;
 }
 
-export default function PainelLateralEditarEmocao({ evento, onClose }: PainelLateralEmocaoProps) {
+export default function PainelLateralEditarEmocao({ evento, onClose, pacienteId }: PainelLateralEmocaoProps) {
 
     const agora = new Date();
     const dataFormatada = format(agora, "dd/MM/yyyy", { locale: ptBR });
@@ -34,12 +35,43 @@ export default function PainelLateralEditarEmocao({ evento, onClose }: PainelLat
     const [mensagem, setMensagem] = useState("");
     const[notas, setNotas] = useState("");
     const [aberto, setAberto] = useState(false);
-    console.log('Evento recebido:', evento);
     const alternarDropdown = () => setAberto(!aberto);
     const selecionarEmocao = (nome:string) => {
         setEmocaoSelecionada(nome);
         setAberto(false);
     }
+
+    const mapaEmocoes: { [key: string]: number } = {
+        "feliz": 4,
+        "normal": 3,
+        "triste": 2,
+        "raiva": 1,
+    };
+
+    const tipoEmocaoId = mapaEmocoes[emocaoSelecionada];
+
+
+    const salvarEmocao = async (pacienteId: number, tipoEmocaoId: number) => {
+        try {
+            const agora = new Date();
+            const data = format(agora, "yyyy-MM-dd", { locale: ptBR }); // formato aceito pelo backend
+            const hora = format(agora, "HH:mm", { locale: ptBR });
+
+            const emocaoPayload = {
+                paciente: { pacienteId }, // precisa bater com o esperado pelo seu backend
+                tipoEmocao: { id: tipoEmocaoId }, // idem aqui
+                data,
+                hora,
+                sentimento: mensagem,
+                notas,
+            };
+
+            const resposta = await axios.post("http://localhost:8080/api/emocoes", emocaoPayload);
+            console.log("Emoção salva com sucesso:", resposta.data);
+        } catch (erro) {
+            console.error("Erro ao salvar emoção:", erro);
+        }
+    };
 
     return (
         <div className="fixed top-0 right-0 w-full max-w-md h-screen bg-white shadow-lg z-50 flex flex-col">
@@ -133,6 +165,7 @@ export default function PainelLateralEditarEmocao({ evento, onClose }: PainelLat
                         texto="Salvar"
                         className="cursor-pointer group bg-transparent !border-none !shadow-none !text-[#0088A3] flex items-center gap-1 hover:!text-[#006e85] text-base font-bold transition-colors"
                         icone={<Check color="#0088A3" />}
+                        handleClick={() => salvarEmocao(1, mapaEmocoes[emocaoSelecionada])}
                     />
                 </div>
             </div>

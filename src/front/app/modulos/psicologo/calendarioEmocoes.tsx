@@ -388,7 +388,7 @@ export default function CalendarioEmocoes() {
                                     endAccessor="end"
                                     defaultView={Views.WEEK}
                                     views={["week", "day", "agenda"]}
-                                    style={{ height: "78vh" }}
+                                    style={{ height: "70vh" }}
                                     components={{
                                         toolbar: CustomToolbar,
                                         header: CustomHeader,

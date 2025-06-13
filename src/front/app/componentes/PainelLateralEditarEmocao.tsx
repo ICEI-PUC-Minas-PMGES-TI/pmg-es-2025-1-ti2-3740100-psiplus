@@ -9,6 +9,7 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import TagFacesIcon from "@mui/icons-material/TagFaces";
+import InputPadrao from "~/componentes/InputPadrao";
 
 interface EventoEmocao {
     id: number;
@@ -34,6 +35,8 @@ export default function PainelLateralEditarEmocao({ evento, onClose }: PainelLat
     const dataFormatada = format(agora, "dd/MM/yyyy", { locale: ptBR });
     const horaFormatada = format(agora, "HH:mm", { locale: ptBR });
     const [emocaoSelecionada, setEmocaoSelecionada] = useState<string | null> (null);
+    const [mensagem, setMensagem] = useState("");
+    const[notas, setNotas] = useState("");
     const [aberto, setAberto] = useState(false);
     console.log('Evento recebido:', evento);
     const alternarDropdown = () => setAberto(!aberto);
@@ -104,19 +107,29 @@ export default function PainelLateralEditarEmocao({ evento, onClose }: PainelLat
                 </div>
 
                 {/* Sentimento */}
-                <div className="flex items-start space-x-3 p-4 border-b border-gray-200">
-                    <TagFacesIcon className="text-gray-300 mt-1" />
-                    <p className="text-gray-500 text-sm leading-relaxed whitespace-pre-line">
-                        { "Como você está se sentindo hoje?"}
-                    </p>
+                <div className=" items-start space-x-3 p-3 border-b border-gray-200">
+                    <InputPadrao
+                        type="text"
+                        icon={<TagFacesIcon className="text-gray-300  mr-4" />}
+                        placeholder="Como você está se sentindo hoje?"
+                        name="mensagem"
+                        value={mensagem}
+                        classNameInput="border-none !text-gray-500 !text-sm leading-relaxed whitespace-pre-line"
+                        onChange={(e) => setMensagem(e.target.value)}
+                    />
                 </div>
 
                 {/* Notas */}
                 <div className="flex items-start space-x-3 p-4">
-                    <EditNoteIcon className="text-gray-300 mt-1" />
-                    <p className="text-gray-500 text-sm leading-relaxed whitespace-pre-line">
-                        { "Adicione uma nota."}
-                    </p>
+                    <InputPadrao
+                        type="text"
+                        icon={<EditNoteIcon className="text-gray-300  mr-4" />}
+                        placeholder="Adicione uma nota"
+                        name="notas"
+                        value={notas}
+                        classNameInput="border-none !text-gray-500 !text-sm leading-relaxed whitespace-pre-line"
+                        onChange={(e) => setNotas(e.target.value)}
+                    />
                 </div>
             </div>
         </div>

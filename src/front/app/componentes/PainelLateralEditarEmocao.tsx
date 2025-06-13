@@ -2,6 +2,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { iconesEmocoes } from "~/componentes/iconesEmocoes";
 import {useState} from "react";
+import BotaoPadrao from "~/componentes/BotaoPadrao";
 
 // Ícones do MUI
 import CloseIcon from "@mui/icons-material/Close";
@@ -10,6 +11,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import TagFacesIcon from "@mui/icons-material/TagFaces";
 import InputPadrao from "~/componentes/InputPadrao";
+import SaveIcon from "@mui/icons-material/Check";
 
 interface EventoEmocao {
     id: number;
@@ -109,7 +111,7 @@ export default function PainelLateralEditarEmocao({ evento, onClose }: PainelLat
                 {/* Sentimento */}
                 <div className=" items-start space-x-3 p-3 border-b border-gray-200">
                     <InputPadrao
-                        type="text"
+                        type="textarea"
                         icon={<TagFacesIcon className="text-gray-300  mr-4" />}
                         placeholder="Como você está se sentindo hoje?"
                         name="mensagem"
@@ -120,15 +122,22 @@ export default function PainelLateralEditarEmocao({ evento, onClose }: PainelLat
                 </div>
 
                 {/* Notas */}
-                <div className="flex items-start space-x-3 p-4">
+                <div className=" items-start space-x-3 p-4">
                     <InputPadrao
-                        type="text"
+                        type="textarea"
                         icon={<EditNoteIcon className="text-gray-300  mr-4" />}
                         placeholder="Adicione uma nota"
                         name="notas"
                         value={notas}
                         classNameInput="border-none !text-gray-500 !text-sm leading-relaxed whitespace-pre-line"
                         onChange={(e) => setNotas(e.target.value)}
+                    />
+                </div>
+                <div className="  flex items-end justify-end mt-85">
+                    <BotaoPadrao
+                        texto="Salvar"
+                        className="cursor-pointer group bg-transparent !border-none !shadow-none !text-[#0088A3] flex items-center gap-1 hover:!text-[#006e85] text-base font-bold transition-colors"
+                        icone={<SaveIcon style={{ color: "#0088A3" }} />}
                     />
                 </div>
             </div>

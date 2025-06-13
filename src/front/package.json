@@ -31,7 +31,6 @@
     "tailwind-merge": "^3.3.0"
   },
   "devDependencies": {
-    "@esbuild/darwin-arm64": "^0.25.5",
     "@react-router/dev": "^7.5.3",
     "@tailwindcss/vite": "^4.0.0",
     "@types/node": "^20",

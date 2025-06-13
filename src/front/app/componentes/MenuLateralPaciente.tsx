@@ -6,11 +6,11 @@ import BotaoPadrao from "~/componentes/BotaoPadrao";
 import IconAgendas from "../../public/assets/IconAgenda.png";
 import IconPacientes from "../../public/assets/IconPacientes.png";
 import BotaoAdd from "../../public/assets/BotaoAdd.png";
-import { CalendarDays, Users } from "lucide-react";
+import {CalendarDays, Laugh, Smile, SmilePlus, User, Users} from "lucide-react";
 import { useNavigate } from "react-router";
 
 type MenuLateralPacienteProps = {
-    telaAtiva: "agenda" | "emoçoes";
+    telaAtiva: "agenda" | "emoçoes" | "perfil";
 };
 
 export default function MenuLateralPaciente({ telaAtiva }: MenuLateralPacienteProps) {
@@ -74,15 +74,26 @@ export default function MenuLateralPaciente({ telaAtiva }: MenuLateralPacientePr
 
             {/* Emoções */}
             <BotaoPadrao
-                caminho={undefined}
+                caminho={"/paciente/calendarioEmocoes"}
                 className={"!items-start text-[16px] !justify-start mt-[10px]"}
                 color="bg-white"
                 texto="Emoções"
                 textoColor="text-black"
-                icone={<Users />}
+                icone={<Smile/>}
                 iconeColor="text-black"
                 active={telaAtiva === "emoçoes"}
-                handleClick={() => navigate("/paciente/perfil")}
+            />
+
+            {/* Meu perfil */}
+            <BotaoPadrao
+                caminho={"/paciente/perfil"}
+                className={"!items-start text-[16px] !justify-start mt-[10px]"}
+                color="bg-white"
+                texto="Meu perfil"
+                textoColor="text-black"
+                icone={<User/>}
+                iconeColor="text-black"
+                active={telaAtiva === "perfil"}
             />
 
             <div className="mt-auto flex flex-col items-center px-4 mb-8">
@@ -91,7 +102,7 @@ export default function MenuLateralPaciente({ telaAtiva }: MenuLateralPacientePr
                     caminho={"/paciente/agendarConsulta"}
                     color="bg-[#0088A3]"
                     className="text-[16px] w-full min-w-[180px] whitespace-nowrap mt-2 hover:brightness-90"
-                    texto="Nova consulta"
+                    texto="Agendar consulta"
                     icone={<img className="w-[29px] mr-1" src={BotaoAdd} alt="Icon +" />}
                 />
             </div>

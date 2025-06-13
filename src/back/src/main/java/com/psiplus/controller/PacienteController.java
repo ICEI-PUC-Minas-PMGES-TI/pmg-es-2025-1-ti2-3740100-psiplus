@@ -4,10 +4,8 @@ import java.util.Map;
 
 import com.psiplus.DTO.PacienteComPsicologoDTO;
 import com.psiplus.DTO.PacienteDTO;
-import com.psiplus.DTO.PsicologoDTO;
 import com.psiplus.DTO.RedefinicaoSenhaDTO;
 import com.psiplus.model.Paciente;
-import com.psiplus.model.Psicologo;
 import com.psiplus.model.LoginRequest;
 import com.psiplus.service.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/pacientes")
 public class PacienteController {

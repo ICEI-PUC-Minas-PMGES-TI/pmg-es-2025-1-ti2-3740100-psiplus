@@ -3,19 +3,21 @@ import MenuLateralPsicólogo from "~/componentes/MenuLateralPsicólogo";
 import InputPadrao from "~/componentes/InputPadrao";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import PerfilUser from "../../../public/assets/PerfilUser.jpg";
-import PersonIcon from '@mui/icons-material/Person';
-import HistoryIcon from "@mui/icons-material/History";
-import BarChartIcon from "@mui/icons-material/BarChart";
-import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import { IoIosArrowDown } from "react-icons/io";
 import { useState, useEffect } from "react";
-import EditIcon from '@mui/icons-material/Edit';
-import LockIcon from "@mui/icons-material/Lock";
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import {
+    User,
+    Clock,
+    BarChart,
+    Camera,
+    Edit2,
+    Lock,
+    CheckCircle,
+    Smile
+} from "lucide-react";
 import { useNavigate, useParams } from "react-router";
 import axios from "axios";
 import ExitIcon from "../../../public/assets/ExitIcon.png"
-import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
 
 interface Endereco {
     rua: string;
@@ -248,7 +250,7 @@ export default function GestaoPacientes() {
                           className="rounded-full w-24 h-24 object-cover"
                       />
                       <button className="absolute bottom-0 right-0 bg-white p-1 rounded-full shadow">
-                        <PhotoCameraIcon style={{color: "#858EBD", fontSize: 20}}/>
+                          <Camera color="#858EBD" size={20} />
                       </button>
                     </div>
                     <h2 className="mt-2 font-semibold text-lg text-[#3A3F63]">{paciente?.usuario?.nome || ""}</h2>
@@ -260,7 +262,7 @@ export default function GestaoPacientes() {
                     {/* Botão ativo */}
                     <button className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg bg-white shadow-md w-full">
                       <div className="bg-[#0088A3] rounded-md p-1">
-                        <PersonIcon style={{color: "white"}}/>
+                          <User color="white" size={20} />
                       </div>
                       <span className="text-sm font-medium text-[#2B2F42]">Informações Pessoais</span>
                     </button>
@@ -270,7 +272,7 @@ export default function GestaoPacientes() {
                         onClick={() => navigate(`/psicologo/gestaoRegistros/${id}`)}
                         className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-[#2B2F42] w-full">
                       <div className="bg-[#F4F7FF] rounded-md p-1">
-                        <HistoryIcon style={{color: "#858EBD"}}/>
+                          <Clock color="#858EBD" size={20} />
                       </div>
                       <span className="text-sm font-regular whitespace-nowrap">Histórico de Consultas</span>
                     </button>
@@ -279,7 +281,7 @@ export default function GestaoPacientes() {
                         onClick={() => navigate(`/psicologo/estatisticasEmocoes/${id}`)}
                         className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-[#2B2F42] w-full">
                       <div className="bg-[#F4F7FF] rounded-md p-1">
-                        <BarChartIcon style={{color: "#858EBD"}}/>
+                          <BarChart color="#858EBD" size={20} />
                       </div>
                       <span className="text-sm font-regular whitespace-nowrap">Estatísticas das Emoções</span>
                     </button>
@@ -288,7 +290,7 @@ export default function GestaoPacientes() {
                         onClick={() => navigate(`/psicologo/calendarioEmocoes/${id}`)}
                         className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-[#2B2F42] w-full">
                       <div className="bg-[#F4F7FF] rounded-md p-1">
-                        <SentimentVerySatisfiedIcon style={{color: "#858EBD"}}/>
+                          <Smile color="#858EBD" size={20} />
                       </div>
                       <span className="text-sm font-regular whitespace-nowrap">Calendário de Emoções</span>
                     </button>
@@ -306,10 +308,10 @@ export default function GestaoPacientes() {
                               handleClick={() => setModoEdicao(true)}
                               className="group bg-transparent !border-none !shadow-none !text-[#F79824] flex items-center gap-1 hover:!text-[#d97706] text-base font-bold transition-colors"
                               icone={
-                                <EditIcon
-                                    className="text-[#F79824] transition-colors group-hover:text-[#d97706]"
-                                    style={{ fontSize: 18 }}
-                                />
+                                  <Edit2
+                                      className="text-[#F79824] transition-colors group-hover:text-[#d97706]"
+                                      size={18}
+                                  />
                               }
                           />
                       ) : (
@@ -319,15 +321,9 @@ export default function GestaoPacientes() {
                                 handleClick={salvarEdicao}
                                 className="group bg-transparent !border-none !shadow-none !text-[#0088A3] flex items-center gap-1 hover:!text-[#006e85] text-base font-bold transition-colors"
                                 icone={
-                                    <CheckCircleIcon
-                                        sx={{
-                                            fontSize: 20,
-                                            color: '#0088A3',
-                                            transition: 'color 0.2s',
-                                            '&:hover': {
-                                                color: '#006e85',
-                                            },
-                                        }}
+                                    <CheckCircle
+                                        size={20}
+                                        className="text-[#0088A3] transition-colors hover:text-[#006e85]"
                                     />
                                 }
                             />
@@ -372,7 +368,7 @@ export default function GestaoPacientes() {
                           name="cpfCnpj"
                           value={paciente.usuario.cpfCnpj ?? ""}
                           onChange={handleInputChange}
-                          icon={<LockIcon style={{ color: "#BBC6D9" }} />}
+                          icon={<Lock color="#BBC6D9" />}
                           classNameInput="!px-5 !pl-10 !py-2 rounded-lg !text-[#858EBD] !border-[#DAE0F2] !bg-[#F3F4F9]"
                           disabled={true}
                       />

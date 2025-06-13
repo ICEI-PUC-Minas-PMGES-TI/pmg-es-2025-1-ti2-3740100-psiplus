@@ -2,12 +2,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { iconesEmocoes } from "~/componentes/IconesEmocoes";
 
-// Ícones do MUI
-import CloseIcon from "@mui/icons-material/Close";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import EditNoteIcon from "@mui/icons-material/EditNote";
-import TagFacesIcon from "@mui/icons-material/TagFaces";
+import { X, Calendar, Clock, Edit2, Smile } from 'lucide-react';
 
 interface EventoEmocao {
     id: number;
@@ -41,7 +36,7 @@ export default function PainelLateralEmocao({ evento, onClose }: PainelLateralEm
             {/* Botão fechar - canto superior direito */}
             <div className="flex justify-end p-4">
                 <button onClick={onClose}>
-                    <CloseIcon className="text-[#7D8FB3] cursor-pointer hover:text-black transition-colors duration-200" />
+                    <X className="text-[#7D8FB3] cursor-pointer hover:text-black transition-colors duration-200" />
                 </button>
             </div>
 
@@ -62,18 +57,18 @@ export default function PainelLateralEmocao({ evento, onClose }: PainelLateralEm
                 {/* Data e Hora */}
                 <div className="grid grid-cols-2 gap-2 px-4 py-3 border-b border-gray-200 text-sm text-gray-700">
                     <div className="flex items-center space-x-2">
-                        <CalendarTodayIcon fontSize="small" className="text-[#C3CAD9]" />
+                        <Calendar size={16} className="text-[#C3CAD9]" />
                         <span>{dataFormatada}</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <AccessTimeIcon fontSize="small" className="text-[#C3CAD9]" />
+                        <Clock size={16} className="text-[#C3CAD9]" />
                         <span>{horaFormatada}</span>
                     </div>
                 </div>
 
                 {/* Sentimento */}
                 <div className="flex items-start space-x-3 p-4 border-b border-gray-200">
-                    <TagFacesIcon className="text-gray-300 mt-1" />
+                    <Smile size={20} className="text-gray-300 mt-1" />
                     <p className="text-gray-500 text-sm leading-relaxed whitespace-pre-line">
                         {evento.sentimento?.trim() || "Não possui registro"}
                     </p>
@@ -81,12 +76,13 @@ export default function PainelLateralEmocao({ evento, onClose }: PainelLateralEm
 
                 {/* Notas */}
                 <div className="flex items-start space-x-3 p-4">
-                    <EditNoteIcon className="text-gray-300 mt-1" />
+                    <Edit2 size={20} className="text-gray-300 mt-1" />
                     <p className="text-gray-500 text-sm leading-relaxed whitespace-pre-line">
                         {evento.notas?.trim() || "Não possui registro"}
                     </p>
                 </div>
             </div>
         </div>
+
     );
 }

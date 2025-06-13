@@ -2,22 +2,11 @@ import Main from "~/componentes/Main";
 import MenuLateralPaciente from "~/componentes/MenuLateralPaciente";
 import ExitIcon from "../../../public/assets/ExitIcon.png"
 import BotaoPadrao from "~/componentes/BotaoPadrao";
-import PersonIcon from '@mui/icons-material/Person';
-import HistoryIcon from "@mui/icons-material/History";
-import BarChartIcon from "@mui/icons-material/BarChart";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import axios from "axios";
-import PerfilUser from "../../../public/assets/PerfilUser.jpg";
-import MenuIcon from "@mui/icons-material/Menu";
-import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
-import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
-import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
-import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
-import PainelLateralEmocao from "~/componentes/PainelLateralEmocao";
+import { Smile, Frown, Angry, Meh, Edit2 } from 'lucide-react';
 import PainelLateralEditarEmocao from "~/componentes/PainelLateralEditarEmocao";
-import { iconesEmocoes } from "~/componentes/iconesEmocoes";
-import EditIcon from "@mui/icons-material/Edit";
 
 //Imports da agenda
 import localizer from "~/utils/calendarConfig";
@@ -210,19 +199,19 @@ export function CalendarioEmocoesPaciente (){
 
         switch (event.emocao) {
             case "feliz":
-                Icone = <SentimentVerySatisfiedIcon style={{ color: "white", fontSize: 20 }} />;
+                Icone = <Smile color="white" size={20} />;
                 corFundo = "bg-[#4E9B1E]";
                 break;
             case "triste":
-                Icone = <SentimentDissatisfiedIcon style={{ color: "white", fontSize: 20 }} />;
+                Icone = <Frown color="white" size={20} />;
                 corFundo = "bg-[#55B3EE]";
                 break;
             case "neutro":
-                Icone = <SentimentNeutralIcon style={{ color: "white", fontSize: 20 }} />;
+                Icone = <Meh color="white" size={20} />;
                 corFundo = "bg-yellow-400";
                 break;
             case "raiva":
-                Icone = <SentimentVeryDissatisfiedIcon style={{ color: "white", fontSize: 20 }} />;
+                Icone = <Angry color="white" size={20} />;
                 corFundo = "bg-[#DC0606]";
                 break;
             default:
@@ -314,7 +303,7 @@ export function CalendarioEmocoesPaciente (){
                             </div>
                             <button className="bg-[#ADD9E2] text-[#0088A3] cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1 hover:brightness-95"
                                     onClick={() => setMostrar(true)}>
-                                <EditIcon style={{ fontSize: 18, color: "#0088A3"}}/>
+                                <Edit2 color="#0088A3" size={18} />
                                 Adicionar emoção
 
                             </button>

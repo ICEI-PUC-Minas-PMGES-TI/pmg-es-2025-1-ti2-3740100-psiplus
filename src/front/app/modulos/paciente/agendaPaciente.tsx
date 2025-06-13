@@ -5,7 +5,6 @@ import React, {useEffect, useState} from "react";
 
 //imports de icons
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import EditIcon from "@mui/icons-material/Edit";
 
 //Imports da agenda
 import localizer from "~/utils/calendarConfig";

@@ -4,15 +4,17 @@ import InputPadrao from "~/componentes/InputPadrao";
 import ConsultationHistory from "~/componentes/ConsultationHistory";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import PerfilUser from "../../../public/assets/PerfilUser.jpg";
-import PersonIcon from '@mui/icons-material/Person';
-import HistoryIcon from "@mui/icons-material/History";
-import BarChartIcon from "@mui/icons-material/BarChart";
-import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import {
+  User,
+  History,
+  BarChart3,
+  Camera,
+  Smile
+} from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import axios from "axios";
 import ExitIcon from "../../../public/assets/ExitIcon.png"
-import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
 
 
 interface Anotacao {
@@ -115,7 +117,7 @@ export function GestaoRegistros() {
                         className="rounded-full w-24 h-24 object-cover"
                     />
                     <button className="absolute bottom-0 right-0 bg-white p-1 rounded-full shadow">
-                      <PhotoCameraIcon style={{color: "#858EBD", fontSize: 20}}/>
+                      <Camera color="#858EBD" size={20} />
                     </button>
                   </div>
                   <h2 className="mt-2 font-semibold text-lg text-[#3A3F63]">{paciente?.usuario?.nome || ""}</h2>
@@ -124,39 +126,39 @@ export function GestaoRegistros() {
                 </div>
 
                 <div className="mt-6 flex flex-col gap-3">
-                  {/* Botão inativo */}
                   <button
                       onClick={() => navigate(`/psicologo/pacientes/${id}`)}
-                      className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-[#2B2F42] w-full">
+                      className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-[#2B2F42] w-full"
+                  >
                     <div className="bg-[#F4F7FF] rounded-md p-1">
-                      <PersonIcon style={{color: "#858EBD"}}/>
+                      <User color="#858EBD" size={20} />
                     </div>
                     <span className="text-sm font-regular whitespace-nowrap">Informações Pessoais</span>
                   </button>
 
-                  {/* Botão ativo */}
                   <button className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg bg-white shadow-md w-full">
                     <div className="bg-[#0088A3] rounded-md p-1">
-                      <HistoryIcon style={{color: "white"}}/>
+                      <History color="white" size={20} />
                     </div>
                     <span className="text-sm font-medium text-[#2B2F42]">Histórico de Consultas</span>
                   </button>
 
-                  {/* Botões inativos */}
                   <button
                       onClick={() => navigate(`/psicologo/estatisticasEmocoes/${id}`)}
-                      className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-[#2B2F42] w-full">
+                      className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-[#2B2F42] w-full"
+                  >
                     <div className="bg-[#F4F7FF] rounded-md p-1">
-                      <BarChartIcon style={{color: "#858EBD"}}/>
+                      <BarChart3 color="#858EBD" size={20} />
                     </div>
                     <span className="text-sm font-regular whitespace-nowrap">Estatísticas das Emoções</span>
                   </button>
 
                   <button
                       onClick={() => navigate(`/psicologo/calendarioEmocoes/${id}`)}
-                      className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-[#2B2F42] w-full">
+                      className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-[#2B2F42] w-full"
+                  >
                     <div className="bg-[#F4F7FF] rounded-md p-1">
-                      <SentimentVerySatisfiedIcon style={{color: "#858EBD"}}/>
+                      <Smile color="#858EBD" size={20} />
                     </div>
                     <span className="text-sm font-regular whitespace-nowrap">Calendário de Emoções</span>
                   </button>

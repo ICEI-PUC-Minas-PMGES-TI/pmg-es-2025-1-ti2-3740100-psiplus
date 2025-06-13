@@ -3,19 +3,12 @@ import MenuLateralPaciente from "~/componentes/MenuLateralPaciente"; // Altere a
 import InputPadrao from "~/componentes/InputPadrao";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import PerfilUser from "../../../public/assets/PerfilUser.jpg";
-import PersonIcon from '@mui/icons-material/Person';
-import HistoryIcon from "@mui/icons-material/History";
-import BarChartIcon from "@mui/icons-material/BarChart";
-import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
-import { IoIosArrowDown } from "react-icons/io";
 import { useState, useEffect } from "react";
-import EditIcon from '@mui/icons-material/Edit';
-import LockIcon from "@mui/icons-material/Lock";
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useNavigate, useParams } from "react-router";
 import axios from "axios";
-import ExitIcon from "../../../public/assets/ExitIcon.png"
-import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
+import { User, Camera, Edit2, Lock, CheckCircle } from 'lucide-react';
+import { IoIosArrowDown } from "react-icons/io";
+import ExitIcon from "../../../public/assets/ExitIcon.png";
 
 interface Endereco {
     rua: string;
@@ -223,292 +216,194 @@ export default function perfilPaciente() {
             {/* Lado esquerdo com menu do paciente */}
             <MenuLateralPaciente telaAtiva="perfil" />
             <div className="w-px bg-gray-300"></div>
-            <div className="m-5 w-4/5">
-                <div className="flex">
-                    <BotaoPadrao
-                        texto="Sair"
-                        icone={<img className=" w-[26px] " src={ExitIcon} alt="Sair" />}
-                        color="bg-white"
-                        textoColor="text-gray-600"
-                        className="ml-auto hover:text-black transition-colors duration-200 font-medium cursor-pointer"
-                        handleClick={leave}
-                    />
-                </div>
-              <hr className="border-t-2 border-[#DFE5F1] my-2"/>
-              <h1 className="font-semibold text-black mx-4 text-[20px] mt-5">Perfil do Paciente</h1>
-
-                <div className="mx-1 mt-4 flex gap-7">
-                {/* Painel Lateral do Paciente */}
-                <div className="w-1/4 px-2 py-3">
-                  <div className="flex flex-col items-center text-center">
-                    <div className="relative">
-                      <img
-                          src={PerfilUser}
-                          alt="Foto do Paciente"
-                          className="rounded-full w-24 h-24 object-cover"
-                      />
-                      <button className="absolute bottom-0 right-0 bg-white p-1 rounded-full shadow">
-                        <PhotoCameraIcon style={{color: "#858EBD", fontSize: 20}}/>
-                      </button>
-                    </div>
-                    <h2 className="mt-2 font-semibold text-lg text-[#3A3F63]">{paciente?.usuario?.nome || ""}</h2>
-                    <p className="text-sm text-[#5A607F]">{paciente?.usuario?.email || ""}</p>
-                    <p className="text-sm text-gray-400">Última consulta - 12/02/2025</p>
-                  </div>
-
-                  <div className="mt-6 flex flex-col gap-3">
-                    {/* Botão ativo */}
-                    <button className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg bg-white shadow-md w-full">
-                      <div className="bg-[#0088A3] rounded-md p-1">
-                        <PersonIcon style={{color: "white"}}/>
-                      </div>
-                      <span className="text-sm font-medium text-[#2B2F42]">Informações Pessoais</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* FORMULÁRIO */}
-                <div className="w-3/4">
+              <div className="w-3/4">
                   <div className="flex items-center justify-between mb-2">
-                    <h2 className="font-bold text-[16px] text-[#3A3F63] uppercase">Informações Pessoais</h2>
-                    <div className="flex gap-2">
-                      {!modoEdicao ? (
-                          <BotaoPadrao
-                              texto="Editar Dados"
-                              handleClick={() => setModoEdicao(true)}
-                              className="group bg-transparent !border-none !shadow-none !text-[#F79824] flex items-center gap-1 hover:!text-[#d97706] text-base font-bold transition-colors"
-                              icone={
-                                <EditIcon
-                                    className="text-[#F79824] transition-colors group-hover:text-[#d97706]"
-                                    style={{ fontSize: 18 }}
-                                />
-                              }
-                          />
-                      ) : (
-                          <>
-                            <BotaoPadrao
-                                texto="Salvar"
-                                handleClick={salvarEdicao}
-                                className="group bg-transparent !border-none !shadow-none !text-[#0088A3] flex items-center gap-1 hover:!text-[#006e85] text-base font-bold transition-colors"
-                                icone={
-                                    <CheckCircleIcon
-                                        sx={{
-                                            fontSize: 20,
-                                            color: '#0088A3',
-                                            transition: 'color 0.2s',
-                                            '&:hover': {
-                                                color: '#006e85',
-                                            },
-                                        }}
-                                    />
-                                }
-                            />
-                            <BotaoPadrao
-                                texto="Cancelar"
-                                handleClick={cancelarEdicao}
-                                className="group bg-transparent !border-none !shadow-none !text-gray-500 flex items-center gap-1 hover:!text-gray-700 text-base font-bold transition-colors"
-                                icone={
-                                  <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      className="h-5 w-5 text-gray-500 group-hover:text-gray-700 transition-colors"
-                                      fill="none"
-                                      viewBox="0 0 24 24"
-                                      stroke="currentColor"
-                                      strokeWidth={2}
-                                  >
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                  </svg>
-                                }
-                            />
-                          </>
-                      )}
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-x-4 gap-y--3">
-                    {/* Nome Completo */}
-                    <div>
-                      <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Nome Completo*</label>
-                      <InputPadrao
-                          name="nome"
-                          value={paciente?.usuario?.nome ?? ""}
-                          onChange={handleInputChange}
-                          classNameInput="!px-5 !py-2 rounded-lg !text-[#858EBD] !border-[#DAE0F2] !bg-[#F3F4F9]"
-                          icon={<LockIcon style={{ color: "#BBC6D9" }} />} // Adiciona o cadeado
-                          disabled={true}
-                      />
-                    </div>
-
-                    {/* CPF */}
-                    <div>
-                      <label className="block text-sm font-regular mb-1 text-[#3A3F63]">CPF</label>
-                      <InputPadrao
-                          name="cpfCnpj"
-                          value={paciente.usuario.cpfCnpj ?? ""}
-                          onChange={handleInputChange}
-                          icon={<LockIcon style={{ color: "#BBC6D9" }} />}
-                          classNameInput="!px-5 !pl-10 !py-2 rounded-lg !text-[#858EBD] !border-[#DAE0F2] !bg-[#F3F4F9]"
-                          disabled={true}
-                      />
-                    </div>
-
-                    {/* Sexo */}
-                    <div className="relative">
-                      <label className="block text-sm font-regular mb-1 text-slate-700">Sexo</label>
-                      <select
-                          name="sexo"
-                          disabled={!modoEdicao}
-                          value={paciente?.usuario?.sexo || ""}
-                          onChange={(e) =>
-                              setPaciente({
-                                  ...paciente,
-                                  usuario: {
-                                      ...paciente.usuario,
-                                      sexo: e.target.value,
-                                  },
-                              })
-                          }
-                          className="px-5 w-full border rounded-lg py-2.5 text-sm appearance-none pr-10 !text-[#858EBD] !border-[#DAE0F2]"
-                      >
-                        <option value="">Selecione</option>
-                        <option value="Feminino">Feminino</option>
-                        <option value="Masculino">Masculino</option>
-                        <option value="Outro">Outro</option>
-                      </select>
-                        <IoIosArrowDown className="absolute right-3 top-[70%] transform -translate-y-1/2 text-2xl pointer-events-none !text-[#858EBD] !border-[#DAE0F2]" />
-                    </div>
-
-                    {/* Data de nascimento */}
-                    <div>
-                      <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Data de nascimento</label>
-                      <div className="relative">
-                        <input
-                            type="text"
-                            value={paciente.usuario.dataNascimento || ""}
-                            onChange={(e) => {
-                                let value = e.target.value.replace(/\D/g, "").slice(0, 8);
-                                const partes = [];
-                                if (value.length >= 2) partes.push(value.slice(0, 2));
-                                if (value.length >= 4) partes.push(value.slice(2, 4));
-                                if (value.length > 4) partes.push(value.slice(4));
-                                const maskedValue = partes.join("/");
-
-                                setPaciente((prev) => ({
-                                    ...prev,
-                                    usuario: {
-                                        ...prev.usuario,
-                                        dataNascimento: maskedValue,
-                                    },
-                                }));
-                            }}
-                            placeholder="dd/mm/aaaa"
-                            disabled={true}
-                            className="w-full border rounded-lg px-4 py-2 text-sm !text-[#858EBD] !border-[#DAE0F2] !bg-[#F3F4F9] pl-10"
-                        />
-                        <LockIcon
-                          style={{
-                            color: "#BBC6D9",
-                            position: "absolute",
-                            left: 10,
-                            top: "50%",
-                            transform: "translateY(-50%)",
-                            pointerEvents: "none"
-                          }}
-                        />
+                      <h2 className="font-bold text-[16px] text-[#3A3F63] uppercase">Informações Pessoais</h2>
+                      <div className="flex gap-2">
+                          {!modoEdicao ? (
+                              <BotaoPadrao
+                                  texto="Editar Dados"
+                                  handleClick={() => setModoEdicao(true)}
+                                  className="group bg-transparent !border-none !shadow-none !text-[#F79824] flex items-center gap-1 hover:!text-[#d97706] text-base font-bold transition-colors"
+                                  icone={
+                                      <Edit2
+                                          color="#F79824"
+                                          size={18}
+                                          className="transition-colors group-hover:text-[#d97706]"
+                                      />
+                                  }
+                              />
+                          ) : (
+                              <>
+                                  <BotaoPadrao
+                                      texto="Salvar"
+                                      handleClick={salvarEdicao}
+                                      className="group bg-transparent !border-none !shadow-none !text-[#0088A3] flex items-center gap-1 hover:!text-[#006e85] text-base font-bold transition-colors"
+                                      icone={
+                                          <CheckCircle
+                                              color="#0088A3"
+                                              size={20}
+                                              className="transition-colors group-hover:text-[#006e85]"
+                                          />
+                                      }
+                                  />
+                                  <BotaoPadrao
+                                      texto="Cancelar"
+                                      handleClick={cancelarEdicao}
+                                      className="group bg-transparent !border-none !shadow-none !text-gray-500 flex items-center gap-1 hover:!text-gray-700 text-base font-bold transition-colors"
+                                      icone={
+                                          <svg
+                                              xmlns="http://www.w3.org/2000/svg"
+                                              className="h-5 w-5 text-gray-500 group-hover:text-gray-700 transition-colors"
+                                              fill="none"
+                                              viewBox="0 0 24 24"
+                                              stroke="currentColor"
+                                              strokeWidth={2}
+                                          >
+                                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                          </svg>
+                                      }
+                                  />
+                              </>
+                          )}
                       </div>
-                    </div>
+                  </div>
 
-                    {/* E-mail */}
-                    <div>
-                      <label className="block text-sm font-regular mb-1 mt-3 text-[#3A3F63]">E-mail*</label>
-                      <InputPadrao
-                          name="email"
-                          value={paciente.usuario.email}
-                          onChange={handleInputChange}
-                          classNameInput="!px-5 !py-2 border-[#DAE0F2] rounded-lg !text-[#858EBD] !border-[#DAE0F2]"
-                          disabled={!modoEdicao}
-                      />
-                    </div>
+                  {/* Campos do formulário */}
+                  <div className="grid grid-cols-2 gap-x-4 gap-y--3">
+                      {/* Nome Completo */}
+                      <div>
+                          <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Nome Completo*</label>
+                          <InputPadrao
+                              name="nome"
+                              value={paciente?.usuario?.nome ?? ""}
+                              onChange={handleInputChange}
+                              classNameInput="!px-5 !py-2 rounded-lg !text-[#858EBD] !border-[#DAE0F2] !bg-[#F3F4F9]"
+                              icon={<Lock color="#BBC6D9" size={18} />} // Cadeado Lucide
+                              disabled={true}
+                          />
+                      </div>
 
-                    {/* Telefone */}
-                    <div className="mb-4">
-                      <label className="block text-sm font-regular mt-3 pb-1.5 text-[#3A3F63]">Telefone</label>
-                        <input
-                            type="text"
-                            value={paciente.usuario.telefone || ""}
-                            onChange={handleTelefoneChange}
-                            disabled={!modoEdicao}
-                            className="w-full border rounded-lg px-4 py-2 text-sm !text-[#858EBD] !border-[#DAE0F2]"
-                        />
-                    </div>
+                      {/* CPF */}
+                      <div>
+                          <label className="block text-sm font-regular mb-1 text-[#3A3F63]">CPF</label>
+                          <InputPadrao
+                              name="cpfCnpj"
+                              value={paciente.usuario.cpfCnpj ?? ""}
+                              onChange={handleInputChange}
+                              icon={<Lock color="#BBC6D9" size={18} />}
+                              classNameInput="!px-5 !pl-10 !py-2 rounded-lg !text-[#858EBD] !border-[#DAE0F2] !bg-[#F3F4F9]"
+                              disabled={true}
+                          />
+                      </div>
+
+                      {/* Sexo */}
+                      <div className="relative">
+                          <label className="block text-sm font-regular mb-1 text-slate-700">Sexo</label>
+                          <select
+                              name="sexo"
+                              disabled={!modoEdicao}
+                              value={paciente?.usuario?.sexo || ""}
+                              onChange={(e) =>
+                                  setPaciente({
+                                      ...paciente,
+                                      usuario: {
+                                          ...paciente.usuario,
+                                          sexo: e.target.value,
+                                      },
+                                  })
+                              }
+                              className="px-5 w-full border rounded-lg py-2.5 text-sm appearance-none pr-10 !text-[#858EBD] !border-[#DAE0F2]"
+                          >
+                              <option value="">Selecione</option>
+                              <option value="Feminino">Feminino</option>
+                              <option value="Masculino">Masculino</option>
+                              <option value="Outro">Outro</option>
+                          </select>
+                          <IoIosArrowDown className="absolute right-3 top-[70%] transform -translate-y-1/2 text-2xl pointer-events-none !text-[#858EBD] !border-[#DAE0F2]" />
+                      </div>
+
+                      {/* Data de nascimento */}
+                      <div>
+                          <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Data de nascimento</label>
+                          <div className="relative">
+                              <input
+                                  type="text"
+                                  value={paciente.usuario.dataNascimento || ""}
+                                  onChange={(e) => {
+                                      let value = e.target.value.replace(/\D/g, "").slice(0, 8);
+                                      const partes = [];
+                                      if (value.length >= 2) partes.push(value.slice(0, 2));
+                                      if (value.length >= 4) partes.push(value.slice(2, 4));
+                                      if (value.length > 4) partes.push(value.slice(4));
+                                      const maskedValue = partes.join("/");
+
+                                      setPaciente((prev) => ({
+                                          ...prev,
+                                          usuario: {
+                                              ...prev.usuario,
+                                              dataNascimento: maskedValue,
+                                          },
+                                      }));
+                                  }}
+                                  placeholder="dd/mm/aaaa"
+                                  disabled={true}
+                                  className="w-full border rounded-lg px-4 py-2 text-sm !text-[#858EBD] !border-[#DAE0F2] !bg-[#F3F4F9] pl-10"
+                              />
+                              <Lock
+                                  color="#BBC6D9"
+                                  size={18}
+                                  style={{
+                                      position: "absolute",
+                                      left: 10,
+                                      top: "50%",
+                                      transform: "translateY(-50%)",
+                                      pointerEvents: "none",
+                                  }}
+                              />
+                          </div>
+                      </div>
+
+                      {/* E-mail */}
+                      <div>
+                          <label className="block text-sm font-regular mb-1 mt-3 text-[#3A3F63]">E-mail*</label>
+                          <InputPadrao
+                              name="email"
+                              value={paciente.usuario.email}
+                              onChange={handleInputChange}
+                              classNameInput="!px-5 !py-2 border-[#DAE0F2] rounded-lg !text-[#858EBD] !border-[#DAE0F2]"
+                              disabled={!modoEdicao}
+                          />
+                      </div>
+
+                      {/* Telefone */}
+                      <div className="mb-4">
+                          <label className="block text-sm font-regular mt-3 pb-1.5 text-[#3A3F63]">Telefone</label>
+                          <input
+                              type="text"
+                              value={paciente.usuario.telefone || ""}
+                              onChange={handleTelefoneChange}
+                              disabled={!modoEdicao}
+                              className="w-full border rounded-lg px-4 py-2 text-sm !text-[#858EBD] !border-[#DAE0F2]"
+                          />
+                      </div>
                   </div>
 
                   {/* Endereço */}
                   <h2 className="font-bold text-[16px] text-[#3A3F63] uppercase mt-3 mb-2">Endereço Residencial</h2>
                   <div className="grid grid-cols-2 gap-x-4 gap-y--3">
-                    <div>
-                      <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Rua</label>
-                      <InputPadrao
-                          name="rua"
-                          value={paciente?.usuario?.endereco?.rua ?? ""}
-                          onChange={handleEnderecoChange}
-                          classNameInput="!px-5 !py-2 border-[#DAE0F2] rounded-lg !text-[#858EBD] !border-[#DAE0F2]"
-                          disabled={!modoEdicao}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Número</label>
-                      <InputPadrao
-                          name="numero"
-                          value={paciente?.usuario?.endereco?.numero ?? ""}
-                          onChange={handleEnderecoChange}
-                          classNameInput="!px-5 !py-2 border-[#DAE0F2] rounded-lg !text-[#858EBD] !border-[#DAE0F2]"
-                          disabled={!modoEdicao}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Bairro</label>
-                      <InputPadrao
-                          name="bairro"
-                          value={paciente?.usuario?.endereco?.bairro ?? ""}
-                          onChange={handleEnderecoChange}
-                          classNameInput="!px-5 !py-2 border-[#DAE0F2] rounded-lg !text-[#858EBD] !border-[#DAE0F2]"
-                          disabled={!modoEdicao}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-regular mb-1 text-[#3A3F63]">CEP</label>
-                      <InputPadrao
-                          name="cep"
-                          value={paciente?.usuario?.endereco?.cep ?? ""}
-                          onChange={handleEnderecoChange}
-                          classNameInput="!px-5 !py-2 border-[#DAE0F2] rounded-lg !text-[#858EBD] !border-[#DAE0F2]"
-                          disabled={!modoEdicao}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Cidade</label>
-                      <InputPadrao
-                          name="cidade"
-                          value={paciente?.usuario?.endereco?.cidade ?? ""}
-                          onChange={handleEnderecoChange}
-                          classNameInput="!px-5 !py-2 border-[#DAE0F2] rounded-lg !text-[#858EBD] !border-[#DAE0F2]"
-                          disabled={!modoEdicao}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Estado</label>
-                      <InputPadrao
-                          name="estado"
-                          value={paciente?.usuario?.endereco?.estado ?? ""}
-                          onChange={handleEnderecoChange}
-                          classNameInput="!px-5 !py-2 border-[#DAE0F2] rounded-lg !text-[#858EBD] !border-[#DAE0F2]"
-                          disabled={!modoEdicao}
-                      />
-                    </div>
+                      <div>
+                          <label className="block text-sm font-regular mb-1 text-[#3A3F63]">Rua</label>
+                          <InputPadrao
+                              name="rua"
+                              value={paciente?.usuario?.endereco?.rua ?? ""}
+                              onChange={handleEnderecoChange}
+                              classNameInput="!px-5 !py-2 border-[#DAE0F2] rounded-lg !text-[#858EBD] !border-[#DAE0F2]"
+                              disabled={!modoEdicao}
+                          />
+                      </div>
                   </div>
-                </div>
               </div>
-            </div>
           </div>
         </Main>
     )

@@ -2,10 +2,9 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 import { Line } from "react-chartjs-2";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
-import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
-import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfied";
-import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
+
+import { Frown, Meh, Smile, Angry } from "lucide-react";
+
 import { MenuItem, Select } from "@mui/material";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip);
@@ -145,14 +144,14 @@ export function EstatisticasEmocoesCard() {
                 return {
                     titulo: "Alegria",
                     qtd: dto.total,
-                    icone: <SentimentVerySatisfiedIcon />,
+                    icone: <Smile />,
                     cor: "#4E9B1E",
                 };
             case "neutro":
                 return {
                     titulo: "Neutro",
                     qtd: dto.total,
-                    icone: <SentimentNeutralIcon />,
+                    icone: <Meh />,
                     cor: "#D1B000",
                 };
             case "triste":
@@ -160,21 +159,21 @@ export function EstatisticasEmocoesCard() {
                 return {
                     titulo: "Tristeza",
                     qtd: dto.total,
-                    icone: <SentimentDissatisfiedIcon />,
+                    icone: <Frown />,
                     cor: "#55B3EE",
                 };
             case "raiva":
                 return {
                     titulo: "Raiva",
                     qtd: dto.total,
-                    icone: <SentimentVeryDissatisfiedIcon />,
+                    icone: <Angry />,
                     cor: "#D13438",
                 };
             default:
                 return {
                     titulo: dto.nome,
                     qtd: dto.total,
-                    icone: <SentimentNeutralIcon />,
+                    icone: <Meh />,
                     cor: "#999",
                 };
         }

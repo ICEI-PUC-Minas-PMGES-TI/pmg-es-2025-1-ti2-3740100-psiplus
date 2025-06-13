@@ -3,7 +3,7 @@ import MenuLateralPsicólogo from "~/componentes/MenuLateralPsicólogo";
 import ExitIcon from "../../../public/assets/ExitIcon.png";
 import React, { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import EditIcon from "@mui/icons-material/Edit";
+import { Pencil } from "lucide-react";
 import localizer from "~/utils/calendarConfig";
 import { Calendar, Views, type HeaderProps } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -348,7 +348,7 @@ export default function Agenda() {
                 className="bg-[#ADD9E2] text-[#0088A3] cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1 hover:brightness-95"
                 onClick={editaragenda}
               >
-                <EditIcon style={{ fontSize: 18, color: "#0088A3" }} />
+                <Pencil size={18} color="#0088A3" />
                 Editar agenda
               </button>
             </div>

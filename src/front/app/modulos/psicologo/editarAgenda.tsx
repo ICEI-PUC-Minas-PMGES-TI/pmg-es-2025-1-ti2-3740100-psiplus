@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 
 // imports de icons
 import {ChevronLeft, ChevronRight, Copy, Save, Trash2} from "lucide-react";
-import EditIcon from "@mui/icons-material/Edit";
 
 // Imports da agenda
 import localizer from "~/utils/calendarConfig";
@@ -52,7 +51,7 @@ import { ptBR } from "date-fns/locale";
 import type { View } from "react-big-calendar";
 import { useNavigate } from "react-router";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
-import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import ExitIcon from "../../../public/assets/ExitIcon.png"
 import axios from "axios";
 
 export default function EditarAgenda() {
@@ -821,7 +820,7 @@ export default function EditarAgenda() {
                     <div className="flex">
                         <BotaoPadrao
                             texto="Sair"
-                            icone={<ExitToAppIcon />}
+                            icone={<img className=" w-[26px] " src={ExitIcon} alt="Sair" />}
                             color="bg-white"
                             textoColor="text-gray-600"
                             className="ml-auto hover:text-black transition-colors duration-200 font-medium cursor-pointer"

@@ -1,17 +1,11 @@
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { iconesEmocoes } from "~/componentes/iconesEmocoes";
+import { iconesEmocoes } from "~/componentes/IconesEmocoes";
 import {useState} from "react";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 
-// Ícones do MUI
-import CloseIcon from "@mui/icons-material/Close";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import EditNoteIcon from "@mui/icons-material/EditNote";
-import TagFacesIcon from "@mui/icons-material/TagFaces";
+import { X, Calendar, Clock, Edit2, Smile, Check } from 'lucide-react';
 import InputPadrao from "~/componentes/InputPadrao";
-import SaveIcon from "@mui/icons-material/Check";
 
 interface EventoEmocao {
     id: number;
@@ -52,7 +46,7 @@ export default function PainelLateralEditarEmocao({ evento, onClose }: PainelLat
             {/* Botão fechar - canto superior direito */}
             <div className="flex justify-end p-4">
                 <button onClick={onClose}>
-                    <CloseIcon className="text-[#7D8FB3] cursor-pointer hover:text-black transition-colors duration-200" />
+                    <X className="text-[#7D8FB3] cursor-pointer hover:text-black transition-colors duration-200" />
                 </button>
             </div>
 
@@ -99,20 +93,20 @@ export default function PainelLateralEditarEmocao({ evento, onClose }: PainelLat
                 {/* Data e Hora */}
                 <div className="grid grid-cols-2 gap-2 px-4 py-3 border-b border-gray-200 text-sm text-gray-700">
                     <div className="flex items-center space-x-2">
-                        <CalendarTodayIcon fontSize="small" className="text-[#C3CAD9]" />
+                        <Calendar size={16} className="text-[#C3CAD9]" />
                         <span>{dataFormatada}</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <AccessTimeIcon fontSize="small" className="text-[#C3CAD9]" />
+                        <Clock size={16} className="text-[#C3CAD9]" />
                         <span>{horaFormatada}</span>
                     </div>
                 </div>
 
                 {/* Sentimento */}
-                <div className=" items-start space-x-3 p-3 border-b border-gray-200">
+                <div className="items-start space-x-3 p-3 border-b border-gray-200">
                     <InputPadrao
                         type="textarea"
-                        icon={<TagFacesIcon className="text-gray-300  mr-4" />}
+                        icon={<Smile size={20} className="text-gray-300 mr-4" />}
                         placeholder="Como você está se sentindo hoje?"
                         name="mensagem"
                         value={mensagem}
@@ -122,10 +116,10 @@ export default function PainelLateralEditarEmocao({ evento, onClose }: PainelLat
                 </div>
 
                 {/* Notas */}
-                <div className=" items-start space-x-3 p-4">
+                <div className="items-start space-x-3 p-4">
                     <InputPadrao
                         type="textarea"
-                        icon={<EditNoteIcon className="text-gray-300  mr-4" />}
+                        icon={<Edit2 size={20} className="text-gray-300 mr-4" />}
                         placeholder="Adicione uma nota"
                         name="notas"
                         value={notas}
@@ -133,14 +127,16 @@ export default function PainelLateralEditarEmocao({ evento, onClose }: PainelLat
                         onChange={(e) => setNotas(e.target.value)}
                     />
                 </div>
-                <div className="  flex items-end justify-end mt-85">
+
+                <div className="flex items-end justify-end mt-85">
                     <BotaoPadrao
                         texto="Salvar"
                         className="cursor-pointer group bg-transparent !border-none !shadow-none !text-[#0088A3] flex items-center gap-1 hover:!text-[#006e85] text-base font-bold transition-colors"
-                        icone={<SaveIcon style={{ color: "#0088A3" }} />}
+                        icone={<Check color="#0088A3" />}
                     />
                 </div>
             </div>
+
         </div>
     );
 }

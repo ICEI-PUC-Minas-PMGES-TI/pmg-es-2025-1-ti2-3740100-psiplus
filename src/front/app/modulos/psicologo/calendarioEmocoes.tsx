@@ -2,20 +2,13 @@ import Main from "~/componentes/Main";
 import MenuLateralPsicólogo from "~/componentes/MenuLateralPsicólogo";
 import ExitIcon from "../../../public/assets/ExitIcon.png"
 import BotaoPadrao from "~/componentes/BotaoPadrao";
-import PersonIcon from '@mui/icons-material/Person';
-import HistoryIcon from "@mui/icons-material/History";
-import BarChartIcon from "@mui/icons-material/BarChart";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import axios from "axios";
 import PerfilUser from "../../../public/assets/PerfilUser.jpg";
-import MenuIcon from "@mui/icons-material/Menu";
-import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
-import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
-import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
-import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
 import PainelLateralEmocao from "~/componentes/PainelLateralEmocao";
-import { iconesEmocoes } from "~/componentes/IconesEmocoes";
+
+import { User, Clock, BarChart2, Menu, Smile, Frown, Angry, Meh } from "lucide-react";
 
 //Imports da agenda
 import localizer from "~/utils/calendarConfig";
@@ -204,19 +197,19 @@ export default function CalendarioEmocoes() {
 
         switch (event.emocao) {
             case "feliz":
-                Icone = <SentimentVerySatisfiedIcon style={{ color: "white", fontSize: 20 }} />;
+                Icone = <Smile color="white" size={20} />;
                 corFundo = "bg-[#4E9B1E]";
                 break;
             case "triste":
-                Icone = <SentimentDissatisfiedIcon style={{ color: "white", fontSize: 20 }} />;
+                Icone = <Frown color="white" size={20} />;
                 corFundo = "bg-[#55B3EE]";
                 break;
             case "neutro":
-                Icone = <SentimentNeutralIcon style={{ color: "white", fontSize: 20 }} />;
+                Icone = <Meh color="white" size={20} />;
                 corFundo = "bg-yellow-400";
                 break;
             case "raiva":
-                Icone = <SentimentVeryDissatisfiedIcon style={{ color: "white", fontSize: 20 }} />;
+                Icone = <Angry color="white" size={20} />;
                 corFundo = "bg-[#DC0606]";
                 break;
             default:
@@ -290,7 +283,7 @@ export default function CalendarioEmocoes() {
                                 className="mb-4 self-end cursor-pointer mr-1"
                                 title="Expandir/recolher menu"
                             >
-                                <MenuIcon style={{ color: "#858EBD" }} />
+                                <Menu color="#858EBD" size={24} />
                             </button>
 
                             {/* Perfil */}
@@ -319,24 +312,24 @@ export default function CalendarioEmocoes() {
                             <div className="mt-6 flex flex-col gap-3 w-full">
                                 <BotaoLateral
                                     onClick={() => navigate(`/psicologo/pacientes/${id}`)}
-                                    icone={<PersonIcon style={{ color: "#858EBD" }} />}
+                                    icone={<User color="#858EBD" size={20} />}
                                     texto="Informações Pessoais"
                                     visivel={menuAberto}
                                 />
                                 <BotaoLateral
                                     onClick={() => navigate(`/psicologo/gestaoRegistros/${id}`)}
-                                    icone={<HistoryIcon style={{ color: "#858EBD" }} />}
+                                    icone={<Clock color="#858EBD" size={20} />}
                                     texto="Histórico de Consultas"
                                     visivel={menuAberto}
                                 />
                                 <BotaoLateral
                                     onClick={() => navigate(`/psicologo/estatisticasEmocoes/${id}`)}
-                                    icone={<BarChartIcon style={{ color: "#858EBD" }} />}
+                                    icone={<BarChart2 color="#858EBD" size={20} />}
                                     texto="Estatísticas das Emoções"
                                     visivel={menuAberto}
                                 />
                                 <BotaoLateral
-                                    icone={<SentimentVerySatisfiedIcon style={{ color: "white" }} />}
+                                    icone={<Smile color="white" size={20} />}
                                     texto="Calendário de Emoções"
                                     visivel={menuAberto}
                                     ativo

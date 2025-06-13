@@ -1,11 +1,8 @@
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import { useNavigate, useParams } from "react-router";
-import AddIcon from '@mui/icons-material/Add';
-import SaveIcon from "@mui/icons-material/Check";
+import { Plus, Save, ChevronDown, ChevronUp } from "lucide-react";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 interface ConsultationHistoryProps {
     pacienteId: number;
@@ -115,7 +112,7 @@ const ConsultationHistory: React.FC<ConsultationHistoryProps> = ({ pacienteId, h
                         texto="Adicionar Anotação"
                         className="cursor-pointer group bg-transparent !border-none !shadow-none !text-[#0088A3] flex items-center gap-1 hover:!text-[#006e85] text-base font-bold transition-colors"
                         handleClick={handleAdicionarAnotacao}
-                        icone={<AddIcon style={{ color: "#0088A3" }} />}
+                        icone={<Plus color="#0088A3" />}
                     />
                     </>
                 ) : (
@@ -131,7 +128,7 @@ const ConsultationHistory: React.FC<ConsultationHistoryProps> = ({ pacienteId, h
                             texto="Salvar"
                             className="cursor-pointer group bg-transparent !border-none !shadow-none !text-[#0088A3] flex items-center gap-1 hover:!text-[#006e85] text-base font-bold transition-colors"
                             handleClick={handleSalvar}
-                            icone={<SaveIcon style={{ color: "#0088A3" }} />}
+                            icone={<Save color={"#0088A3"} />}
                         />
                     </div>
 
@@ -189,7 +186,7 @@ const ConsultationHistory: React.FC<ConsultationHistoryProps> = ({ pacienteId, h
                                     <span className="text-xl">
                                     <span className="text-xl">
                                         {!aberto && <span className="text-[13px] text-[#858EBD]">Exibir anotações</span>}
-                                      {aberto ? <ExpandLessIcon sx={{ color: '#858EBD' }} /> : <ExpandMoreIcon sx={{ color: '#858EBD' }} />}
+                                        {aberto ? <ChevronUp color="#858EBD" /> : <ChevronDown color="#858EBD" />}
                                     </span>
                                   </span>
                                 </div>

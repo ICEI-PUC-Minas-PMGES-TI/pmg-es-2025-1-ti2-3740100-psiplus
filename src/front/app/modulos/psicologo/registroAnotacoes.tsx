@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { CircleCheck, Plus } from 'lucide-react';
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import InfoPaciente from "~/componentes/InfoPaciente";
@@ -69,7 +68,7 @@ export function RegistroAnotacoes() {
           <div className="flex">
             <BotaoPadrao
                 texto="Sair"
-                icone={<ExitToAppIcon />}
+                icone={<img className=" w-[26px] " src={ExitIcon} alt="Sair" />}
                 color="bg-white"
                 textoColor="text-gray-600"
                 className="ml-auto hover:text-black transition-colors duration-200 font-medium cursor-pointer"

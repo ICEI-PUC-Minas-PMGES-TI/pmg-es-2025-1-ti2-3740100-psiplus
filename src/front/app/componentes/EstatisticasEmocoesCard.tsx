@@ -1,6 +1,7 @@
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
 import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
 import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfied";
@@ -16,35 +17,71 @@ interface Emocao {
     cor: string;
 }
 
+interface ContagemEmocaoDTO {
+    nome: string;
+    total: number;
+}
+
 export function EstatisticasEmocoesCard() {
     const [filtroTempo, setFiltroTempo] = useState("semana");
 
-    const emocoes: Emocao[] = [
-        {
-            titulo: "Alegria",
-            qtd: 43,
-            icone: <SentimentVerySatisfiedIcon />,
-            cor: "#4E9B1E",
-        },
-        {
-            titulo: "Neutro",
-            qtd: 37,
-            icone: <SentimentNeutralIcon />,
-            cor: "#D1B000",
-        },
-        {
-            titulo: "Tristeza",
-            qtd: 29,
-            icone: <SentimentDissatisfiedIcon />,
-            cor: "#55B3EE",
-        },
-        {
-            titulo: "Raiva",
-            qtd: 23,
-            icone: <SentimentVeryDissatisfiedIcon />,
-            cor: "#D13438",
-        },
-    ];
+    //Contagem de emocao
+    const [dadosApi, setDadosApi] = useState<ContagemEmocaoDTO[]>([]);
+    const emocoes: Emocao[] = dadosApi.map(mapearEmocao);
+
+    useEffect(() => {
+        axios
+            .get(`http://localhost:8080/api/emocoes?periodo=${filtroTempo}&pacienteId=1`) // substitua o ID real
+            .then((res) => {
+                setDadosApi(res.data);
+            })
+            .catch((err) => {
+                console.error("Erro ao buscar dados de emoções:", err);
+            });
+    }, [filtroTempo]);
+
+    function mapearEmocao(dto: ContagemEmocaoDTO): Emocao {
+        switch (dto.nome.toLowerCase()) {
+            case "feliz":
+            case "alegria":
+                return {
+                    titulo: "Alegria",
+                    qtd: dto.total,
+                    icone: <SentimentVerySatisfiedIcon />,
+                    cor: "#4E9B1E",
+                };
+            case "neutro":
+                return {
+                    titulo: "Neutro",
+                    qtd: dto.total,
+                    icone: <SentimentNeutralIcon />,
+                    cor: "#D1B000",
+                };
+            case "triste":
+            case "tristeza":
+                return {
+                    titulo: "Tristeza",
+                    qtd: dto.total,
+                    icone: <SentimentDissatisfiedIcon />,
+                    cor: "#55B3EE",
+                };
+            case "raiva":
+                return {
+                    titulo: "Raiva",
+                    qtd: dto.total,
+                    icone: <SentimentVeryDissatisfiedIcon />,
+                    cor: "#D13438",
+                };
+            default:
+                return {
+                    titulo: dto.nome,
+                    qtd: dto.total,
+                    icone: <SentimentNeutralIcon />,
+                    cor: "#999",
+                };
+        }
+    }
+
 
     return (
         <div className="w-full px-2 mt-2">

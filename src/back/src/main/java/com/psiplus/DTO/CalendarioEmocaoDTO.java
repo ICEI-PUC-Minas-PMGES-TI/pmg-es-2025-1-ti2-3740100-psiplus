@@ -1,4 +1,4 @@
-package com.psiplus.DTO;
+package com.psiplus.dto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

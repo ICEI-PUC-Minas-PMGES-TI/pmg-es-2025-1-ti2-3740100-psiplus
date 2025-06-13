@@ -2,7 +2,8 @@ package com.psiplus.service;
 
 import com.psiplus.model.CalendarioEmocao;
 import com.psiplus.repository.CalendarioEmocaoRepository;
-import com.psiplus.DTO.CalendarioEmocaoDTO;
+import com.psiplus.dto.CalendarioEmocaoDTO;
+import com.psiplus.dto.ContagemEmocaoDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,4 +53,11 @@ public class CalendarioEmocaoService {
         dto.setNotas(entity.getNotas());
         return dto;
     }
+
+    public List<ContagemEmocaoDTO> contarEmocoesPorPeriodo(Long pacienteId, int dias) {
+        LocalDate dataInicio = LocalDate.now().minusDays(dias);
+        LocalDate dataFim = LocalDate.now();  // declarar dataFim corretamente
+        return calendarioEmocaoRepository.contarPorPeriodo(pacienteId, dataInicio, dataFim);
+    }
+
 }

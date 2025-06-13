@@ -1,13 +1,17 @@
 package com.psiplus.controller;
 
-import com.psiplus.DTO.CalendarioEmocaoDTO;
-import com.psiplus.model.CalendarioEmocao;
-import com.psiplus.service.CalendarioEmocaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDate;
 import java.util.List;
+
+// Importa suas classes do projeto:
+import com.psiplus.model.CalendarioEmocao;
+import com.psiplus.dto.CalendarioEmocaoDTO;
+import com.psiplus.service.CalendarioEmocaoService;
+import com.psiplus.dto.ContagemEmocaoDTO;
+import com.psiplus.repository.CalendarioEmocaoRepository;
+
 
 @RestController
 @RequestMapping("/api/emocoes")

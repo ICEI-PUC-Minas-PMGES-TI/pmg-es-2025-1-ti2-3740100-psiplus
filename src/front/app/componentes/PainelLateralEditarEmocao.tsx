@@ -29,6 +29,10 @@ interface PainelLateralEmocaoProps {
 export default function PainelLateralEditarEmocao({ evento, onClose, pacienteId }: PainelLateralEmocaoProps) {
 
     const agora = new Date();
+    if (agora.getMinutes() >= 30) {
+        agora.setHours(agora.getHours() + 1);
+    }
+    agora.setMinutes(0, 0, 0);
     const dataFormatada = format(agora, "dd/MM/yyyy", { locale: ptBR });
     const horaFormatada = format(agora, "HH:mm", { locale: ptBR });
     const [emocaoSelecionada, setEmocaoSelecionada] = useState<string | null> (null);

@@ -22,23 +22,121 @@ interface ContagemEmocaoDTO {
     total: number;
 }
 
+interface EventoEmocaoDTO {
+    nome: string;
+    data: string;   // Vai vir como string no formato ISO (ex: "2025-06-13")
+    hora: string;   // Vai vir como string (ex: "14:30:00")
+    sentimento: string;
+    notas: string;
+}
+
 export function EstatisticasEmocoesCard() {
     const [filtroTempo, setFiltroTempo] = useState("semana");
 
     //Contagem de emocao
     const [dadosApi, setDadosApi] = useState<ContagemEmocaoDTO[]>([]);
     const emocoes: Emocao[] = dadosApi.map(mapearEmocao);
+    const [mediasPorDia, setMediasPorDia] = useState<(number | null)[]>([]);
+    const [eventosDetalhados, setEventosDetalhados] = useState<EventoEmocaoDTO[]>([]);
+
+    const diasDaSemana = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
+
+    //Gráfico de emocao
+    const emocaoParaValor = {
+        "raiva": 0,
+        "triste": 1,
+        "tristeza": 1,
+        "neutro": 2,
+        "alegria": 3
+    };
 
     useEffect(() => {
-        axios
-            .get(`http://localhost:8080/api/emocoes?periodo=${filtroTempo}&pacienteId=1`) // substitua o ID real
-            .then((res) => {
-                setDadosApi(res.data);
-            })
-            .catch((err) => {
-                console.error("Erro ao buscar dados de emoções:", err);
-            });
+        async function carregarDados() {
+            try {
+                const pacienteId = 1;
+
+                // Buscar dados agregados para cards
+                const respostaAgregados = await axios.get<ContagemEmocaoDTO[]>(
+                    `http://localhost:8080/api/emocoes?periodo=${filtroTempo}&pacienteId=${pacienteId}`
+                );
+                setDadosApi(respostaAgregados.data);
+
+                // Buscar dados detalhados para gráfico
+                const respostaDetalhes = await axios.get<EventoEmocaoDTO[]>(
+                    `http://localhost:8080/api/emocoes/eventos?periodo=${filtroTempo}&pacienteId=${pacienteId}`
+                );
+                const dadosDetalhados = respostaDetalhes.data;
+                setEventosDetalhados(dadosDetalhados);
+
+                if (filtroTempo === "mes") {
+                    // Agrupar por dia do mês
+                    const hoje = new Date();
+                    const diasNoMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0).getDate();
+                    const dadosPorDiaDoMes: number[][] = Array.from({ length: diasNoMes }, () => []);
+
+                    dadosDetalhados.forEach((item) => {
+                        if (!item.data || !item.nome) return;
+                        const data = new Date(item.data);
+                        if (isNaN(data.getTime())) return;
+
+                        const diaDoMesIndex = data.getDate() - 1;
+                        const valor = emocaoParaValor[item.nome.toLowerCase()] ?? 1.5;
+                        dadosPorDiaDoMes[diaDoMesIndex].push(valor);
+                    });
+
+                    const mediasMes = dadosPorDiaDoMes.map(lista =>
+                        lista.length === 0 ? null : parseFloat((lista.reduce((a, b) => a + b, 0) / lista.length).toFixed(1))
+                    );
+
+                    setMediasPorDia(mediasMes);
+                } else {
+                    // Agrupar por dia da semana para 'dia' e 'semana'
+                    const dadosPorDia: number[][] = Array.from({ length: 7 }, () => []);
+
+                    dadosDetalhados.forEach((item) => {
+                        if (!item.data || !item.nome) return;
+                        const data = new Date(item.data);
+                        if (isNaN(data.getTime())) return;
+
+                        const diaSemana = (data.getDay() + 6) % 7; // Segunda = 0
+                        const valor = emocaoParaValor[item.nome.toLowerCase()] ?? 1.5;
+                        dadosPorDia[diaSemana].push(valor);
+                    });
+
+                    const medias = dadosPorDia.map(lista =>
+                        lista.length === 0 ? null : parseFloat((lista.reduce((a, b) => a + b, 0) / lista.length).toFixed(1))
+                    );
+
+                    setMediasPorDia(medias);
+                }
+            } catch (err) {
+                console.error("Erro ao carregar dados:", err);
+            }
+        }
+        carregarDados();
     }, [filtroTempo]);
+
+    const dadosGrafico = diasDaSemana.map((dia, i) => ({
+        dia,
+        media: mediasPorDia[i],
+    }));
+
+    // Definindo labels para o gráfico de acordo com filtroTempo
+    const labels = filtroTempo === "dia"
+        ? ["Hoje"]
+        : filtroTempo === "semana"
+            ? diasDaSemana
+            : ["Semana 1", "Semana 2", "Semana 3", "Semana 4"]; // exemplo para mês (ajuste conforme sua lógica)
+
+    // Dados para o gráfico baseados nas médiasPorDia, para 'semana' ou 'dia'
+    // Para filtro 'mes', você precisaria implementar o cálculo das médias semanais no backend ou frontend
+    const dadosParaGrafico = filtroTempo === "dia"
+        ? mediasPorDia.length > 0 && mediasPorDia[ (new Date().getDay() + 6) % 7 ] !== null
+            ? [mediasPorDia[(new Date().getDay() + 6) % 7] as number]
+            : [0]
+        : filtroTempo === "semana"
+            ? mediasPorDia.map(v => v === null ? 0 : v)
+            : [0, 0, 0, 0]; // Placeholder para mês, ajuste conforme necessidade
 
     function mapearEmocao(dto: ContagemEmocaoDTO): Emocao {
         switch (dto.nome.toLowerCase()) {
@@ -151,11 +249,11 @@ export function EstatisticasEmocoesCard() {
 
                 <Line
                     data={{
-                        labels: ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"],
+                        labels: labels,
                         datasets: [
                             {
                                 label: "Média da emoção",
-                                data: [1, 2, 1.5, 2.5, 2, 2.2, 1],
+                                data: dadosParaGrafico,
                                 borderColor: "#0088A3",
                                 backgroundColor: "rgba(19, 134, 201, 0.1)",
                                 fill: true,
@@ -175,7 +273,7 @@ export function EstatisticasEmocoesCard() {
                                         if (valor < 1.5) icone = "😢";
                                         else if (valor < 2) icone = "😐";
                                         else if (valor >= 2) icone = "😊";
-                                        return `Média: ${icone}`;
+                                        return `Média: ${valor.toFixed(1)} ${icone}`;
                                     },
                                 },
                             },

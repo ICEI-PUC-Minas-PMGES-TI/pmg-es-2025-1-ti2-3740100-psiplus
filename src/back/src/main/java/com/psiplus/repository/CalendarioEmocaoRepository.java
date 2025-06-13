@@ -1,7 +1,6 @@
 package com.psiplus.repository;
 
 import com.psiplus.model.CalendarioEmocao;
-import com.psiplus.model.Usuario;
 import com.psiplus.dto.ContagemEmocaoDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -37,6 +36,26 @@ public interface CalendarioEmocaoRepository extends JpaRepository<CalendarioEmoc
             @Param("pacienteId") Long pacienteId,
             @Param("dataInicio") LocalDate dataInicio,
             @Param("dataFim") LocalDate dataFim
+    );
+
+    @Query("""
+    SELECT c FROM CalendarioEmocao c JOIN FETCH c.tipoEmocao
+    WHERE c.paciente.id = :pacienteId
+    AND (
+        (c.data > :dataInicio)
+        OR (c.data = :dataInicio AND c.hora >= :horaInicio)
+    )
+    AND (
+        (c.data < :dataFim)
+        OR (c.data = :dataFim AND c.hora <= :horaFim)
+    )
+""")
+    List<CalendarioEmocao> findByPacienteIdBetweenDataHora(
+            @Param("pacienteId") Long pacienteId,
+            @Param("dataInicio") LocalDate dataInicio,
+            @Param("horaInicio") LocalTime horaInicio,
+            @Param("dataFim") LocalDate dataFim,
+            @Param("horaFim") LocalTime horaFim
     );
 
 }

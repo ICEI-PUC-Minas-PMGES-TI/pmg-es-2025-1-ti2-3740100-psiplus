@@ -779,18 +779,9 @@ export default function EditarAgenda() {
                                 let className = "";
 
                                 if (event.tipo === "disponivel-excecao") {
-                                    style = {
-                                        backgroundColor: "#fff",
-                                        color: "#005F30",
-                                        border: "1px solid #B0EAC1",
-                                        borderRadius: "6px",
-                                    };
-                                    className = "rbc-event-disponivel";
+                                    className = "rbc-event evento-disponivel";
                                 } else {
-                                    style = {
-                                        backgroundColor: "#0088A3",
-                                        color: "#fff",
-                                    };
+                                    className = "rbc-event consulta";
                                 }
 
                                 // Estilos fixos de layout e tipografia, que se somam aos anteriores

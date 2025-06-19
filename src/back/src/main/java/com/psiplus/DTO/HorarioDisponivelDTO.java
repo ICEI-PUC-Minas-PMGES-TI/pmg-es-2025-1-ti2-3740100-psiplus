@@ -7,13 +7,15 @@ public class HorarioDisponivelDTO {
 
     private LocalDateTime inicio;
     private LocalDateTime fim;
+    private boolean recorrente;
 
     public HorarioDisponivelDTO() {
     }
 
-    public HorarioDisponivelDTO(LocalDateTime inicio, LocalDateTime fim) {
+    public HorarioDisponivelDTO(LocalDateTime inicio, LocalDateTime fim, boolean recorrente) {
         this.inicio = inicio;
         this.fim = fim;
+        this.recorrente = recorrente;
     }
 
     public LocalDateTime getInicio() {
@@ -51,5 +53,13 @@ public class HorarioDisponivelDTO {
     @Override
     public int hashCode() {
         return Objects.hash(inicio, fim);
+    }
+
+    public boolean isRecorrente() {
+        return recorrente;
+    }
+
+    public void setRecorrente(boolean recorrente) {
+        this.recorrente = recorrente;
     }
 }

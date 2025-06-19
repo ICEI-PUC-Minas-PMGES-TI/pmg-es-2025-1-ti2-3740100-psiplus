@@ -58,7 +58,9 @@ public class DisponibilidadeService {
 
             if (!estaIndisponivelPorExcecao) {
                 List<HorarioDisponivelDTO> livres = subtrairConsultas(inicio, fim, consultas);
+                livres.forEach(h -> h.setRecorrente(true));
                 horarios.addAll(livres);
+
             }
 
         }
@@ -67,7 +69,8 @@ public class DisponibilidadeService {
                 .filter(e -> e.getTipo() == TipoExcecao.DISPONIVEL)
                 .map(e -> new HorarioDisponivelDTO(
                         e.getDataHoraInicio().truncatedTo(ChronoUnit.MINUTES),
-                        e.getDataHoraFim().truncatedTo(ChronoUnit.MINUTES)
+                        e.getDataHoraFim().truncatedTo(ChronoUnit.MINUTES),
+                        false
                 ))
                 .filter(dto -> consultas.stream().noneMatch(c -> {
                     LocalDateTime iniConsulta = c.getDataHoraInicio().truncatedTo(ChronoUnit.MINUTES);
@@ -92,11 +95,13 @@ public class DisponibilidadeService {
         for (int i = 1; i < horarios.size(); i++) {
             HorarioDisponivelDTO proximo = horarios.get(i);
 
-            if (!proximo.getInicio().isAfter(atual.getFim())) {
-                // Mescla horários
+            if (proximo.isRecorrente() == atual.isRecorrente()
+                    && !proximo.getInicio().isAfter(atual.getFim())) {
+
                 atual = new HorarioDisponivelDTO(
                         atual.getInicio(),
-                        proximo.getFim().isAfter(atual.getFim()) ? proximo.getFim() : atual.getFim()
+                        proximo.getFim().isAfter(atual.getFim()) ? proximo.getFim() : atual.getFim(),
+                        atual.isRecorrente()
                 );
             } else {
                 unificados.add(atual);
@@ -107,6 +112,7 @@ public class DisponibilidadeService {
         unificados.add(atual);
         return unificados;
     }
+
 
     private List<HorarioDisponivelDTO> subtrairConsultas(LocalDateTime inicio, LocalDateTime fim, List<Consulta> consultas) {
         List<HorarioDisponivelDTO> resultado = new ArrayList<>();
@@ -128,17 +134,18 @@ public class DisponibilidadeService {
         LocalDateTime atual = inicio;
         for (LocalDateTime[] intervalo : ocupados) {
             if (atual.isBefore(intervalo[0])) {
-                resultado.add(new HorarioDisponivelDTO(atual, intervalo[0]));
+                resultado.add(new HorarioDisponivelDTO(atual, intervalo[0], true));
             }
             atual = intervalo[1].isAfter(atual) ? intervalo[1] : atual;
         }
 
         if (atual.isBefore(fim)) {
-            resultado.add(new HorarioDisponivelDTO(atual, fim));
+            resultado.add(new HorarioDisponivelDTO(atual, fim, true));
         }
 
         return resultado;
     }
+
 
     public Map<LocalDate, List<HorarioDisponivelDTO>> buscarDisponibilidadeMensal(Long pacienteId) {
         Paciente paciente = pacienteRepository.findById(pacienteId)

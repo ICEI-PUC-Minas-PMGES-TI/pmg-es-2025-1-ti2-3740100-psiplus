@@ -2,10 +2,9 @@ import Main from "~/componentes/Main";
 import MenuLateralPsicólogo from "~/componentes/MenuLateralPsicólogo";
 import ExitIcon from "../../../public/assets/ExitIcon.png"
 import BotaoPadrao from "~/componentes/BotaoPadrao";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import axios from "axios";
-import PerfilUser from "../../../public/assets/PerfilUser.jpg";
 import PainelLateralEmocao from "~/componentes/PainelLateralEmocao";
 
 import { User, Clock, BarChart2, Menu, Smile, Frown, Angry, Meh } from "lucide-react";
@@ -16,12 +15,14 @@ import {Calendar, Views, momentLocalizer, type HeaderProps} from "react-big-cale
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "~/estilos/customCalendarEmocoes.css";
 import CustomToolbar from "~/componentes/CustomToolbar";
-import { format, startOfWeek, endOfWeek} from "date-fns";
+import {format, startOfWeek, endOfWeek, parseISO} from "date-fns";
 import { ptBR } from "date-fns/locale";
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { eachDayOfInterval, startOfMonth, endOfMonth, isSameDay, isSameMonth, isToday } from "date-fns";
 import type { View } from "react-big-calendar";
 import {ChevronLeft, ChevronRight} from "lucide-react";
+import {useUltimaConsulta} from "~/utils/ultimaConsulta";
+import InfoPaciente from "~/componentes/InfoPaciente";
 
 
 interface Usuario {
@@ -50,12 +51,12 @@ interface EventoEmocao {
 export default function CalendarioEmocoes() {
     const navigate = useNavigate();
     const { id } = useParams();
-    const [menuAberto, setMenuAberto] = useState(false);
     const [dataBase, setDataBase] = useState(new Date());
     const [mesLateral, setMesLateral] = useState(new Date());
     const [visualizacao, setVisualizacao] = useState<View>("week");
     const [eventoSelecionado, setEventoSelecionado] = useState<EventoEmocao | null>(null);
     const [paciente, setPaciente] = useState<Paciente>({ usuario: { nome: "", email: "" } });
+    const ultimaConsulta = useUltimaConsulta(id);
     const [eventos, setEventos] = useState<Array<{
         start: Date;
         end: Date;
@@ -148,34 +149,6 @@ export default function CalendarioEmocoes() {
         };
     };
 
-    const BotaoLateral: React.FC<BotaoLateralProps> = ({ icone, texto, visivel, ativo = false, onClick }) => {
-        return (
-            <button
-                onClick={onClick}
-                className={`cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg w-full
-                ${ativo && visivel ? "bg-white shadow-md text-[#2B2F42]" : ""}
-                ${!ativo ? "hover:bg-gray-100 text-[#2B2F42]" : ""}
-                `}
-            >
-                <div
-                    className={`rounded-md p-1 ${
-                        ativo ? "bg-[#0088A3]" : "bg-[#F4F7FF]"
-                    }`}
-                >
-                    {icone}
-                </div>
-                {visivel && (
-                    <span
-                        className={`text-sm ${
-                            ativo ? "font-medium" : "font-regular"
-                        } whitespace-nowrap`}
-                    >
-                    {texto}
-                </span>
-                )}
-            </button>
-        );
-    };
 
     {/* Partes do Calendário */}
     const proximaSemana = () => {
@@ -287,67 +260,11 @@ export default function CalendarioEmocoes() {
                     <h1 className="pt-4 font-semibold text-black mx-2 text-[20px]">Gestão de Pacientes</h1>
 
                     <div className="mx-1 mt-4 flex gap-7">
+
                         {/* Painel lateral do paciente */}
-                        <div className={`flex flex-col px-2 py-3 transition-all duration-300 ${menuAberto ? "w-64" : "w-16"}`}>
-                            {/* Botão de alternância */}
-                            <button
-                                onClick={() => setMenuAberto(!menuAberto)}
-                                className="mb-4 self-end cursor-pointer mr-1"
-                                title="Expandir/recolher menu"
-                            >
-                                <Menu color="#858EBD" size={24} />
-                            </button>
-
-                            {/* Perfil */}
-                            <div className={`flex flex-col items-center ${menuAberto ? "items-start text-left px-4" : "text-center"}`}>
-                                <div className={`flex ${menuAberto ? "items-start" : "justify-center"} pl-1`}>
-                                    <img
-                                        src={PerfilUser}
-                                        alt="Foto do Paciente"
-                                        className="rounded-full w-10 h-10 object-cover"
-                                        style={{ marginLeft: menuAberto ? "0" : "12px" }} // ajuste fino
-                                    />
-                                </div>
-
-                                {menuAberto && (
-                                    <>
-                                        <h2 className="mt-2 font-semibold text-sm text-[#3A3F63]">
-                                            {paciente?.usuario?.nome || ""}
-                                        </h2>
-                                        <p className="text-xs text-[#5A607F]">{paciente?.usuario?.email || ""}</p>
-                                        <p className="text-xs text-gray-400">Última consulta - 12/02/2025</p>
-                                    </>
-                                )}
-                            </div>
-
-                            {/* Menu de botões */}
-                            <div className="mt-6 flex flex-col gap-3 w-full">
-                                <BotaoLateral
-                                    onClick={() => navigate(`/psicologo/pacientes/${id}`)}
-                                    icone={<User color="#858EBD" size={20} />}
-                                    texto="Informações Pessoais"
-                                    visivel={menuAberto}
-                                />
-                                <BotaoLateral
-                                    onClick={() => navigate(`/psicologo/gestaoRegistros/${id}`)}
-                                    icone={<Clock color="#858EBD" size={20} />}
-                                    texto="Histórico de Consultas"
-                                    visivel={menuAberto}
-                                />
-                                <BotaoLateral
-                                    onClick={() => navigate(`/psicologo/estatisticasEmocoes/${id}`)}
-                                    icone={<BarChart2 color="#858EBD" size={20} />}
-                                    texto="Estatísticas das Emoções"
-                                    visivel={menuAberto}
-                                />
-                                <BotaoLateral
-                                    icone={<Smile color="white" size={20} />}
-                                    texto="Calendário de Emoções"
-                                    visivel={menuAberto}
-                                    ativo
-                                />
-                            </div>
-                        </div>
+                        <InfoPaciente
+                            abaAtiva="emocional"
+                        />
 
                         {/* Conteúdo principal do calendário */}
                         <div className="flex-1">

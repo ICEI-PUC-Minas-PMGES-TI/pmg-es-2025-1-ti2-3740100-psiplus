@@ -3,7 +3,7 @@ import MenuLateralPsicólogo from "~/componentes/MenuLateralPsicólogo";
 import InputPadrao from "~/componentes/InputPadrao";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import PerfilUser from "../../../public/assets/PerfilUser.jpg";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import axios from "axios";
 import ExitIcon from "../../../public/assets/ExitIcon.png"
@@ -18,6 +18,9 @@ import {
     Angry,
 } from "lucide-react";
 import { EstatisticasEmocoesCard } from "~/componentes/EstatisticasEmocoesCard";
+import {format, parseISO} from "date-fns";
+import {useUltimaConsulta} from "~/utils/ultimaConsulta";
+import InfoPaciente from "~/componentes/InfoPaciente";
 
 
 interface Usuario {
@@ -32,7 +35,8 @@ interface Paciente {
 
 export function EstatisticasEmocoes() {
     const navigate = useNavigate();
-    const { id } = useParams();
+    const { id: pacienteId } = useParams();
+    const ultimaConsulta = useUltimaConsulta(pacienteId);
 
     {/* Dados do paciente */}
     const [paciente, setPaciente] = useState<Paciente>({
@@ -45,17 +49,17 @@ export function EstatisticasEmocoes() {
     });
 
     useEffect(() => {
-        if (!id) return;
+        if (!pacienteId) return;
 
         const carregarDados = async () => {
             try {
-                const pacienteRes = await axios.get(`http://localhost:8080/pacientes/${id}`);
+                const pacienteRes = await axios.get(`http://localhost:8080/pacientes/${pacienteId}`);
 
                 const dataPaciente = pacienteRes.data;
 
                 setPaciente({
                     usuario: {
-                        id: dataPaciente.usuario?.usuarioId,
+                        id: pacienteId,
                         nome: dataPaciente.usuario?.nome || "",
                         email: dataPaciente.usuario?.email || "",
                     },
@@ -66,17 +70,10 @@ export function EstatisticasEmocoes() {
         };
 
         carregarDados();
-    }, [id]);
+    }, [pacienteId]);
 
     {/* Parte de estatística */}
     const [filtroTempo, setFiltroTempo] = useState("semana");
-
-    const emocoes = [
-        { icone: <Smile size={24} />, titulo: "Feliz", qtd: 12 },
-        { icone: <Meh size={24} />, titulo: "Neutro", qtd: 7 },
-        { icone: <Frown size={24} />, titulo: "Triste", qtd: 4 },
-        { icone: <Angry size={24} />, titulo: "Irritado", qtd: 9 },
-    ];
 
     function leave() {
         sessionStorage.removeItem("sessaoPsicologo");
@@ -107,77 +104,9 @@ export function EstatisticasEmocoes() {
 
                     <div className="mx-1 mt-4 flex gap-7">
                         {/* Painel Lateral do Paciente */}
-                        <div className="w-1/4 px-2 py-3">
-                            <div className="flex flex-col items-center text-center">
-                                <div className="relative">
-                                    <img
-                                        src={PerfilUser}
-                                        alt="Foto do Paciente"
-                                        className="rounded-full w-24 h-24 object-cover"
-                                    />
-                                    <button className="absolute bottom-0 right-0 bg-white p-1 rounded-full shadow">
-                                        <Camera color="#858EBD" size={20} />
-                                    </button>
-                                </div>
-                                <h2 className="mt-2 font-semibold text-lg text-[#3A3F63]">
-                                    {paciente?.usuario?.nome || ""}
-                                </h2>
-                                <p className="text-sm text-[#5A607F]">{paciente?.usuario?.email || ""}</p>
-                                <p className="text-sm text-gray-400">Última consulta - 12/02/2025</p>
-                            </div>
-
-                            <div className="mt-6 flex flex-col gap-3">
-                                {/* Botão inativo */}
-                                <button
-                                    onClick={() => navigate(`/psicologo/pacientes/${id}`)}
-                                    className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-[#2B2F42] w-full"
-                                >
-                                    <div className="bg-[#F4F7FF] rounded-md p-1">
-                                        <User color="#858EBD" size={20} />
-                                    </div>
-                                    <span className="text-sm font-regular whitespace-nowrap">
-          Informações Pessoais
-        </span>
-                                </button>
-
-                                <button
-                                    onClick={() => navigate(`/psicologo/gestaoRegistros/${id}`)}
-                                    className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-[#2B2F42] w-full"
-                                >
-                                    <div className="bg-[#F4F7FF] rounded-md p-1">
-                                        <Clock color="#858EBD" size={20} />
-                                    </div>
-                                    <span className="text-sm font-regular whitespace-nowrap">
-                                        Histórico de Consultas
-                                    </span>
-                                </button>
-
-                                {/* Botão ativo */}
-                                <button
-                                    className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg bg-white shadow-md w-full"
-                                >
-                                    <div className="bg-[#0088A3] rounded-md p-1">
-                                        <BarChart2 color="white" size={20} />
-                                    </div>
-                                    <span className="text-sm font-medium text-[#2B2F42]">
-                                        Estatísticas das Emoções
-                                    </span>
-                                </button>
-
-                                {/* Botão inativos */}
-                                <button
-                                    onClick={() => navigate(`/psicologo/calendarioEmocoes/${id}`)}
-                                    className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 text-[#2B2F42] w-full"
-                                >
-                                    <div className="bg-[#F4F7FF] rounded-md p-1">
-                                        <Smile color="#858EBD" size={20} />
-                                    </div>
-                                    <span className="text-sm font-regular whitespace-nowrap">
-                                        Calendário de Emoções
-                                    </span>
-                                </button>
-                            </div>
-                        </div>
+                        <InfoPaciente
+                            abaAtiva="estatisticas"
+                        />
 
                         {/* Seção das estatísticas */}
                         <div className="flex-1">

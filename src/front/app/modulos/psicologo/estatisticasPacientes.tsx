@@ -48,7 +48,7 @@ export default function EstatisticasPacientes(){
     const PercentualCadastrosMes = (dadosMes, dadosTotal) => {
         const foraDoMes = dadosTotal - dadosMes;
         if (foraDoMes === 0) {
-            return 100; //
+            return 100;
         }
         return Number(((dadosMes / foraDoMes) * 100).toFixed(2));
     };

@@ -20,6 +20,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { eachDayOfInterval, startOfMonth, endOfMonth, isSameDay, isSameMonth, isToday } from "date-fns";
 import type { View } from "react-big-calendar";
 import {ChevronLeft, ChevronRight} from "lucide-react";
+import PainelLateralEmocao from "~/componentes/PainelLateralEmocao";
 
 interface Usuario {
     id?: number;
@@ -366,10 +367,10 @@ export function CalendarioEmocoesPaciente (){
                             />
                         </div>
                     </div>
-                    {mostrar && (
-                        <PainelLateralEditarEmocao
-                            pacienteId={pacienteId}
-                            onClose={() => setMostrar(false)}
+                    {eventoSelecionado && (
+                        <PainelLateralEmocao
+                            evento={eventoSelecionado}
+                            onClose={() => setEventoSelecionado(null)}
                         />
                     )}
 

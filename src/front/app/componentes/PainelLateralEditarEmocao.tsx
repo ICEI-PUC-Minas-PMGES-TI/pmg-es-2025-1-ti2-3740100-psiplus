@@ -1,5 +1,5 @@
 import { iconesEmocoes } from "~/componentes/IconesEmocoes";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import axios from "axios";
 import { format } from "date-fns";
@@ -40,8 +40,25 @@ export default function PainelLateralEditarEmocao({
     }
     agora.setMinutes(0, 0, 0);
 
-    const dataFormatada = format(agora, "dd/MM/yyyy", { locale: ptBR });
-    const horaFormatada = format(agora, "HH:mm", { locale: ptBR });
+    function arredondarHora(data: Date) {
+        const novaData = new Date(data);
+        novaData.setMinutes(0, 0, 0);
+        return novaData;
+    }
+
+    const agoraArredondado = arredondarHora(new Date());
+
+    const horaFormatada = evento?.hora
+        ? evento.hora.split(":")[0] + ":00"
+        : format(agoraArredondado, "HH:mm", { locale: ptBR });
+
+    const dataFormatada = evento
+        ? (() => {
+            const [ano, mes, dia] = evento.data.split("-").map(Number);
+            const dataObj = new Date(ano, mes - 1, dia);
+            return format(dataObj, "dd/MM/yyyy", { locale: ptBR });
+        })()
+        : format(agoraArredondado, "dd/MM/yyyy", { locale: ptBR });
 
     const [emocaoSelecionada, setEmocaoSelecionada] = useState<string | null>("feliz");
     const [mensagem, setMensagem] = useState("");
@@ -50,6 +67,14 @@ export default function PainelLateralEditarEmocao({
     const [mostrarPopup, setMostrarPopup] = useState(false);
     const [tituloPopup, setTituloPopup] = useState("");
     const [mensagemPopup, setMensagemPopup] = useState("");
+
+    useEffect(() => {
+        if (evento) {
+            setEmocaoSelecionada(evento.tipoEmocao?.nome ?? "feliz");
+            setMensagem(evento.sentimento ?? "");
+            setNotas(evento.notas ?? "");
+        }
+    }, [evento]);
 
     const alternarDropdown = () => setAberto(!aberto);
 
@@ -62,12 +87,12 @@ export default function PainelLateralEditarEmocao({
 
     const salvarEmocao = async (pacienteId: number) => {
         try {
-            const agora = new Date();
-            if (agora.getMinutes() >= 30) agora.setHours(agora.getHours() + 1);
-            agora.setMinutes(0, 0, 0);
+            const data = evento?.data ?? format(new Date(), "yyyy-MM-dd");
 
-            const data = format(agora, "yyyy-MM-dd");
-            const hora = format(agora, "HH:mm");
+            const hora = evento?.hora
+                ? evento.hora.split(":")[0] + ":00"
+                : format(arredondarHora(new Date()), "HH:mm");
+
             const tipoEmocaoId = mapaEmocoes[emocaoSelecionada!];
 
             const emocaoPayload = {
@@ -87,6 +112,7 @@ export default function PainelLateralEditarEmocao({
             if (atualizarEventos) {
                 await atualizarEventos();
             }
+
         } catch (erro: any) {
             if (erro.response?.status === 409) {
                 setTituloPopup("Conflito de Horário");

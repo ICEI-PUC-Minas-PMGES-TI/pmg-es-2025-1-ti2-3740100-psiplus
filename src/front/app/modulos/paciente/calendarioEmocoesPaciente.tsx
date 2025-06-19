@@ -54,6 +54,7 @@ export function CalendarioEmocoesPaciente (){
     const [mesLateral, setMesLateral] = useState(new Date());
     const [visualizacao, setVisualizacao] = useState<View>("week");
     const [eventoSelecionado, setEventoSelecionado] = useState<EventoEmocao | null>(null);
+    const [eventoCriado, setEventoCriado] = useState<EventoEmocao | null>(null);
     const [pacienteId, setPacienteId] = useState<number | null>(null);
     const [eventos, setEventos] = useState<Array<{
         start: Date;
@@ -269,6 +270,32 @@ export function CalendarioEmocoesPaciente (){
         };
     };
 
+    function arredondarHora(data: Date) {
+        const novaData = new Date(data);
+        novaData.setMinutes(0, 0, 0);
+        return novaData;
+    }
+
+    const aoSelecionarSlot = ({ start }: { start: Date }) => {
+        const dataEvento = format(start, "yyyy-MM-dd", { locale: ptBR });
+        const horaEvento = format(arredondarHora(start), "HH:mm", { locale: ptBR });
+
+        const novoEvento = {
+            id: 0,
+            paciente: {
+                pacienteId
+            },
+            data: dataEvento,
+            hora: horaEvento,
+            tipoEmocao: { nome: "feliz", icone: "feliz" }, // default
+            sentimento: "",
+            notas: "",
+        };
+
+        setEventoCriado(novoEvento);
+        setMostrar(true);
+    };
+
     return (
     <Main>
         <div className="flex h-screen bg-white ">
@@ -367,13 +394,15 @@ export function CalendarioEmocoesPaciente (){
                                 view={visualizacao}
                                 onView={(view) => setVisualizacao(view)}
                                 onSelectEvent={aoSelecionarEvento}
+                                onSelectSlot={aoSelecionarSlot}
+                                selectable={true}
                                 eventPropGetter={estiloEvento}
                             />
                         </div>
                     </div>
                     {mostrar && (
                         <PainelLateralEditarEmocao
-                            evento={null}
+                            evento={eventoCriado}
                             pacienteId={pacienteId}
                             atualizarEventos={carregar}
                             onClose={() => setMostrar(false)

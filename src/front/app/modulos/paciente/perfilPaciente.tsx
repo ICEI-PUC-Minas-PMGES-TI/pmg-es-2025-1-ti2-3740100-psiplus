@@ -254,7 +254,11 @@ export default function perfilPaciente() {
                                 </div>
                                 <h2 className="mt-2 font-semibold text-lg text-[#3A3F63]">{paciente?.usuario?.nome || ""}</h2>
                                 <p className="text-sm text-[#5A607F]">{paciente?.usuario?.email || ""}</p>
-                                <p className="text-sm text-gray-400">Última consulta - 12/02/2025</p>
+                                <p className="text-xs text-gray-400">
+                                    {ultimaConsulta
+                                        ? `Última consulta - ${format(parseISO(ultimaConsulta.data), "dd/MM/yyyy")}`
+                                        : "Nenhuma consulta encontrada"}
+                                </p>
                             </div>
 
                             <div className="mt-6 flex flex-col gap-3">

@@ -3,6 +3,9 @@ package com.psiplus.model;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "paciente")
@@ -10,7 +13,7 @@ public class Paciente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "paciente_id")  // Recomendo explicitar o nome da coluna
+    @Column(name = "paciente_id")
     private Long pacienteId;
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -36,6 +39,10 @@ public class Paciente {
     @JoinColumn(name = "psicologo_id")
     @JsonBackReference
     private Psicologo psicologo;
+
+    @CreationTimestamp
+    @Column(name = "data_cadastro", nullable = false, updatable = false)
+    private LocalDateTime dataCadastro;
 
     // Getters e Setters
 
@@ -70,5 +77,7 @@ public class Paciente {
     public void setArquivado(Boolean arquivado){ this.arquivado = arquivado; }
     public Psicologo getPsicologo() { return psicologo; }
     public void setPsicologo (Psicologo psicologo){ this.psicologo = psicologo; }
+    public LocalDateTime getDataCadastro() { return dataCadastro; }
+    public void setDataCadastro(LocalDateTime dataCadastro) { this.dataCadastro = dataCadastro; }
 
 }

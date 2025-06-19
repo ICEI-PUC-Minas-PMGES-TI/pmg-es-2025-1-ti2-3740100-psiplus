@@ -119,7 +119,6 @@ public class PacienteService {
 
         Paciente salvo = repository.save(paciente);
 
-        // Agora sim: enviar o e-mail depois de tudo estar salvo
         String html = EmailTemplates.gerarBoasVindas(usuario.getNome(), usuario.getEmail(), usuario.getCpfCnpj());
         emailService.enviarEmail(usuario.getEmail(), "Bem-vindo ao Psi+", html);
 

@@ -3,6 +3,7 @@ import MenuLateralPsicólogo from "~/componentes/MenuLateralPsicólogo";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import ExitIcon from "../../../public/assets/ExitIcon.png";
 import { useNavigate } from "react-router";
+import GraficoCrescimento from "~/componentes/GraficoCrescimento";
 
 export default function EstatisticasPacientes(){
     const navigate = useNavigate();
@@ -31,9 +32,16 @@ export default function EstatisticasPacientes(){
                         />
                     </div>
                     <hr className="border-t-2 border-[#DFE5F1] my-2"/>
-                    <h1 className="pt-4 font-semibold text-[#161736] mx-2 text-[25px]">Estatísticas</h1>
+                    <h1 className="pt-4 font-semibold text-[#161736] mx-2 text-[25px]">ESTATÍSTICAS</h1>
+                    <div className="mt-10 bg-white rounded-xl shadow-md mx-5 p-4 relative">
+                        <h1 className="pt-4 font-semibold text-[#161736] mx-2 text-[25px]">Novos cadastros - Mês </h1>
+                        <h1 className="pt-4 font-semibold ml-25 text-[#161736] mx-2 text-[65px]"> 25 % </h1>
+                        <GraficoCrescimento />
+                    </div>
+                    <div className="mt-10 bg-white rounded-xl shadow-md mx-5 p-4 relative">
+                        <h1 className="pt-4 font-semibold text-[#161736] mx-2 text-[20px]">Atendimentos Efetivados</h1>
+                    </div>
                 </div>
-
             </div>
         </Main>
     );

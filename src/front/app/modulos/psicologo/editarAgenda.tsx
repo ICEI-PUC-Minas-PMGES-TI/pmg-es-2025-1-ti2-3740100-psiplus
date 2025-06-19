@@ -369,23 +369,19 @@ export default function EditarAgenda() {
         };
 
         const fatiarIntervalo = (dispStart, dispEnd, consultas) => {
-            // Ordena consultas por start
             const sorted = consultas.sort((a, b) => a.start - b.start);
             const livres = [];
             let cursor = dispStart;
 
             for (const cons of sorted) {
-                // Se o cursor está antes do começo da consulta, tem espaço livre
                 if (cursor < cons.start) {
                     livres.push({ start: cursor, end: cons.start });
                 }
-                // Avança o cursor para o fim da consulta se estiver dentro da disponibilidade
                 if (cons.end > cursor) {
                     cursor = cons.end;
                 }
             }
 
-            // Depois da última consulta, se sobrar espaço, adiciona também
             if (cursor < dispEnd) {
                 livres.push({ start: cursor, end: dispEnd });
             }
@@ -408,13 +404,11 @@ export default function EditarAgenda() {
             const endDisp = new Date(dia);
             endDisp.setHours(horaF, minutoF, 0, 0);
 
-            // Pega as consultas que se cruzam
             const consultasNoIntervalo = consultas.filter(c =>
                 intervaloSeCruzam(startDisp, endDisp, c.start, c.end)
             );
 
             if (consultasNoIntervalo.length === 0) {
-                // Disponibilidade inteira livre
                 disponibilidadesComIntervalos.push({
                     start: startDisp,
                     end: endDisp,
@@ -425,11 +419,9 @@ export default function EditarAgenda() {
                     borderColor: "#3B82F6",
                 });
             } else {
-                // Divide o intervalo, removendo as consultas
                 const intervalosLivres = fatiarIntervalo(startDisp, endDisp, consultasNoIntervalo);
 
                 intervalosLivres.forEach(({ start, end }) => {
-                    // Só adiciona se o intervalo for válido (ex: maior que zero)
                     if (start < end) {
                         disponibilidadesComIntervalos.push({
                             start,

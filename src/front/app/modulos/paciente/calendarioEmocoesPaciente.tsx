@@ -64,7 +64,6 @@ export function CalendarioEmocoesPaciente (){
     }>>([]);
     const [mostrar, setMostrar] = useState(false);
 
-
     useEffect(() => {
         const sessao = JSON.parse(sessionStorage.getItem("sessaoPaciente") || "{}");
         if (sessao?.usuarioId) {
@@ -294,6 +293,7 @@ export function CalendarioEmocoesPaciente (){
 
         setEventoCriado(novoEvento);
         setMostrar(true);
+        setEventoSelecionado(null)
     };
 
     return (

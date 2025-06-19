@@ -38,11 +38,9 @@ export function AgendaPaciente() {
   const [dataSelecionada, setDataSelecionada] = useState<{ start: Date; end: Date } | null>(null);
   const [visualizacao, setVisualizacao] = useState<"week" | "day" | "agenda">(Views.WEEK); // Added missing state
   const [psicologoId, setPsicologoId] = useState<number | null>(null);
-const [psicologoNome, setPsicologoNome] = useState<string>("");
+  const [psicologoNome, setPsicologoNome] = useState<string>("");
 
-
-
-useEffect(() => {
+  useEffect(() => {
   const sessao = JSON.parse(sessionStorage.getItem("sessaoPaciente") || "{}");
   if (sessao?.usuarioId) {
     setPacienteId(sessao.usuarioId);
@@ -126,27 +124,175 @@ useEffect(() => {
     carregarEventosCalendario();
   }, [pacienteId]);
 
+  const handleAgendado = (psicologo: any) => {
+    const carregarEventosCalendario = async () => {
+      try {
+        const { data: consultasBackend } = await axios.get(`http://localhost:8080/consultas/paciente/${pacienteId}`);
+        consultasBackend.sort((a: any, b: any) => {
+          if (a.pacienteId !== b.pacienteId) return a.pacienteId - b.pacienteId;
+          if (a.data !== b.data) return a.data.localeCompare(b.data);
+          return a.horarioInicio.localeCompare(b.horarioInicio);
+        });
+
+        const gruposUnificados: any[] = [];
+        for (let i = 0; i < consultasBackend.length; i++) {
+          const atual = consultasBackend[i];
+          const [hIni, mIni] = atual.horarioInicio.split(":").map(Number);
+          const [hFim, mFim] = atual.horarioFim.split(":").map(Number);
+          const [ano, mes, dia] = atual.data.split("-").map(Number);
+          const inicio = new Date(ano, mes - 1, dia, hIni, mIni);
+          const fim = new Date(ano, mes - 1, dia, hFim, mFim);
+
+          const ultimo = gruposUnificados[gruposUnificados.length - 1];
+          const mesmaPessoa = ultimo && ultimo.pacienteId === atual.pacienteId;
+          const mesmaData = ultimo && ultimo.data === atual.data;
+          const continua = ultimo && ultimo.horarioFim === atual.horarioInicio;
+
+          if (mesmaPessoa && mesmaData && continua) {
+            ultimo.horarioFim = atual.horarioFim;
+            ultimo.end = fim;
+          } else {
+            gruposUnificados.push({
+              id: atual.id,
+              pacienteId: atual.pacienteId,
+              data: atual.data,
+              horarioInicio: atual.horarioInicio,
+              horarioFim: atual.horarioFim,
+              start: inicio,
+              end: fim,
+            });
+          }
+        }
+
+        const eventosConsultas: Evento[] = gruposUnificados.map((consulta) => ({
+          id: consulta.id,
+          title: "Consulta",
+          start: consulta.start,
+          end: consulta.end,
+          backgroundColor: "#FECACA",
+          borderColor: "#DC2626",
+        }));
+
+        setConsultas(eventosConsultas);
+
+        const { data: disponibilidadeMensal } = await axios.get(`http://localhost:8080/consultas/disponibilidade-mensal?pacienteId=${pacienteId}`);
+        setDisponiveis(disponibilidadeMensal);
+      } catch (error) {
+        console.error("Erro ao carregar calendário:", error);
+      }
+    };
+
+    carregarEventosCalendario();
+  };
+
   const disponiveisFormatados = React.useMemo(() => {
     const eventos: Evento[] = [];
+    const agora = new Date();
+
     Object.entries(disponiveis).forEach(([dataStr, horarios]: [string, any[]]) => {
       horarios.forEach(horario => {
         const inicio = new Date(horario.inicio);
         const fim = new Date(horario.fim);
+
+        if (fim <= agora) return;
+
         eventos.push({
-            title: "Disponível",
-            start: inicio,
-            end: fim,
-            className: "rbc-event.evento-disponivel",
-            tipo: "disponivel",
+          title: "Disponível",
+          start: inicio,
+          end: fim,
+          className: "rbc-event.evento-disponivel",
+          tipo: "disponivel",
+          recorrente: horario.recorrente || false,
         });
       });
     });
+
     return eventos;
   }, [disponiveis]);
 
+  const gerarDisponibilidadesRecorrentesSemana = React.useCallback(() => {
+    const inicioSemana = startOfWeek(dataBase, { weekStartsOn: 1 });
+    const eventos: Evento[] = [];
+
+    const intervaloSeCruzam = (start1: Date, end1: Date, start2: Date, end2: Date) => {
+      return start1 < end2 && start2 < end1;
+    };
+
+    const fatiarIntervalo = (dispStart: Date, dispEnd: Date, consultas: Evento[]) => {
+      const sorted = [...consultas].sort((a, b) => a.start.getTime() - b.start.getTime());
+      const livres = [];
+      let cursor = dispStart;
+
+      for (const cons of sorted) {
+        if (cursor < cons.start) {
+          livres.push({ start: cursor, end: cons.start });
+        }
+        if (cons.end > cursor) {
+          cursor = cons.end;
+        }
+      }
+
+      if (cursor < dispEnd) {
+        livres.push({ start: cursor, end: dispEnd });
+      }
+
+      return livres;
+    };
+
+    Object.entries(disponiveis).forEach(([_, horarios]) => {
+      horarios.forEach((disp: any) => {
+        if (!disp.recorrente) return;
+
+        const [ano, mes, dia, horaI, minutoI] = disp.inicio.split(/[-T:]/).map(Number);
+        const [, , , horaF, minutoF] = disp.fim.split(/[-T:]/).map(Number);
+
+        const dataReferencia = new Date(ano, mes - 1, dia); // correta e sem timezone bug
+        const diaSemana = dataReferencia.getDay(); // 0 = dom, 1 = seg...
+
+        const dataAlvo = new Date(inicioSemana);
+        dataAlvo.setDate(inicioSemana.getDate() + ((diaSemana + 7 - inicioSemana.getDay()) % 7));
+
+        const startDisp = new Date(dataAlvo);
+        startDisp.setHours(horaI, minutoI, 0, 0);
+
+        const endDisp = new Date(dataAlvo);
+        endDisp.setHours(horaF, minutoF, 0, 0);
+
+        if (endDisp < new Date()) return;
+
+        const consultasNoIntervalo = consultas.filter(c =>
+            intervaloSeCruzam(startDisp, endDisp, c.start, c.end)
+        );
+
+        const intervalosLivres = fatiarIntervalo(startDisp, endDisp, consultasNoIntervalo);
+
+        intervalosLivres.forEach(({ start, end }) => {
+          if (start < end) {
+            eventos.push({
+              start,
+              end,
+              title: "Disponível",
+              tipo: "disponivel",
+              className: "rbc-event.evento-disponivel",
+              recorrente: true,
+            });
+          }
+        });
+      });
+    });
+
+    return eventos;
+  }, [dataBase, disponiveis, consultas]);
+
+  const disponiveisRecorrentesSemana = gerarDisponibilidadesRecorrentesSemana();
+
   const agendaEventos = React.useMemo(() => {
-    return [...disponiveisFormatados, ...consultas];
-  }, [consultas, disponiveisFormatados]);
+    return [
+      ...disponiveisFormatados.filter(e => !e.recorrente),
+      ...disponiveisRecorrentesSemana,
+      ...consultas,
+    ];
+  }, [disponiveisFormatados, disponiveisRecorrentesSemana, consultas]);
 
   const consultasDoMes = React.useMemo(() => {
     return agendaEventos
@@ -225,66 +371,7 @@ useEffect(() => {
   }
 };
 
-  const handleAgendado = (psicologo: any) => {
-    const carregarEventosCalendario = async () => {
-      try {
-        const { data: consultasBackend } = await axios.get(`http://localhost:8080/consultas/paciente/${pacienteId}`);
-        consultasBackend.sort((a: any, b: any) => {
-          if (a.pacienteId !== b.pacienteId) return a.pacienteId - b.pacienteId;
-          if (a.data !== b.data) return a.data.localeCompare(b.data);
-          return a.horarioInicio.localeCompare(b.horarioInicio);
-        });
 
-        const gruposUnificados: any[] = [];
-        for (let i = 0; i < consultasBackend.length; i++) {
-          const atual = consultasBackend[i];
-          const [hIni, mIni] = atual.horarioInicio.split(":").map(Number);
-          const [hFim, mFim] = atual.horarioFim.split(":").map(Number);
-          const [ano, mes, dia] = atual.data.split("-").map(Number);
-          const inicio = new Date(ano, mes - 1, dia, hIni, mIni);
-          const fim = new Date(ano, mes - 1, dia, hFim, mFim);
-
-          const ultimo = gruposUnificados[gruposUnificados.length - 1];
-          const mesmaPessoa = ultimo && ultimo.pacienteId === atual.pacienteId;
-          const mesmaData = ultimo && ultimo.data === atual.data;
-          const continua = ultimo && ultimo.horarioFim === atual.horarioInicio;
-
-          if (mesmaPessoa && mesmaData && continua) {
-            ultimo.horarioFim = atual.horarioFim;
-            ultimo.end = fim;
-          } else {
-            gruposUnificados.push({
-              id: atual.id,
-              pacienteId: atual.pacienteId,
-              data: atual.data,
-              horarioInicio: atual.horarioInicio,
-              horarioFim: atual.horarioFim,
-              start: inicio,
-              end: fim,
-            });
-          }
-        }
-
-        const eventosConsultas: Evento[] = gruposUnificados.map((consulta) => ({
-          id: consulta.id,
-          title: "Consulta",
-          start: consulta.start,
-          end: consulta.end,
-          backgroundColor: "#FECACA",
-          borderColor: "#DC2626",
-        }));
-
-        setConsultas(eventosConsultas);
-
-        const { data: disponibilidadeMensal } = await axios.get(`http://localhost:8080/consultas/disponibilidade-mensal?pacienteId=${pacienteId}`);
-        setDisponiveis(disponibilidadeMensal);
-      } catch (error) {
-        console.error("Erro ao carregar calendário:", error);
-      }
-    };
-
-    carregarEventosCalendario();
-  };
 
   const diasDoMes = eachDayOfInterval({
     start: startOfWeek(startOfMonth(mesLateral), { weekStartsOn: 0 }),
@@ -376,7 +463,6 @@ useEffect(() => {
               onNavigate={(novaData) => setDataBase(novaData)}
               view={visualizacao}
               onView={(view) => setVisualizacao(view)}
-              onSelectEvent={handleSelectEvent}
             />
           </div>
         </div>
@@ -430,7 +516,7 @@ useEffect(() => {
                     key={idx}
                     onClick={() => {
                       setDataBase(dia);
-                      setVisualizacao("day"); // Switch to day view to show available slots
+                      setVisualizacao("day");
                     }}
                     className={`py-1 w-8 h-8 rounded-full flex items-center justify-center mx-auto transition cursor-pointer
                       ${isSelecionado ? "bg-[#0088A3] text-white font-semibold" : isHoje ? "text-[#F58020]" : ""}

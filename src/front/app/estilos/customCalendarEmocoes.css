@@ -112,6 +112,18 @@
     width: 100% !important;
 }
 
+.rbc-event.emocao {
+    background-color: white !important;
+    border: none !important; /* Zera todas as bordas */
+    border-radius: 0 !important;
+    font-weight: 500 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+}
+
 .rbc-event {
     background-color: white !important;
     border: none !important; /* Zera todas as bordas */

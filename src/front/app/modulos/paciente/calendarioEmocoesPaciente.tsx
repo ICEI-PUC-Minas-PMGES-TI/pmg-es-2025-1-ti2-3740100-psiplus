@@ -21,8 +21,6 @@ import { eachDayOfInterval, startOfMonth, endOfMonth, isSameDay, isSameMonth, is
 import type { View } from "react-big-calendar";
 import {ChevronLeft, ChevronRight} from "lucide-react";
 
-
-
 interface Usuario {
     id?: number;
     nome: string;
@@ -114,6 +112,7 @@ export function CalendarioEmocoesPaciente (){
                     end: fim,
                     emocao: e.tipoEmocaoNome.toLowerCase(),
                     original: evento,
+                    tipo: "emocao"
                 };
             });
             setEventos(eventosTransformados);
@@ -252,6 +251,17 @@ export function CalendarioEmocoesPaciente (){
         navigate("/")
     }
 
+    const estiloEvento = (event: Event) => {
+        if (event.tipo === "emocao") {
+            return {
+                className: "rbc-event emocao",
+            };
+        }
+        return {
+            className: "rbc-event",
+        };
+    };
+
     return (
     <Main>
         <div className="flex h-screen bg-white ">
@@ -331,7 +341,7 @@ export function CalendarioEmocoesPaciente (){
                                 endAccessor="end"
                                 defaultView={Views.WEEK}
                                 views={["week", "day", "agenda"]}
-                                style={{ height: "78vh" }}
+                                style={{ height: "70vh" }}
                                 components={{
                                     toolbar: CustomToolbar,
                                     header: CustomHeader,
@@ -352,6 +362,7 @@ export function CalendarioEmocoesPaciente (){
                                 onSelectEvent={(event) => {
                                     setEventoSelecionado(event.original);
                                 }}
+                                eventPropGetter={estiloEvento}
                             />
                         </div>
                     </div>

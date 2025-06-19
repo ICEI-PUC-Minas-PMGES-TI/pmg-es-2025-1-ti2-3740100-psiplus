@@ -1,5 +1,6 @@
 import type { Route } from "./+types/redefinicaoSenhaRoute";
 import {RedefinicaoSenha} from "../../modulos/paciente/redefiniçãoSenha";
+import ProtectedRoute from "~/routes/ProtectedRoute";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -9,5 +10,9 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function redefinicaoSenhaRoute() {
-    return <RedefinicaoSenha/>;
+    return (
+        <ProtectedRoute>
+            <RedefinicaoSenha/>
+        </ProtectedRoute>
+    )
 }

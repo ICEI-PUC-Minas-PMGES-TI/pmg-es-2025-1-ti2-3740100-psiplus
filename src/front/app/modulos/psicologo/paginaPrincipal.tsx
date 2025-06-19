@@ -227,16 +227,14 @@ export default function Agenda() {
     );
   };
 
-  const estiloEvento = () => {
+  const estiloEvento = (event: Evento) => {
+    if (event.tipo === "disponivel") {
+      return {
+        className: "rbc-event evento-disponivel",
+      };
+    }
     return {
-      style: {
-        minHeight: "80px",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        padding: "2px 4px",
-        fontSize: "0.75rem",
-      },
+      className: "rbc-event consulta",
     };
   };
 

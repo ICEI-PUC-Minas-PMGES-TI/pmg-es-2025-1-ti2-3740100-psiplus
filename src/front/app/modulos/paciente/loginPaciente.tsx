@@ -19,7 +19,7 @@ export function LoginPaciente() {
 
     function fazerLogin(e: React.FormEvent) {
         e.preventDefault();
-        setErro(""); // limpa o erro antes de tentar de novo
+        setErro("");
 
         axios
             .post("http://localhost:8080/pacientes/login", {
@@ -28,7 +28,7 @@ export function LoginPaciente() {
             })
             .then((response) => {
                 const tempoDeSessao = 30 * 60 * 1000; // 30 minutos
-
+                console.log(response.data)
                 const dadosSessao = {
                     usuarioId: response.data.pacienteId,
                     expiraEm: Date.now() + tempoDeSessao,

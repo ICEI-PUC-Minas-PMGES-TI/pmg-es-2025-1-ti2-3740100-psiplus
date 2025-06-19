@@ -54,6 +54,7 @@ useEffect(() => {
         if (data.psicologoId) {
           setPsicologoId(data.psicologoId);
           setPsicologoNome(data.psicologoNome || "Psicólogo não informado");
+
         } else {
           setPsicologoId(null);
           setPsicologoNome("Psicólogo não informado");
@@ -206,40 +207,10 @@ useEffect(() => {
     if (event.tipo === "disponivel") {
       return {
         className: "rbc-event evento-disponivel",
-        style: {
-          minHeight: "80px",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          padding: "2px 4px",
-          fontSize: "0.75rem",
-          backgroundColor: "#D1FAE5",
-          borderLeft: "4px solid #10B981",
-          color: "#065F46",
-          fontWeight: "600",
-          boxShadow: "none",
-          borderRadius: "0",
-          border: "none",
-        },
       };
     }
     return {
-      className: "rbc-event",
-      style: {
-        minHeight: "80px",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        padding: "2px 4px",
-        fontSize: "0.75rem",
-        backgroundColor: "#FFF4E9",
-        borderLeft: "4px solid #F79824",
-        color: "#F79824",
-        fontWeight: "500",
-        boxShadow: "none",
-        borderRadius: "0",
-        border: "none",
-      },
+      className: "rbc-event consulta",
     };
   };
 
@@ -251,8 +222,6 @@ useEffect(() => {
     } else {
       alert("Não foi possível identificar o psicólogo para agendamento.");
     }
-  } else {
-    alert("Este horário não está disponível para agendamento.");
   }
 };
 
@@ -376,9 +345,7 @@ useEffect(() => {
             )}
 
             <Calendar
-              selectable={true}
               onSelectEvent={handleSelectEvent}
-              onSelectSlot={() => alert("Selecione um horário disponível para agendar.")}
               localizer={localizer}
               culture="pt-BR"
               step={60}
@@ -396,7 +363,6 @@ useEffect(() => {
                 event: EventoCalendario,
               }}
               events={agendaEventos}
-              selectable={true}
               eventPropGetter={estiloEvento}
               messages={{
                 week: "Semana",

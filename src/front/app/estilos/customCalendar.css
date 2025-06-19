@@ -126,9 +126,25 @@
     justify-content: center !important;
 }
 
+.rbc-event.consulta {
+    background-color: #FFF4E9 !important;
+    border: none !important;
+    border-left: 4px solid #F79824 !important;
+    border-radius: 0 !important;
+    min-height: 80px;
+    color: #F79824 !important;
+    font-weight: 500 !important;
+    padding: 6px 8px !important;
+    box-shadow: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+}
+
 .rbc-event.evento-disponivel {
     background-color: #D1FAE5 !important;
     border-left: 4px solid #10B981 !important;
+    min-height: 80px;
     color: #065F46 !important;
     font-weight: 600 !important;
 }

@@ -13,29 +13,29 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
     const navigate = useNavigate();
     const [sessaoValida, setSessaoValida] = useState<boolean | null>(null); // null = carregando
 
+    function recuperarSessao(tipo: "psicologo" | "paciente"): Sessao | null {
+        const key = `sessao${tipo[0].toUpperCase()}${tipo.slice(1)}`;
+        const raw = sessionStorage.getItem(key);
+        if (!raw) return null;
+        try {
+            const sessao = JSON.parse(raw) as Sessao;
+            if (Date.now() > sessao.expiraEm) {
+                sessionStorage.removeItem(key);
+                return null;
+            }
+            return sessao;
+        } catch {
+            return null;
+        }
+    }
+
     useEffect(() => {
         async function testarBackend(): Promise<boolean> {
             try {
                 const res = await axios.get(`http://localhost:8080/psicologos/1`);
                 return !!res.data;
-            } catch (error) {
-                return false;
-            }
-        }
-
-        function recuperarSessao(tipo: "psicologo" | "paciente"): Sessao | null {
-            const key = `sessao${tipo[0].toUpperCase()}${tipo.slice(1)}`;
-            const raw = sessionStorage.getItem(key);
-            if (!raw) return null;
-            try {
-                const sessao = JSON.parse(raw) as Sessao;
-                if (Date.now() > sessao.expiraEm) {
-                    sessionStorage.removeItem(key);
-                    return null;
-                }
-                return sessao;
             } catch {
-                return null;
+                return false;
             }
         }
 
@@ -50,7 +50,11 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
             const psicologoSessao = recuperarSessao("psicologo");
             const pacienteSessao = recuperarSessao("paciente");
 
-            if (psicologoSessao || pacienteSessao) {
+            const path = location.pathname;
+
+            if (path.startsWith("/psicologo") && psicologoSessao) {
+                setSessaoValida(true);
+            } else if (path.startsWith("/paciente") && pacienteSessao) {
                 setSessaoValida(true);
             } else {
                 setSessaoValida(false);
@@ -58,13 +62,14 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
         }
 
         init();
-    }, []);
+    }, [location.pathname]);
 
     useEffect(() => {
         if (sessaoValida === false) {
-            if (location.pathname.startsWith("/psicologo")) {
+            const path = location.pathname;
+            if (path.startsWith("/psicologo")) {
                 navigate("/psicologo/login");
-            } else if (location.pathname.startsWith("/paciente")) {
+            } else if (path.startsWith("/paciente")) {
                 navigate("/paciente/login");
             } else {
                 navigate("/");
@@ -72,7 +77,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
         }
     }, [sessaoValida, location.pathname, navigate]);
 
-    if (sessaoValida === null || !sessaoValida) {
+    if (sessaoValida === null || sessaoValida === false) {
         return (
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
                 <CircularProgress size={50} sx={{ color: "#4A90E2" }} />

@@ -1,5 +1,6 @@
 import type { Route } from "./+types/CalendarioEmocoesPacienteRoute";
 import { CalendarioEmocoesPaciente } from "~/modulos/paciente/calendarioEmocoesPaciente";
+import ProtectedRoute from "~/routes/ProtectedRoute";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -9,5 +10,9 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function CalendarioEmocoesPacienteRoute() {
-    return <CalendarioEmocoesPaciente />;
+    return (
+        <ProtectedRoute>
+            <CalendarioEmocoesPaciente />
+        </ProtectedRoute>
+    )
 }

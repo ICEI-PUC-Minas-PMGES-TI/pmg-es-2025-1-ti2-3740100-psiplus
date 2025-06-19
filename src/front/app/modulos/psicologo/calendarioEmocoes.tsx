@@ -136,6 +136,17 @@ export default function CalendarioEmocoes() {
         onClick?: () => void;
     };
 
+    const estiloEvento = (event: Event) => {
+        if (event.tipo === "emocao") {
+            return {
+                className: "rbc-event emocao",
+            };
+        }
+        return {
+            className: "rbc-event",
+        };
+    };
+
     const BotaoLateral: React.FC<BotaoLateralProps> = ({ icone, texto, visivel, ativo = false, onClick }) => {
         return (
             <button
@@ -409,6 +420,7 @@ export default function CalendarioEmocoes() {
                                     onSelectEvent={(event) => {
                                         setEventoSelecionado(event.original);
                                     }}
+                                    eventPropGetter={estiloEvento}
                                 />
                             </div>
                         </div>

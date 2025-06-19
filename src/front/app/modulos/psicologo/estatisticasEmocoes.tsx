@@ -1,25 +1,11 @@
 import Main from "~/componentes/Main";
 import MenuLateralPsicólogo from "~/componentes/MenuLateralPsicólogo";
-import InputPadrao from "~/componentes/InputPadrao";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
-import PerfilUser from "../../../public/assets/PerfilUser.jpg";
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import axios from "axios";
 import ExitIcon from "../../../public/assets/ExitIcon.png"
-import {
-    User,
-    Clock,
-    BarChart2,
-    Camera,
-    Frown,
-    Meh,
-    Smile,
-    Angry,
-} from "lucide-react";
 import { EstatisticasEmocoesCard } from "~/componentes/EstatisticasEmocoesCard";
-import {format, parseISO} from "date-fns";
-import {useUltimaConsulta} from "~/utils/ultimaConsulta";
 import InfoPaciente from "~/componentes/InfoPaciente";
 
 

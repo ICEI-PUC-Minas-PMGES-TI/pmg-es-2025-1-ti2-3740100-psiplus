@@ -21,7 +21,6 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { eachDayOfInterval, startOfMonth, endOfMonth, isSameDay, isSameMonth, isToday } from "date-fns";
 import type { View } from "react-big-calendar";
 import {ChevronLeft, ChevronRight} from "lucide-react";
-import {useUltimaConsulta} from "~/utils/ultimaConsulta";
 import InfoPaciente from "~/componentes/InfoPaciente";
 
 
@@ -56,7 +55,6 @@ export default function CalendarioEmocoes() {
     const [visualizacao, setVisualizacao] = useState<View>("week");
     const [eventoSelecionado, setEventoSelecionado] = useState<EventoEmocao | null>(null);
     const [paciente, setPaciente] = useState<Paciente>({ usuario: { nome: "", email: "" } });
-    const ultimaConsulta = useUltimaConsulta(id);
     const [eventos, setEventos] = useState<Array<{
         start: Date;
         end: Date;

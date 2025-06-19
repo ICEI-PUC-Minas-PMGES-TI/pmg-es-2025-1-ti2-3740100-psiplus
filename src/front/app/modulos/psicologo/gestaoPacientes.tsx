@@ -2,23 +2,16 @@ import Main from "~/componentes/Main";
 import MenuLateralPsicólogo from "~/componentes/MenuLateralPsicólogo";
 import InputPadrao from "~/componentes/InputPadrao";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
-import PerfilUser from "../../../public/assets/PerfilUser.jpg";
 import { IoIosArrowDown } from "react-icons/io";
 import { useState, useEffect } from "react";
 import {
-    User,
-    Clock,
-    BarChart,
-    Camera,
     Edit2,
     Lock,
-    CheckCircle,
-    Smile
+    CheckCircle
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router";
 import axios from "axios";
 import ExitIcon from "../../../public/assets/ExitIcon.png"
-import {useUltimaConsulta} from "~/utils/ultimaConsulta";
 import InfoPaciente from "~/componentes/InfoPaciente";
 
 interface Endereco {
@@ -50,7 +43,6 @@ interface Paciente {
 export default function GestaoPacientes() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const ultimaConsulta = useUltimaConsulta(id);
     const [modoEdicao, setModoEdicao] = useState(false);
 
     const [paciente, setPaciente] = useState<Paciente>({

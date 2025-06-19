@@ -1,5 +1,6 @@
 package com.psiplus.service;
 
+import back.src.main.java.com.psiplus.DTO.dadosCadastroDTO;
 import com.psiplus.DTO.RedefinicaoSenhaDTO;
 import com.psiplus.DTO.PacienteDTO;
 import com.psiplus.DTO.AnotacaoDTO;
@@ -134,6 +135,12 @@ public class PacienteService {
         return repository.findAll()
                 .stream()
                 .map(PacienteDTO::new)
+                .collect(Collectors.toList());
+    }
+    public List<dadosCadastroDTO> listarDadosCadastro(){
+        return repository.findAll()
+                .stream()
+                .map(dadosCadastroDTO::new)
                 .collect(Collectors.toList());
     }
     public Paciente autenticar(String email, String senha) {

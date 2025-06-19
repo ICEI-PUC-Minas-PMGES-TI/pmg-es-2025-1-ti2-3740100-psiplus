@@ -2,6 +2,7 @@ package com.psiplus.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import back.src.main.java.com.psiplus.DTO.dadosCadastroDTO;
 import com.psiplus.DTO.PacienteComPsicologoDTO;
 import com.psiplus.DTO.PacienteDTO;
 import com.psiplus.DTO.RedefinicaoSenhaDTO;
@@ -85,6 +86,9 @@ public class PacienteController {
     public List<PacienteDTO> listarResumo() {
         return service.listarResumo();
     }
+
+    @GetMapping("/dadosCadastro")
+    public List<dadosCadastroDTO> listarDadosCadastro(){ return service.listarDadosCadastro();}
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {

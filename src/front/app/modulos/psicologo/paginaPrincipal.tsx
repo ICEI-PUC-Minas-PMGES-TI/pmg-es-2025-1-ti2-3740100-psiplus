@@ -227,7 +227,7 @@ export default function Agenda() {
     );
   };
 
-  const estiloEvento = (event: Evento) => {
+  const estiloEvento = (event: Event) => {
     if (event.tipo === "disponivel") {
       return {
         className: "rbc-event evento-disponivel",

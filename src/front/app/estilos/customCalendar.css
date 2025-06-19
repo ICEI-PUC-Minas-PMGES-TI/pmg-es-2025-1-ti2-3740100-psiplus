@@ -40,6 +40,14 @@
     color: #858585;
 }
 
+.rbc-event-content {
+    height: 100% !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
 /* Remove a linha abaixo do cabeçalho (rbc-row-resource) */
 .rbc-time-header-content .rbc-row.rbc-row-resource {
     display: none !important;
@@ -112,14 +120,13 @@
     width: 100% !important;
 }
 
+
 .rbc-event {
-    background-color: #FFF4E9 !important;
-    border: none !important;
-    border-left: 4px solid #F79824 !important;
+    background-color: white !important;
+    border: none !important; /* Zera todas as bordas */
     border-radius: 0 !important;
-    color: #F79824 !important;
     font-weight: 500 !important;
-    padding: 6px 8px !important;
+    padding: 0 !important;
     box-shadow: none !important;
     display: flex !important;
     flex-direction: column !important;

@@ -115,6 +115,7 @@ export default function CalendarioEmocoes() {
                     end: fim,
                     emocao: e.tipoEmocaoNome.toLowerCase(),
                     original: evento,
+                    tipo: "emocao"
                 };
             });
             setEventos(eventosTransformados);

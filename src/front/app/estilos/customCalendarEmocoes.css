@@ -136,6 +136,21 @@
     justify-content: center !important;
 }
 
+.rbc-event.consulta {
+    background-color: #FFF4E9 !important;
+    border: none !important;
+    border-left: 4px solid #F79824 !important;
+    border-radius: 0 !important;
+    min-height: 80px;
+    color: #F79824 !important;
+    font-weight: 500 !important;
+    padding: 6px 8px !important;
+    box-shadow: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+}
+
 /* Oculta o horário dentro dos eventos (mas NÃO nas laterais do calendário) */
 .rbc-event-label {
     display: none !important;

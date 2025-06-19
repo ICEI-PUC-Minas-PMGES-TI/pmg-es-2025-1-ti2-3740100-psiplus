@@ -8,7 +8,7 @@ import GraficoCrescimento from "~/componentes/GraficoCrescimento";
 
 export default function EstatisticasPacientes(){
     const navigate = useNavigate();
-    const[pacientes, setPacientes] = useState([]);
+    const [pacientes, setPacientes] = useState([]);
     const hoje = new Date();
     const mesAtual = hoje.getMonth();
     const anoAtual = hoje.getFullYear();

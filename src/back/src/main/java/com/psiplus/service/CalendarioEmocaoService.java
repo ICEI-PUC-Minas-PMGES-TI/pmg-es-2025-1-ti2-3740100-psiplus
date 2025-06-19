@@ -13,18 +13,20 @@ import com.psiplus.util.EntidadeNaoEncontradaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CalendarioEmocaoService {
 
     @Autowired
     private CalendarioEmocaoRepository calendarioEmocaoRepository;
+
     @Autowired
     private TipoEmocaoRepository tipoEmocaoRepository;
+
     @Autowired
     private PacienteRepository pacienteRepository;
 
@@ -35,7 +37,7 @@ public class CalendarioEmocaoService {
         TipoEmocao tipoEmocao = tipoEmocaoRepository.findById(dto.getTipoEmocaoId())
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("Tipo de emoção não encontrado"));
 
-        List<CalendarioEmocaoDTO> emocoesDoPaciente = listarPorPacienteId(paciente.getPacienteId());
+        List<CalendarioEmocaoDTO> emocoesDoPaciente = listarPorPacienteId(dto.getPacienteId());
 
         boolean jaExiste = emocoesDoPaciente.stream().anyMatch(e ->
                 e.getData().equals(dto.getData()) && e.getHora().equals(dto.getHora())
@@ -57,18 +59,15 @@ public class CalendarioEmocaoService {
         return toDTO(salvo);
     }
 
-
     public List<CalendarioEmocao> listarTodos() {
         return calendarioEmocaoRepository.findAll();
     }
 
     public List<CalendarioEmocaoDTO> listarPorPacienteId(Long pacienteId) {
-        List<CalendarioEmocaoDTO> dtos = calendarioEmocaoRepository.findByPacienteIdComTipoEmocao(pacienteId)
+        return calendarioEmocaoRepository.findByPacienteIdComTipoEmocao(pacienteId)
                 .stream()
                 .map(this::toDTO)
                 .toList();
-        dtos.forEach(dto -> System.out.println("DTO id: " + dto.getId() + ", sentimento: " + dto.getSentimento() + ", notas: " + dto.getNotas()));
-        return dtos;
     }
 
     public List<CalendarioEmocaoDTO> listarPorPacienteEData(Long pacienteId, LocalDate data) {
@@ -76,6 +75,36 @@ public class CalendarioEmocaoService {
                 .stream()
                 .map(this::toDTO)
                 .toList();
+    }
+
+    // Novo método para período genérico (intervalo entre datas)
+    public List<CalendarioEmocaoDTO> listarPorPacienteEPeriodo(Long pacienteId, LocalDate dataInicio, LocalDate dataFim) {
+        return calendarioEmocaoRepository.findByPacienteIdAndDataBetweenComTipoEmocao(pacienteId, dataInicio, dataFim)
+                .stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
+    // Filtrar pelo dia atual
+    public List<CalendarioEmocaoDTO> listarPorPacienteIdEDiaAtual(Long pacienteId) {
+        LocalDate hoje = LocalDate.now();
+        return listarPorPacienteEData(pacienteId, hoje);
+    }
+
+    // Filtrar pela semana atual (segunda a domingo)
+    public List<CalendarioEmocaoDTO> listarPorPacienteIdESemanaAtual(Long pacienteId) {
+        LocalDate hoje = LocalDate.now();
+        LocalDate inicioSemana = hoje.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate fimSemana = hoje.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+        return listarPorPacienteEPeriodo(pacienteId, inicioSemana, fimSemana);
+    }
+
+    // Filtrar pelo mês atual
+    public List<CalendarioEmocaoDTO> listarPorPacienteIdEMesAtual(Long pacienteId) {
+        LocalDate hoje = LocalDate.now();
+        LocalDate inicioMes = hoje.withDayOfMonth(1);
+        LocalDate fimMes = hoje.withDayOfMonth(hoje.lengthOfMonth());
+        return listarPorPacienteEPeriodo(pacienteId, inicioMes, fimMes);
     }
 
     public CalendarioEmocaoDTO toDTO(CalendarioEmocao entity) {
@@ -93,10 +122,8 @@ public class CalendarioEmocaoService {
 
     public List<ContagemEmocaoDTO> contarEmocoesPorPeriodo(Long pacienteId, int dias) {
         LocalDate dataInicio = LocalDate.now().minusDays(dias);
-        LocalDate dataFim = LocalDate.now();  // declarar dataFim corretamente
+        LocalDate dataFim = LocalDate.now();
         return calendarioEmocaoRepository.contarPorPeriodo(pacienteId, dataInicio, dataFim);
     }
-
-
 
 }

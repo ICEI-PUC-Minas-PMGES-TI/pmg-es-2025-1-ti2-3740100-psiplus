@@ -36,7 +36,6 @@ interface Paciente {
 export function EstatisticasEmocoes() {
     const navigate = useNavigate();
     const { id: pacienteId } = useParams();
-    const ultimaConsulta = useUltimaConsulta(pacienteId);
 
     {/* Dados do paciente */}
     const [paciente, setPaciente] = useState<Paciente>({

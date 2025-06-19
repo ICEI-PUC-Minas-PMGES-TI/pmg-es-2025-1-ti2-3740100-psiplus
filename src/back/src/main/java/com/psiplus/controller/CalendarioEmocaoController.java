@@ -21,10 +21,6 @@ public class CalendarioEmocaoController {
 
     @Autowired
     private CalendarioEmocaoService calendarioEmocaoService;
-    @Autowired
-    private PacienteRepository pacienteRepository;
-    @Autowired
-    private TipoEmocaoRepository tipoEmocaoRepository;
 
     @PostMapping
     public ResponseEntity<?> criarEmocao(@RequestBody CalendarioEmocaoDTO dto) {
@@ -41,8 +37,24 @@ public class CalendarioEmocaoController {
     }
 
     @GetMapping("/paciente/{pacienteId}")
-    public List<CalendarioEmocaoDTO> listarPorPaciente(@PathVariable Long pacienteId) {
-        return calendarioEmocaoService.listarPorPacienteId(pacienteId);
+    public List<CalendarioEmocaoDTO> listarPorPaciente(
+            @PathVariable Long pacienteId,
+            @RequestParam(required = false) String periodo
+    ) {
+        if (periodo == null) {
+            return calendarioEmocaoService.listarPorPacienteId(pacienteId);
+        }
+
+        switch (periodo.toLowerCase()) {
+            case "dia":
+                return calendarioEmocaoService.listarPorPacienteIdEDiaAtual(pacienteId);
+            case "semana":
+                return calendarioEmocaoService.listarPorPacienteIdESemanaAtual(pacienteId);
+            case "mes":
+                return calendarioEmocaoService.listarPorPacienteIdEMesAtual(pacienteId);
+            default:
+                throw new IllegalArgumentException("Período inválido: " + periodo);
+        }
     }
 
     @GetMapping("/paciente/{pacienteId}/data/{data}")

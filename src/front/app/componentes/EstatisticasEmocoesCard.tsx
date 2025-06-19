@@ -6,6 +6,7 @@ import axios from "axios";
 import { Frown, Meh, Smile, Angry } from "lucide-react";
 
 import { MenuItem, Select } from "@mui/material";
+import {useParams} from "react-router";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip);
 
@@ -37,6 +38,7 @@ export function EstatisticasEmocoesCard() {
     const emocoes: Emocao[] = dadosApi.map(mapearEmocao);
     const [mediasPorDia, setMediasPorDia] = useState<(number | null)[]>([]);
     const [eventosDetalhados, setEventosDetalhados] = useState<EventoEmocaoDTO[]>([]);
+    const pacienteId = useParams("")
 
     const diasDaSemana = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
 
@@ -52,7 +54,6 @@ export function EstatisticasEmocoesCard() {
     useEffect(() => {
         async function carregarDados() {
             try {
-                const pacienteId = 1;
 
                 // Buscar dados agregados para cards
                 const respostaAgregados = await axios.get<ContagemEmocaoDTO[]>(

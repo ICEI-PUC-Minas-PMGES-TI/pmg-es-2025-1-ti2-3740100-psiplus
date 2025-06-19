@@ -21,6 +21,7 @@ import { eachDayOfInterval, startOfMonth, endOfMonth, isSameDay, isSameMonth, is
 import type { View } from "react-big-calendar";
 import {ChevronLeft, ChevronRight} from "lucide-react";
 import PainelLateralEmocao from "~/componentes/PainelLateralEmocao";
+import Popup from "~/componentes/Popup";
 
 interface Usuario {
     id?: number;
@@ -70,34 +71,24 @@ export function CalendarioEmocoesPaciente (){
         }
     }, []);
 
-    // Buscar eventos emocionais do paciente
-    useEffect(() => {
-        if (!pacienteId) return;
+    async function carregarEventosEmocao(pacienteId: number): Promise<any[]> {
+        if (!pacienteId) return [];
 
-        axios.get(`http://localhost:8080/api/emocoes/paciente/${pacienteId}`).then(res => {
-            console.log('Resposta bruta da API:', res.data);
+        try {
+            const res = await axios.get(`http://localhost:8080/api/emocoes/paciente/${pacienteId}`);
+            console.log("Resposta bruta da API:", res.data);
+
             const eventosTransformados = res.data.map((e: any) => {
-                console.log('Evento recebido:', e);
-                // parse datas
-                const [ano, mes, dia] = e.data.split('-').map(Number);
-                const [hora, minuto] = e.hora.split(':').map(Number);
+                console.log("Evento recebido:", e);
 
+                const [ano, mes, dia] = e.data.split("-").map(Number);
+                const [hora, minuto] = e.hora.split(":").map(Number);
                 const inicio = new Date(ano, mes - 1, dia, hora, minuto);
-                const fim = new Date(inicio.getTime() + 60 * 60 * 1000);
+                const fim = new Date(inicio.getTime() + 60 * 60 * 1000); // +1 hora
 
-                console.log("Evento montado:", {
-                    id: e.id,
-                    start: inicio.toString(),
-                    iso: inicio.toISOString(),
-                    data: e.data,
-                    hora: e.hora
-                });
-
-
-                // monta evento usando paciente do estado
                 const evento: EventoEmocao = {
                     id: e.id,
-                    pacienteId: pacienteId,  // usa o paciente atual
+                    pacienteId: pacienteId,
                     data: e.data,
                     hora: e.hora,
                     tipoEmocao: {
@@ -105,7 +96,7 @@ export function CalendarioEmocoesPaciente (){
                         icone: e.tipoEmocaoNome,
                     },
                     sentimento: e.sentimento,
-                    notas: e.notas
+                    notas: e.notas,
                 };
 
                 return {
@@ -113,17 +104,32 @@ export function CalendarioEmocoesPaciente (){
                     end: fim,
                     emocao: e.tipoEmocaoNome.toLowerCase(),
                     original: evento,
-                    tipo: "emocao"
+                    tipo: "emocao",
                 };
             });
-            setEventos(eventosTransformados);
-        });
+
+            return eventosTransformados;
+        } catch (err) {
+            console.error("Erro ao carregar emoções:", err);
+            return [];
+        }
+    }
+
+    const carregar = async () => {
+        if (!pacienteId) return;
+        const eventosCarregados = await carregarEventosEmocao(pacienteId);
+        setEventos(eventosCarregados);
+    };
+
+    useEffect(() => {
+        carregar();
     }, [pacienteId]);
 
     // Função de clique em evento do calendário
     const aoSelecionarEvento = (event: any) => {
         const e = event.original;
         setEventoSelecionado(e);
+        setMostrar(false)
     };
 
     {/* Ajustar menu lateral interno abrindo e fechando */}
@@ -310,7 +316,7 @@ export function CalendarioEmocoesPaciente (){
                                 </button>
                             </div>
                             <button className="bg-[#ADD9E2] text-[#0088A3] cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1 hover:brightness-95"
-                                    onClick={() => setMostrar(true)}>
+                                    onClick={() => {setMostrar(true); setEventoSelecionado(null)}}>
                                 <Edit2 color="#0088A3" size={18} />
                                 Adicionar emoção
 
@@ -360,13 +366,20 @@ export function CalendarioEmocoesPaciente (){
                                 onNavigate={(novaData) => setDataBase(novaData)}
                                 view={visualizacao}
                                 onView={(view) => setVisualizacao(view)}
-                                onSelectEvent={(event) => {
-                                    setEventoSelecionado(event.original);
-                                }}
+                                onSelectEvent={aoSelecionarEvento}
                                 eventPropGetter={estiloEvento}
                             />
                         </div>
                     </div>
+                    {mostrar && (
+                        <PainelLateralEditarEmocao
+                            evento={null}
+                            pacienteId={pacienteId}
+                            atualizarEventos={carregar}
+                            onClose={() => setMostrar(false)
+                        }
+                        />
+                    )}
                     {eventoSelecionado && (
                         <PainelLateralEmocao
                             evento={eventoSelecionado}

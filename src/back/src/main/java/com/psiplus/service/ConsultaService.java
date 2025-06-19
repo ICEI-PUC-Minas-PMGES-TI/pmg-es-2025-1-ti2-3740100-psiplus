@@ -87,7 +87,9 @@ public class ConsultaService {
         return false;
     }
 
-
+    public Optional<Consulta> buscarUltimaConsultaPorPaciente(Long pacienteId) {
+        return consultaRepository.findTopByPacienteIdOrderByDataDescHorarioInicioDesc(pacienteId);
+    }
 
 }
 

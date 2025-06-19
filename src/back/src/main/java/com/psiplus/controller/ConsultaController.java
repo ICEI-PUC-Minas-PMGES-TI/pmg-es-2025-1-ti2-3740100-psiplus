@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/consultas")
@@ -80,5 +81,14 @@ public class ConsultaController {
         }
     }
 
+    @GetMapping("/ultimaconsulta/{id}")
+    public ResponseEntity<?> buscarUltimaConsulta(@PathVariable("id") Long pacienteId) {
+        Optional<Consulta> ultimaConsulta = consultaService.buscarUltimaConsultaPorPaciente(pacienteId);
+        if (ultimaConsulta.isPresent()) {
+            return ResponseEntity.ok(ultimaConsulta.get());
+        } else {
+            return ResponseEntity.noContent().build();
+        }
+    }
 
 }

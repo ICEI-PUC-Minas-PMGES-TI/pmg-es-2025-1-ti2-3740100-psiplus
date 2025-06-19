@@ -1,7 +1,7 @@
-import { Navigate, useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import CircularProgress from '@mui/material/CircularProgress';
+import CircularProgress from "@mui/material/CircularProgress";
 
 type Sessao = {
     nome: string;
@@ -10,12 +10,13 @@ type Sessao = {
 
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
     const location = useLocation();
+    const navigate = useNavigate();
     const [sessaoValida, setSessaoValida] = useState<boolean | null>(null); // null = carregando
 
     useEffect(() => {
         async function testarBackend(): Promise<boolean> {
             try {
-                const res = await axios.get("http://localhost:8080/psicologos/1");
+                const res = await axios.get(`http://localhost:8080/psicologos/1`);
                 return !!res.data;
             } catch (error) {
                 return false;
@@ -23,12 +24,13 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
         }
 
         function recuperarSessao(tipo: "psicologo" | "paciente"): Sessao | null {
-            const raw = sessionStorage.getItem(`sessao${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`);
+            const key = `sessao${tipo[0].toUpperCase()}${tipo.slice(1)}`;
+            const raw = sessionStorage.getItem(key);
             if (!raw) return null;
             try {
                 const sessao = JSON.parse(raw) as Sessao;
                 if (Date.now() > sessao.expiraEm) {
-                    sessionStorage.removeItem(`sessao${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`);
+                    sessionStorage.removeItem(key);
                     return null;
                 }
                 return sessao;
@@ -58,8 +60,19 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
         init();
     }, []);
 
-    // Spinner enquanto a sessão está sendo carregada
-    if (sessaoValida === null) {
+    useEffect(() => {
+        if (sessaoValida === false) {
+            if (location.pathname.startsWith("/psicologo")) {
+                navigate("/psicologo/login");
+            } else if (location.pathname.startsWith("/paciente")) {
+                navigate("/paciente/login");
+            } else {
+                navigate("/");
+            }
+        }
+    }, [sessaoValida, location.pathname, navigate]);
+
+    if (sessaoValida === null || !sessaoValida) {
         return (
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
                 <CircularProgress size={50} sx={{ color: "#4A90E2" }} />
@@ -67,16 +80,5 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
         );
     }
 
-    if (sessaoValida) {
-        return <>{children}</>;
-    }
-
-    // Redirecionamento baseado na URL
-    if (location.pathname.startsWith("/psicologo")) {
-        return <Navigate to="/psicologo/login" state={{ from: location }} replace />;
-    } else if (location.pathname.startsWith("/paciente")) {
-        return <Navigate to="/paciente/login" state={{ from: location }} replace />;
-    }
-
-    return <Navigate to="/" state={{ from: location }} replace />;
+    return <>{children}</>;
 }

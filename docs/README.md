@@ -244,10 +244,6 @@ A construção do sistema proposto me permitiu entender de forma prática como d
 
 # APÊNDICES
 
-
-_Atualizar os links e adicionar novos links para que a estrutura do código esteja corretamente documentada._
-
-
 ## Apêndice A - Código fonte
 
 [Código do front-end](../src/front) -- repositório do código do front-end

@@ -33,6 +33,8 @@ export default function EstatisticasPacientes(){
             .catch((err) => console.error("Erro ao buscar pacientes:", err));
     }, []);
 
+    
+
     const cadastrosMes = (datas) =>{
         const cadastrosMensais = datas.filter((data) =>{
             const dataFormatada = new Date(data);
@@ -80,24 +82,34 @@ export default function EstatisticasPacientes(){
                         <h1 className="pt-4 font-semibold ml-25 text-[#161736] mx-2 text-[65px]"> {percentualMes}% </h1>
                         <GraficoCrescimento />
                     </div>
-
                     <div className="mt-10 bg-white rounded-xl shadow-md mx-5 p-4 relative">
-                        <h1 className="pt-4 font-semibold text-[#161736] mx-2 text-[25px]">Atendimentos Efetivados</h1>
+                        <h1 className="pt-4 font-semibold text-[#161736] mx-2 text-[25px]">
+                            Atendimentos Efetivados
+                        </h1>
 
-                        <div className="flex justify-between items-center mt-15 px-2">
+                        {/* Percentual centralizado no topo dos dados */}
+                        <div className="flex flex-col items-center mt-6">
+                            <span className="font-semibold text-[#161736] text-[80px] leading-none">79%</span>
+                            <div className="w-16 h-1 bg-[#16a34a] rounded-full mt-2 mb-10"></div>
+                        </div>
+
+                        {/* Dados principais */}
+                        <div className="flex justify-between items-center mt-6 px-2">
                             {/* Coluna 1: Atendimentos Agendados */}
                             <div className="flex flex-col items-center w-1/2 border-r border-gray-300 pr-4">
                                 <span className="pt-4 font-semibold text-[#161736] mx-2 text-[65px]">120</span>
-                                <span className="text-gray-500 mt-2">Atendimentos Agendados</span>
+                                <span className="text-gray-500 mt-2">Consultas agendadas</span>
                             </div>
 
                             {/* Coluna 2: Atendimentos Realizados */}
                             <div className="flex flex-col items-center w-1/2 pl-4">
                                 <span className="pt-4 font-semibold mx-2 text-[65px] text-[#16a34a]">95</span>
-                                <span className="text-gray-500 mt-2">Atendimentos Realizados</span>
+                                <span className="text-gray-500 mt-2">Consultas realizadas</span>
                             </div>
                         </div>
                     </div>
+
+
 
                 </div>
             </div>

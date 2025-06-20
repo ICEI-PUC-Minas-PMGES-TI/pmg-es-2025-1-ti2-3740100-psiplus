@@ -252,4 +252,4 @@ _Permite ao paciente modificar ou excluir uma emoção previamente registrada, m
 | --- | --- | --- |
 | `Editar Emoção` | Salva os novos dados da emoção no banco | default |
 | `Deletar Emoção` | Remove os dados da emoção do banco | remover |
-|
+

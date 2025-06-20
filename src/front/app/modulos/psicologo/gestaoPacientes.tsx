@@ -68,14 +68,7 @@ export default function GestaoPacientes() {
     });
 
     useEffect(() => {
-        console.log("Paciente atualizado no estado:", JSON.stringify(paciente, null, 2));
-    }, [paciente]);
-
-    useEffect(() => {
         if (!id) return;
-
-        console.log("Chamando API com ID:", id);
-
         carregarPaciente(id);
     }, [id]);
 

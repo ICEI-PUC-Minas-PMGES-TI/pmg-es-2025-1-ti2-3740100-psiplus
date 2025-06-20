@@ -40,7 +40,7 @@ export default function PainelLateralEditarEmocaoProps({ evento, onClose, atuali
 
     const mapaEmocoes: { [key: string]: number } = {
         feliz: 1,
-        normal: 2,
+        neutro: 2,
         triste: 3,
         raiva: 4,
     };

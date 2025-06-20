@@ -237,19 +237,15 @@ _Verifique no link abaixo como devem ser as referências no padrão ABNT:_
 
 http://portal.pucminas.br/imagedb/documento/DOC_DSC_NOME_ARQUI20160217102425.pdf
 
-**[1.1]** - _ELMASRI, Ramez; NAVATHE, Sham. **Sistemas de banco de dados**. 7. ed. São Paulo: Pearson, c2019. E-book. ISBN 9788543025001._
+**[1.1]** - _REACT. React – A JavaScript library for building user interfaces. https://react.dev_
 
-**[1.2]** - _COPPIN, Ben. **Inteligência artificial**. Rio de Janeiro, RJ: LTC, c2010. E-book. ISBN 978-85-216-2936-8._
+**[1.2]** - _SPRING BOOT. Tutorials https://docs.spring.io/spring-boot/tutorial/index.html_
 
-**[1.3]** - _CORMEN, Thomas H. et al. **Algoritmos: teoria e prática**. Rio de Janeiro, RJ: Elsevier, Campus, c2012. xvi, 926 p. ISBN 9788535236996._
+**[1.3]** - _MICROSOFT LEARN. What is the Azure SQL Database service? https://learn.microsoft.com/azure/azure-sql/database/sql-database-paas-overview_
 
-**[1.4]** - _SUTHERLAND, Jeffrey Victor. **Scrum: a arte de fazer o dobro do trabalho na metade do tempo**. 2. ed. rev. São Paulo, SP: Leya, 2016. 236, [4] p. ISBN 9788544104514._
+**[1.4]** - _DOCTORALIA. Tenho dificuldade de me expressar, por isso não consigo ir ao psicólogo. É normal não conseguir se comunicar? https://www.doctoralia.com.br/perguntas-respostas/tenho-dificuldade-de-me-expressar-por-isso-nao-consigo-ir-ao-psicologo-e-normal-nao-conseguir-se-c_
 
-**[1.5]** - _RUSSELL, Stuart J.; NORVIG, Peter. **Inteligência artificial**. Rio de Janeiro: Elsevier, c2013. xxi, 988 p. ISBN 9788535237016._
-
-**[1.6]** - Tenho dificuldade de me expressar, [https://www.doctoralia.com.br/perguntas-respostas/tenho-dificuldade-de-me-expressar-por-isso-nao-consigo-ir-ao-psicologo-e-normal-nao-conseguir-se-c].
-
-**[1.7]** - O paciente faltou à consulta e não avisou, [https://nossospsicologos.zendesk.com/hc/pt-br/articles/115000759614-O-paciente-faltou-%C3%A0-consulta-e-n%C3%A3o-avisou-Devo-informar-isso-%C3%A0-plataforma].
+**[1.5]** - _NOSSOS PSICÓLOGOS. O paciente faltou à consulta e não avisou. Devo informar isso à plataforma? https://nossospsicologos.zendesk.com/hc/pt-br/articles/115000759614-O-paciente-faltou-%C3%A0-consulta-e-n%C3%A3o-avisou-Devo-informar-isso-%C3%A0-plataforma_
 
 
 # APÊNDICES

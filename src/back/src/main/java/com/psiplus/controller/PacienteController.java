@@ -167,4 +167,17 @@ public class PacienteController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Senha antiga incorreta ou paciente não encontrado.");
         }
     }
+
+    @PutMapping("/arquivar")
+    public ResponseEntity<Void> arquivarPacientes(@RequestBody List<Long> ids) {
+        service.arquivarPacientes(ids);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/acao/desarquivar")
+    public ResponseEntity<Void> desarquivarPacientes(@RequestBody List<Long> ids) {
+        System.out.println("IDs recebidos: " + ids);
+        service.desarquivarPacientes(ids);
+        return ResponseEntity.ok().build();
+    }
 }

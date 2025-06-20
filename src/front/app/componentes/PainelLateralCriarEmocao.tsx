@@ -80,18 +80,21 @@ export default function PainelLateralCriarEmocao({
 
     const mapaEmocoes: { [key: string]: number } = {
         feliz: 1,
-        normal: 2,
+        neutro: 2,
         triste: 3,
         raiva: 4,
     };
 
     const salvarEmocao = async (pacienteId: number) => {
         try {
-            const data = evento?.data ?? format(new Date(), "yyyy-MM-dd");
+
+            const data = evento?.data
+                ? evento.data
+                : format(agora, "yyyy-MM-dd", { locale: ptBR });
 
             const hora = evento?.hora
                 ? evento.hora.split(":")[0] + ":00"
-                : format(arredondarHora(new Date()), "HH:mm");
+                : format(arredondarHora(agora), "HH:mm", { locale: ptBR });
 
             const tipoEmocaoId = mapaEmocoes[emocaoSelecionada!];
 

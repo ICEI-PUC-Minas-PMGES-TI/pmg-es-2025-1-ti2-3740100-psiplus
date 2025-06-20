@@ -26,15 +26,27 @@ public class ConsultaService {
     @Autowired
     private PsicologoRepository psicologoRepository;
 
-    public Consulta agendarConsulta(AgendamentoDTO dto) {
-        Consulta nova = new Consulta();
-        nova.setPacienteId(dto.getPacienteId());
-        nova.setPsicologoId(dto.getPsicologoId());
-        nova.setData(dto.getData());
-        nova.setHorarioInicio(dto.getHorarioInicio());
-        nova.setHorarioFim(dto.getHorarioFim());
-        return consultaRepository.save(nova);
+public Consulta agendarConsulta(AgendamentoDTO dto) {
+    Paciente paciente = pacienteRepository.findById(dto.getPacienteId())
+        .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
+    Psicologo psicologo = psicologoRepository.findById(dto.getPsicologoId())
+        .orElseThrow(() -> new RuntimeException("Psicólogo não encontrado"));
+
+    // Associa o psicólogo ao paciente, se necessário
+    if (paciente.getPsicologo() == null || 
+        !paciente.getPsicologo().getPsicologoId().equals(psicologo.getPsicologoId())) {
+        paciente.setPsicologo(psicologo);
+        pacienteRepository.save(paciente);
     }
+
+    Consulta nova = new Consulta();
+    nova.setPacienteId(paciente.getPacienteId());
+    nova.setPsicologoId(psicologo.getPsicologoId());
+    nova.setData(dto.getData());
+    nova.setHorarioInicio(dto.getHorarioInicio());
+    nova.setHorarioFim(dto.getHorarioFim());
+    return consultaRepository.save(nova);
+}
 
     public List<Consulta> listarPorPaciente(Long pacienteId) {
         return consultaRepository.findByPacienteId(pacienteId);

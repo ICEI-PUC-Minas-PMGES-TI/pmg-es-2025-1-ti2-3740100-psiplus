@@ -26,6 +26,8 @@ import {
     route("psicologo/estatisticasEmocoes/:id", "routes/psicologo/estatisticasEmocoesRoute.tsx"),
     route("psicologo/editarConsulta/:id", "routes/psicologo/editarConsultaRoute.tsx"),
     route("psicologo/estatisticasPacientes", "routes/psicologo/estatisticasPacienteRoute.tsx"),
+    route("paciente/agendarConsultaPaciente", "routes/paciente/agendarConsultaPacienteRoute.tsx"),
+
 
 
     // 404

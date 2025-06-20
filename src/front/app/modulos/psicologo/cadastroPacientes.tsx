@@ -152,16 +152,6 @@ export default function CadastroPacientes() {
             <div className="p-8">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="font-bold text-[16px] text-[#3A3F63] uppercase">Informações Pessoais</h2>
-                <div className="flex gap-2">
-                  <BotaoPadrao
-                      texto="Salvar"
-                      icone={null}
-                      color="bg-[#0088A3]"
-                      textoColor="text-white"
-                      className="hover:brightness-90 transition-colors duration-200 font-medium border !rounded-3xl"
-                      handleClick={handleSubmit}
-                  />
-                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-x-4 gap-y--3">
@@ -305,8 +295,19 @@ export default function CadastroPacientes() {
                 ></textarea>
               </div>
             </div>
+            <div className="flex justify-end pr-4">
+              <BotaoPadrao
+                  texto="Salvar"
+                  icone={null}
+                  color="bg-[#0088A3]"
+                  textoColor="text-white"
+                  className="hover:brightness-90 px-10 py-3 transition-colors duration-200 font-medium border !rounded-3xl"
+                  handleClick={handleSubmit}
+              />
+            </div>
           </div>
         </div>
+
         {/* Popup */}
         {mostrarPopup && (
             <Popup

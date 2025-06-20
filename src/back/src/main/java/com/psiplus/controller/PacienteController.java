@@ -5,11 +5,13 @@ import java.util.Map;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.psiplus.DTO.dadosCadastroDTO;
+import com.psiplus.DTO.PacienteAgendamentoDTO;
 import com.psiplus.DTO.PacienteComPsicologoDTO;
 import com.psiplus.DTO.PacienteDTO;
 import com.psiplus.DTO.dadosCadastroDTO;
 import com.psiplus.DTO.RedefinicaoSenhaDTO;
 import com.psiplus.model.Paciente;
+import com.psiplus.model.Psicologo;
 import com.psiplus.model.LoginRequest;
 import com.psiplus.model.Usuario;
 import com.psiplus.service.PacienteService;
@@ -72,6 +74,57 @@ public class PacienteController {
         return ResponseEntity.noContent().build();
     }
 
+@GetMapping("/{id}/dados-agendamento")
+public ResponseEntity<PacienteAgendamentoDTO> getDadosParaAgendamento(@PathVariable Long id) {
+    Paciente paciente = service.buscarPorId(id);
+    if (paciente == null) {
+        return ResponseEntity.notFound().build();
+    }
+    Long psicologoId = null;
+    String psicologoNome = null;
+    if (paciente.getPsicologo() != null) {
+        psicologoId = paciente.getPsicologo().getPsicologoId();
+        psicologoNome = paciente.getPsicologo().getUsuario().getNome();
+    }
+    PacienteAgendamentoDTO dto = new PacienteAgendamentoDTO(
+        paciente.getPacienteId(),
+        paciente.getUsuario().getNome(),
+        psicologoId,
+        psicologoNome
+    );
+    return ResponseEntity.ok(dto);
+}
+
+    @PutMapping("/{pacienteId}/associar-psicologo/{psicologoId}")
+    public ResponseEntity<?> associarPsicologo(
+            @PathVariable Long pacienteId,
+            @PathVariable Long psicologoId) {
+        Paciente paciente = service.buscarPorId(pacienteId);
+        if (paciente == null) {
+            return ResponseEntity.notFound().build();
+        }
+        Psicologo psicologo = service.buscarPsicologoPorId(psicologoId);
+        if (psicologo == null) {
+            return ResponseEntity.badRequest().body("Psicólogo não encontrado");
+        }
+        paciente.setPsicologo(psicologo);
+        service.salvar(paciente);
+        return ResponseEntity.ok().build();
+    }
+
+        @PutMapping("/arquivar")
+    public ResponseEntity<Void> arquivarPacientes(@RequestBody List<Long> ids) {
+        service.arquivarPacientes(ids);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/acao/desarquivar")
+    public ResponseEntity<Void> desarquivarPacientes(@RequestBody List<Long> ids) {
+        System.out.println("IDs recebidos: " + ids);
+        service.desarquivarPacientes(ids);
+        return ResponseEntity.ok().build();
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody Paciente pacienteAtualizado) {
 
@@ -104,6 +157,9 @@ public class PacienteController {
         pacienteAtualizado.setArquivado(existente.getArquivado());
         pacienteAtualizado.setPsicologo(existente.getPsicologo());
 
+        if (pacienteAtualizado.getPsicologo() == null) {
+            pacienteAtualizado.setPsicologo(existente.getPsicologo());
+}
         try {
             Paciente salvo = service.salvar(pacienteAtualizado);
             if (salvo == null) {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaCheck } from "react-icons/fa";
 import axios from "axios";
 import { useNavigate } from "react-router";
@@ -14,8 +14,6 @@ interface AgendamentoModalPacienteProps {
   onClose: () => void;
   dataSelecionada: { start: Date; end: Date } | null;
   onAgendado: (psicologo: Psicologo) => void;
-  psicologoId: number | null;
-  psicologoNome: string;
 }
 
 export default function AgendamentoModalPaciente({
@@ -23,20 +21,41 @@ export default function AgendamentoModalPaciente({
   onClose,
   dataSelecionada,
   onAgendado,
-  psicologoId,
-  psicologoNome,
 }: AgendamentoModalPacienteProps) {
   const [isSalvando, setIsSalvando] = useState(false);
+  const [psicologo, setPsicologo] = useState<Psicologo | null>(null);
   const navigate = useNavigate();
 
+  // Acessar sessionStorage apenas no navegador
   const sessao = typeof window !== "undefined" ? JSON.parse(sessionStorage.getItem("sessaoPaciente") || "{}") : {};
   const pacienteId = sessao?.usuarioId || null;
 
-  const psicologo: Psicologo | null = psicologoId
-    ? { id: psicologoId, nome: psicologoNome }
-    : null;
+  // Buscar dados do paciente, incluindo o psicologoId
+  useEffect(() => {
+    const fetchPaciente = async () => {
+      if (!pacienteId) return;
+
+      try {
+       const response = await axios.get(`http://localhost:8080/pacientes/${pacienteId}/dados-agendamento`, {
+          headers: { "Cache-Control": "no-cache" },
+        });
+        const pacienteData = response.data;
+        setPsicologo({
+          id: pacienteData.psicologoId,
+          nome: pacienteData.psicologoNome || "Psicólogo não informado",
+          crp: pacienteData.psicologoCrp || "Não informado",
+        });
+      } catch (error) {
+        console.error("Erro ao buscar dados do paciente:", error);
+        alert("Erro ao carregar dados do psicólogo. Tente novamente.");
+      }
+    };
+
+    fetchPaciente();
+  }, [pacienteId]);
 
   if (!open || !dataSelecionada || !dataSelecionada.start || !dataSelecionada.end) {
+    console.warn("AgendamentoModalPaciente: Propriedades inválidas", { open, dataSelecionada });
     return null;
   }
 
@@ -46,11 +65,8 @@ export default function AgendamentoModalPaciente({
     return null;
   }
 
-  // Não exibe mais "Carregando dados do psicólogo"
   if (!psicologo) {
-    onClose();
-    alert("Horário indisponível para agendamento.");
-    return null;
+    return <div>Carregando dados do psicólogo...</div>;
   }
 
   const diaSemana = dataSelecionada.start.toLocaleDateString("pt-BR", {
@@ -81,20 +97,31 @@ export default function AgendamentoModalPaciente({
     const body = {
       pacienteId: pacienteId,
       psicologoId: psicologo.id,
-      data,
-      horarioInicio,
-      horarioFim,
+      data: data,
+      horarioInicio: horarioInicio,
+      horarioFim: horarioFim,
     };
 
-    try {
-      const response = await axios.post("http://localhost:8080/consultas/agendar", body);
+    const handleSelectEvent = (event: Evento) => {
+  console.log("Evento selecionado:", event);
+  if (event.tipo === "disponivel") {
+    // ...restante do código...
+  }
+};
 
-      if (response.status === 200) {
+    try {
+      const response = await fetch("http://localhost:8080/consultas/agendar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      if (response.ok) {
         onAgendado(psicologo);
         onClose();
       } else {
-        const erroData = response.data;
-        alert(`Erro ao agendar: ${erroData.message || "Tente novamente."}`);
+        const errorData = await response.json();
+        alert(`Erro ao agendar: ${errorData.message || "Tente novamente."}`);
       }
     } catch (error) {
       console.error("Erro:", error);
@@ -114,15 +141,13 @@ export default function AgendamentoModalPaciente({
         <div className="flex justify-end">
           <button
             onClick={onClose}
-            className="cursor-pointer text-gray-500 hover:text-black font-bold pb-5"
+            className="text-gray-500 hover:text-black font-bold pb-5"
           >
             X Cancelar
           </button>
         </div>
         <div className="mb-4">
-          <p className="text-sm mb-1">
-            Agendar consulta com: <strong>{psicologo.nome}</strong>
-          </p>
+          <p className="text-sm mb-1">Agendar consulta com: <strong>{psicologo.nome}</strong></p>
           <p className="text-sm mb-3">Confirme os dados para agendar a consulta</p>
           <p className="text-sm text-gray-600 capitalize font-bold">
             <strong>{diaSemana}</strong>, {dataFormatada}

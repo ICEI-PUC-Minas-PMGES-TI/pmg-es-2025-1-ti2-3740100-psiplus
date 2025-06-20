@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react"; // Corrigido: import useEffect
 import { FaCheck } from "react-icons/fa";
 import SelecaoPacienteModal from "./SelecaoPacienteModal";
 import axios from "axios";
@@ -32,6 +32,14 @@ export default function AgendamentoModal({
   const sessao = JSON.parse(sessionStorage.getItem("sessaoPsicologo") || "{}");
   const psicologoId = sessao?.usuarioId || null;
 
+  useEffect(() => {
+    if (!open) {
+      setPacienteNome("");
+      setSelecaoModalAberto(false);
+      setPacientesEncontrados([]);
+    }
+  }, [open]);
+
   if (!open || !dataSelecionada || !dataSelecionada.start || !dataSelecionada.end) {
     console.warn("AgendamentoModal: Propriedades inválidas", { open, dataSelecionada });
     return null;
@@ -57,11 +65,6 @@ export default function AgendamentoModal({
       console.log("Resposta completa do backend (buscarPacientesPorNome):", response.data);
       return response.data.map((p: any) => {
         const cpf = p.cpf || p.usuario?.cpfCnpj || "Não informado";
-        console.log(`Mapeando paciente ID ${p.pacienteId}:`, {
-          nome: p.nome || p.usuario?.nome,
-          cpf,
-          raw: p,
-        });
         return {
           id: p.pacienteId,
           nome: p.nome || p.usuario?.nome || "Nome não informado",
@@ -97,10 +100,10 @@ export default function AgendamentoModal({
 
     const body = {
       pacienteId: paciente.id,
-      psicologoId: psicologoId,
-      data: data,
-      horarioInicio: horarioInicio,
-      horarioFim: horarioFim,
+      psicologoId,
+      data,
+      horarioInicio,
+      horarioFim,
     };
 
     try {
@@ -131,21 +134,17 @@ export default function AgendamentoModal({
       return;
     }
 
-    const pacientesEncontrados = await buscarPacientesPorNome(pacienteNome.trim());
-    console.log("Pacientes encontrados:", pacientesEncontrados);
-    console.log("IDs dos pacientes:", pacientesEncontrados.map((p) => p.id));
+    const encontrados = await buscarPacientesPorNome(pacienteNome.trim());
+    console.log("Pacientes encontrados:", encontrados);
 
-    if (pacientesEncontrados.length === 0) {
+    if (encontrados.length === 0) {
       alert("Paciente não encontrado!");
       return;
     }
 
-    if (pacientesEncontrados.length === 1) {
-      salvarAgendamento(pacientesEncontrados[0]);
-    } else {
-      setPacientesEncontrados(pacientesEncontrados);
-      setSelecaoModalAberto(true);
-    }
+    // Sempre abrir modal de seleção, mesmo com 1 paciente
+    setPacientesEncontrados(encontrados);
+    setSelecaoModalAberto(true);
   };
 
   return (

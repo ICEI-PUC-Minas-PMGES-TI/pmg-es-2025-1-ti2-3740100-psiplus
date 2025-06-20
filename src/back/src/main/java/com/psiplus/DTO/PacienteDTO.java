@@ -13,6 +13,7 @@ public class PacienteDTO {
     private String email;
     private String telefone;
     private String nascimento;
+    private Boolean arquivado;
 
     public PacienteDTO(Paciente paciente) {
         this.pacienteId = paciente.getPacienteId();
@@ -25,6 +26,7 @@ public class PacienteDTO {
         this.nascimento = usuario.getDataNascimento() != null
                 ? usuario.getDataNascimento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
                 : "";
+        this.arquivado = paciente.getArquivado();
     }
 
     // Getters e Setters
@@ -45,4 +47,7 @@ public class PacienteDTO {
 
     public String getNascimento() { return nascimento; }
     public void setNascimento(String nascimento) { this.nascimento = nascimento; }
+
+    public Boolean getArquivado() { return arquivado; }
+    public void setArquivado(Boolean arquivado) { this.arquivado = arquivado; }
 }

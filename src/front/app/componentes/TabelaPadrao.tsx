@@ -4,6 +4,7 @@ import IconPesquisar from "../../public/assets/IconPesquisar.png";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import Filtro from "../../public/assets/Filtro.png";
 import IconArquivado from "../../public/assets/IconArquivado.png";
+import { ArrowLeft } from "lucide-react";
 
 interface Column {
     id: string;
@@ -14,9 +15,11 @@ interface Column {
 interface TabelaPadraoProps {
     data: any[];
     onRowClick?: (paciente: any) => void;
+    onArquivar?: (pacientesArquivados: any[]) => void;
+    onDesarquivar?: (pacientesDesarquivados: any[]) => void;
 }
 
-export default function TabelaPadrao({ data, onRowClick }: TabelaPadraoProps) {
+export default function TabelaPadrao({ data, onRowClick, onArquivar, onDesarquivar }: TabelaPadraoProps) {
     const columns: Column[] = [
         { id: 'nome', label: 'Nome' },
         { id: 'cpf', label: 'CPF', align: 'left' },
@@ -33,7 +36,6 @@ export default function TabelaPadrao({ data, onRowClick }: TabelaPadraoProps) {
     const rowsPerPage = 10;
     const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
     const [ordenacaoRecente, setOrdenacaoRecente] = useState(true);
-    const [arquivados, setArquivados] = useState<any[]>([]);
     const [mostrandoArquivados, setMostrandoArquivados] = useState(false);
 
     useEffect(() => {
@@ -60,7 +62,11 @@ export default function TabelaPadrao({ data, onRowClick }: TabelaPadraoProps) {
         }
     };
 
-    const dadosVisiveis = mostrandoArquivados ? arquivados : tabelaData;
+    const dadosVisiveis = useMemo(() => {
+        return tabelaData.filter(p =>
+            mostrandoArquivados ? p.arquivado : !p.arquivado
+        );
+    }, [mostrandoArquivados, tabelaData]);
 
     const filteredData = useMemo(() => {
         return dadosVisiveis.filter((row) =>
@@ -104,11 +110,32 @@ export default function TabelaPadrao({ data, onRowClick }: TabelaPadraoProps) {
 
     const arquivarPaciente = () => {
         const pacientesParaArquivar = getSelectedRows();
-        const idsArquivados = new Set(pacientesParaArquivar.map(p => p.pacienteId));
+        const idsArquivados = pacientesParaArquivar.map(p => p.pacienteId);
 
-        const novosDados = tabelaData.filter(p => !idsArquivados.has(p.pacienteId));
-        setTabelaData(novosDados);
-        setArquivados(prev => [...prev, ...pacientesParaArquivar]);
+        const atualizados = tabelaData.map(p =>
+            idsArquivados.includes(p.pacienteId)
+                ? { ...p, arquivado: true }
+                : p
+        );
+
+        onArquivar?.(idsArquivados);
+        setTabelaData(atualizados);
+        setSelectedRows(new Set());
+        setPage(0);
+    };
+
+    const desarquivarPaciente = () => {
+        const pacientesParaDesarquivar = getSelectedRows();
+        const idsDesarquivados = pacientesParaDesarquivar.map(p => p.pacienteId);
+
+        const atualizados = tabelaData.map(p =>
+            idsDesarquivados.includes(p.pacienteId)
+                ? { ...p, arquivado: false }
+                : p
+        );
+
+        onDesarquivar?.(idsDesarquivados);
+        setTabelaData(atualizados);
         setSelectedRows(new Set());
         setPage(0);
     };
@@ -131,26 +158,38 @@ export default function TabelaPadrao({ data, onRowClick }: TabelaPadraoProps) {
                         icon={<img className="w-[25px]" src={IconPesquisar} alt="pesquisar" />}
                     />
                 </div>
-                <BotaoPadrao
-                    color="bg-white"
-                    className="text-[14px] !font-normal ml-5 !text-[#6A74A5]"
-                    texto={ordenacaoRecente ? "Ordem Alfabética" : "Mais Recentes"}
-                    icone={<img className="w-[21px]" src={Filtro} alt="Ordenar" />}
-                    handleClick={alternarOrdenacao}
-                />
+
+                {!mostrandoArquivados && (
+                    <BotaoPadrao
+                        color="bg-white"
+                        className="text-[14px] !font-normal ml-5 !text-[#6A74A5]"
+                        texto={ordenacaoRecente ? "Ordem Alfabética" : "Mais Recentes"}
+                        icone={<img className="w-[21px]" src={Filtro} alt="Ordenar" />}
+                        handleClick={alternarOrdenacao}
+                    />
+                )}
+
                 <BotaoPadrao
                     color="bg-white"
                     className="text-[14px] !font-normal ml-1 !text-[#6A74A5]"
                     texto={
                         mostrandoArquivados
-                            ? "Voltar"
+                            ? selectedRows.size > 0
+                                ? "Desarquivar"
+                                : "Voltar"
                             : selectedRows.size > 0
                                 ? "Arquivar"
                                 : "Arquivados"
                     }
-                    icone={<img className="w-[21px]" src={IconArquivado} alt="Arquivados" />}
+                    icone={
+                        mostrandoArquivados && selectedRows.size === 0
+                            ? <ArrowLeft className="w-[20px] h-[20px]" />
+                            : <img className="w-[21px]" src={IconArquivado} alt="Arquivados" />
+                    }
                     handleClick={
-                        selectedRows.size > 0 ? arquivarPaciente : toggleArquivados
+                        selectedRows.size > 0
+                            ? (mostrandoArquivados ? desarquivarPaciente : arquivarPaciente)
+                            : toggleArquivados
                     }
                 />
             </div>
@@ -159,7 +198,7 @@ export default function TabelaPadrao({ data, onRowClick }: TabelaPadraoProps) {
                 <table className="min-w-full divide-y divide-gray-200 bg-white text-sm">
                     <thead className="bg-gray-100">
                     <tr>
-                        {!mostrandoArquivados && <th className="px-4 py-3 w-4"></th>}
+                        <th className="px-4 py-3 w-4"></th>
                         {columns.map((col) => (
                             <th
                                 key={col.id}
@@ -180,20 +219,18 @@ export default function TabelaPadrao({ data, onRowClick }: TabelaPadraoProps) {
 
                             return (
                                 <tr key={rowIndex} className="hover:bg-gray-50">
-                                    {!mostrandoArquivados && (
-                                        <td className="px-4 py-3">
-                                            <input
-                                                type="checkbox"
-                                                checked={isChecked}
-                                                onChange={(e) => {
-                                                    const updated = new Set(selectedRows);
-                                                    if (e.target.checked) updated.add(rowIndex);
-                                                    else updated.delete(rowIndex);
-                                                    setSelectedRows(updated);
-                                                }}
-                                            />
-                                        </td>
-                                    )}
+                                    <td className="px-4 py-3">
+                                        <input
+                                            type="checkbox"
+                                            checked={isChecked}
+                                            onChange={(e) => {
+                                                const updated = new Set(selectedRows);
+                                                if (e.target.checked) updated.add(rowIndex);
+                                                else updated.delete(rowIndex);
+                                                setSelectedRows(updated);
+                                            }}
+                                        />
+                                    </td>
                                     {columns.map((col) => (
                                         <td key={col.id} className={`px-4 py-3 text-${col.align || 'left'}`}>
                                             {col.id === "nome" ? (
@@ -213,7 +250,7 @@ export default function TabelaPadrao({ data, onRowClick }: TabelaPadraoProps) {
                         })
                     ) : (
                         <tr>
-                            <td colSpan={columns.length + (mostrandoArquivados ? 0 : 1)} className="px-4 py-6 text-center text-gray-400 italic">
+                            <td colSpan={columns.length + 1} className="px-4 py-6 text-center text-gray-400 italic">
                                 Nenhum dado disponível.
                             </td>
                         </tr>

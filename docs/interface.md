@@ -54,7 +54,7 @@ _O paciente tem acesso à agenda do psicólogo, podendo identificar os horários
 
 _Ao selecionar um horário, o paciente é direcionado para uma tela de confirmação antes de finalizar o agendamento._
 
-![Tela de agendamento de consulta](images/BotaoAgendarConsulta.png)
+![Tela de agendamento de consulta](images/Wireframe-Agendar-Paciente.png)
 
 **Comandos**
 

@@ -82,6 +82,6 @@ AND c.data BETWEEN :dataInicio AND :dataFim
 
     boolean existsByPaciente_PacienteIdAndDataAndHora(Long pacienteId, LocalDate data, LocalTime hora);
 
-    List<CalendarioEmocao> findByPacienteIdAndDataBetweenComTipoEmocao(Long pacienteId, LocalDate dataInicio, LocalDate dataFim);
+    List<CalendarioEmocao> findByPaciente_PacienteIdAndDataBetween(Long pacienteId, LocalDate inicio, LocalDate fim);
 
 }

@@ -79,7 +79,7 @@ public class CalendarioEmocaoService {
 
     // Novo método para período genérico (intervalo entre datas)
     public List<CalendarioEmocaoDTO> listarPorPacienteEPeriodo(Long pacienteId, LocalDate dataInicio, LocalDate dataFim) {
-        return calendarioEmocaoRepository.findByPacienteIdAndDataBetweenComTipoEmocao(pacienteId, dataInicio, dataFim)
+        return calendarioEmocaoRepository.findByPaciente_PacienteIdAndDataBetween(pacienteId, dataInicio, dataFim)
                 .stream()
                 .map(this::toDTO)
                 .toList();

@@ -1,31 +1,25 @@
 package com.psiplus.service;
 
-import back.src.main.java.com.psiplus.DTO.dadosCadastroDTO;
 import com.psiplus.DTO.RedefinicaoSenhaDTO;
+import com.psiplus.DTO.dadosCadastroDTO;
 import com.psiplus.DTO.PacienteDTO;
 import com.psiplus.DTO.AnotacaoDTO;
-
 import com.psiplus.model.Paciente;
 import com.psiplus.model.Psicologo;
 import com.psiplus.model.Usuario;
 import com.psiplus.model.Endereco;
-
-
 import com.psiplus.email.EmailService;
 import com.psiplus.util.EmailTemplates;
-
 import com.psiplus.repository.UsuarioRepository;
 import com.psiplus.repository.PacienteRepository;
 import com.psiplus.repository.EnderecoRepository;
 import com.psiplus.repository.PsicologoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -68,7 +62,7 @@ public class PacienteService {
 
     @Transactional
     public Paciente salvar(Paciente paciente) {
-                // Verificar se paciente tem psicologo setado
+        // Verificar se paciente tem psicologo setado
         if (paciente.getPsicologo() != null && paciente.getPsicologo().getPsicologoId() != null) {
             Psicologo psicologo = psicologoRepository.findById(paciente.getPsicologo().getPsicologoId())
                     .orElseThrow(() -> new RuntimeException("Psicólogo não encontrado"));
@@ -76,42 +70,61 @@ public class PacienteService {
         } else {
             paciente.setPsicologo(null);
         }
+
         Usuario usuario = paciente.getUsuario();
 
         if (usuario != null) {
             if (paciente.getPacienteId() != null) {
+                // Atualização: buscar paciente existente
                 Paciente existente = buscarPorId(paciente.getPacienteId());
+                if (existente == null) {
+                    throw new RuntimeException("Paciente não encontrado");
+                }
 
-                if (existente != null && existente.getUsuario() != null) {
+                // Garantir que nome, cpfCnpj e dataNascimento não sejam alterados
+                if (existente.getUsuario() != null) {
+                    usuario.setNome(existente.getUsuario().getNome());
+                    usuario.setCpfCnpj(existente.getUsuario().getCpfCnpj());
+                    usuario.setDataNascimento(existente.getUsuario().getDataNascimento());
                     usuario.setUsuarioId(existente.getUsuario().getUsuarioId());
 
+                    // Preservar a senha existente
+                    usuario.setSenha(existente.getUsuario().getSenha());
+
+                    // Preservar o ID do endereço, se existir
                     if (usuario.getEndereco() != null && existente.getUsuario().getEndereco() != null) {
                         usuario.getEndereco().setId(existente.getUsuario().getEndereco().getId());
                     }
                 }
             } else {
+                // Criação: validar CPF e e-mail
                 if (usuarioRepository.existsByCpfCnpj(usuario.getCpfCnpj())) {
                     throw new RuntimeException("CPF já cadastrado!");
                 }
-
                 if (usuarioRepository.existsByEmail(usuario.getEmail())) {
                     throw new RuntimeException("E-mail já cadastrado!");
                 }
+
+                // Definir senha padrão apenas para novos pacientes
+                if (usuario.getSenha() == null || usuario.getSenha().isBlank()) {
+                    usuario.setSenha(usuario.getCpfCnpj());
+                }
+
+                if (usuario.getEndereco() != null) {
+                    Endereco enderecoPersistido = enderecoRepository.save(usuario.getEndereco()); // <-- Correto!
+                    usuario.setEndereco(enderecoPersistido);
+                }
+
+                // Criptografar a senha antes de salvar
+                if (usuario.getSenha() != null && !usuario.getSenha().isBlank()) {
+                    usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
+                }
             }
 
-            // **Salvar o endereço antes do usuário**
+            // Salvar o endereço antes do usuário
             if (usuario.getEndereco() != null) {
-                Endereco enderecoPersistido = enderecoRepository.save(usuario.getEndereco()); // <-- Correto!
+                Endereco enderecoPersistido = enderecoRepository.save(usuario.getEndereco());
                 usuario.setEndereco(enderecoPersistido);
-            }
-
-            if (usuario.getSenha() == null || usuario.getSenha().isBlank()) {
-                usuario.setSenha(usuario.getCpfCnpj());
-            }
-
-            // **Criptografar a senha antes de salvar**
-            if (usuario.getSenha() != null && !usuario.getSenha().isBlank()) {
-                usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
             }
 
             usuario = usuarioRepository.save(usuario);
@@ -119,17 +132,28 @@ public class PacienteService {
         }
 
         Paciente salvo = repository.save(paciente);
+        
 
-        String html = EmailTemplates.gerarBoasVindas(usuario.getNome(), usuario.getEmail(), usuario.getCpfCnpj());
-        emailService.enviarEmail(usuario.getEmail(), "Bem-vindo ao Psi+", html);
+        // Enviar e-mail apenas para novos pacientes
+        if (paciente.getPacienteId() == null) {
+            String html = EmailTemplates.gerarBoasVindas(usuario.getNome(), usuario.getEmail(), usuario.getCpfCnpj());
+            emailService.enviarEmail(usuario.getEmail(), "Bem-vindo ao Psi+", html);
+        }
 
         return salvo;
-
     }
 
     public void deletar(Long id) {
         repository.deleteById(id);
     }
+
+        public List<dadosCadastroDTO> listarDadosCadastro(){
+        return repository.findAll()
+                .stream()
+                .map(dadosCadastroDTO::new)
+                .collect(Collectors.toList());
+    }
+
 
     public List<PacienteDTO> listarResumo() {
         return repository.findAll()
@@ -137,12 +161,7 @@ public class PacienteService {
                 .map(PacienteDTO::new)
                 .collect(Collectors.toList());
     }
-    public List<dadosCadastroDTO> listarDadosCadastro(){
-        return repository.findAll()
-                .stream()
-                .map(dadosCadastroDTO::new)
-                .collect(Collectors.toList());
-    }
+
     public Paciente autenticar(String email, String senha) {
         return repository.findByUsuarioEmail(email)
                 .filter(p -> passwordEncoder.matches(senha, p.getUsuario().getSenha()))
@@ -154,18 +173,18 @@ public class PacienteService {
         if (paciente == null) {
             return false;
         }
-        paciente.setHistoricoClinico(anotacoes); // adapte se for outro tipo
+        paciente.setHistoricoClinico(anotacoes);
         salvar(paciente);
         return true;
     }
 
-    public boolean redefinirSenha(String email, String senhaAntiga, String novaSenha, String confirmarSenha){
-        if(!novaSenha.equals(confirmarSenha)) {
+    public boolean redefinirSenha(String email, String senhaAntiga, String novaSenha, String confirmarSenha) {
+        if (!novaSenha.equals(confirmarSenha)) {
             return false; // Senhas novas não coincidem
         }
 
         Optional<Paciente> optionalPaciente = repository.findByUsuarioEmail(email);
-        if(optionalPaciente.isEmpty()){
+        if (optionalPaciente.isEmpty()) {
             return false; // Paciente não encontrado
         }
 
@@ -180,9 +199,8 @@ public class PacienteService {
         // Criptografa e atualiza a nova senha
         usuario.setSenha(passwordEncoder.encode(novaSenha));
         paciente.setSenhaRedefinida(true);
-        usuarioRepository.save(usuario); // pode salvar direto o usuário
+        usuarioRepository.save(usuario);
 
         return true;
     }
-
 }

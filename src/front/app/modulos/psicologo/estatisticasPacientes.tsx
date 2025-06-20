@@ -12,6 +12,8 @@ export default function EstatisticasPacientes(){
     const hoje = new Date();
     const mesAtual = hoje.getMonth();
     const anoAtual = hoje.getFullYear();
+    const [psicologoId, setPsicologoId] = useState<number | null>(null);
+    const [consultas, setConsultas] = useState([]);
 
     function leave() {
         sessionStorage.removeItem("sessaoPsicologo");
@@ -33,7 +35,33 @@ export default function EstatisticasPacientes(){
             .catch((err) => console.error("Erro ao buscar pacientes:", err));
     }, []);
 
-    
+    useEffect(() => {
+        const sessao = JSON.parse(sessionStorage.getItem("sessaoPsicologo") || "{}");
+        if (sessao?.usuarioId) {
+            setPsicologoId(sessao.usuarioId);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (!psicologoId) return; // só executa se tiver ID
+
+        const fetchConsultas = async () => {
+            try {
+                const response = await fetch(`http://localhost:8080/consultas/psicologo/${psicologoId}`);
+                if (!response.ok) {
+                    throw new Error('Erro na resposta da API');
+                }
+                const data = await response.json();
+                console.log("Consultas recebidas:", data);
+                setConsultas(data);
+            } catch (error) {
+                console.error("Erro ao buscar consultas:", error);
+            }
+        };
+
+        fetchConsultas();
+    }, [psicologoId]);
+
 
     const cadastrosMes = (datas) =>{
         const cadastrosMensais = datas.filter((data) =>{
@@ -55,9 +83,32 @@ export default function EstatisticasPacientes(){
         return Number(((dadosMes / foraDoMes) * 100).toFixed(2));
     };
 
+    const consultasTotal = (consultas)=>{
+        return consultas.length;
+    }
+    const consultasEfetivas = (consultas) => {
+
+        const efetivadas = consultas.filter((consulta) => {
+            const dataConsulta = new Date(consulta.data); // Ajusta pro nome que você usa
+            return dataConsulta < hoje;
+        });
+
+        return efetivadas.length;
+    };
+
+    const PercentualConsultasEfetivas = (dadosEfetivas, dadosTotal) => {
+        const naoRealizadas = dadosTotal - dadosEfetivas;
+        if (naoRealizadas === 0) {
+            return 100;
+        }
+        return Number(((dadosEfetivas / dadosTotal) * 100).toFixed(2));
+    };
+
     const totalDoMes = cadastrosMes(pacientes);
     const percentualMes = PercentualCadastrosMes(totalDoMes, pacientes.length);
-
+    const totalConsultas = consultasTotal(consultas);
+    const totalEfetivadas = consultasEfetivas(consultas);
+    const percentConsultasEfetivas = PercentualConsultasEfetivas(totalEfetivadas, totalConsultas);
     return(
         <Main>
             <div className="flex min-h-screen bg-white">
@@ -89,7 +140,7 @@ export default function EstatisticasPacientes(){
 
                         {/* Percentual centralizado no topo dos dados */}
                         <div className="flex flex-col items-center mt-6">
-                            <span className="font-semibold text-[#161736] text-[80px] leading-none">79%</span>
+                            <span className="font-semibold text-[#161736] text-[80px] leading-none">{percentConsultasEfetivas}%</span>
                             <div className="w-16 h-1 bg-[#16a34a] rounded-full mt-2 mb-10"></div>
                         </div>
 
@@ -97,13 +148,13 @@ export default function EstatisticasPacientes(){
                         <div className="flex justify-between items-center mt-6 px-2">
                             {/* Coluna 1: Atendimentos Agendados */}
                             <div className="flex flex-col items-center w-1/2 border-r border-gray-300 pr-4">
-                                <span className="pt-4 font-semibold text-[#161736] mx-2 text-[65px]">120</span>
+                                <span className="pt-4 font-semibold text-[#161736] mx-2 text-[65px]">{totalConsultas}</span>
                                 <span className="text-gray-500 mt-2">Consultas agendadas</span>
                             </div>
 
                             {/* Coluna 2: Atendimentos Realizados */}
                             <div className="flex flex-col items-center w-1/2 pl-4">
-                                <span className="pt-4 font-semibold mx-2 text-[65px] text-[#16a34a]">95</span>
+                                <span className="pt-4 font-semibold mx-2 text-[65px] text-[#16a34a]">{totalEfetivadas}</span>
                                 <span className="text-gray-500 mt-2">Consultas realizadas</span>
                             </div>
                         </div>

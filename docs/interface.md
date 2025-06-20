@@ -4,24 +4,11 @@ _A sessão a seguir apresenta a descrição do produto de software desenvolvido,
 
 ---
 
-### 6.1. Tela Principal do Sistema
-
-_Descrição da tela principal do sistema, servindo como o ponto de entrada para o sistema e oferecendo uma visão geral das funcionalidades._
-
-![Tela principal do sistema](images/PrincipalPsicólogo.png)
-
-| **Comandos** | **Destino** | **Tipo** |
-| --- | --- | --- |
-| `agendarConsulta` | Abrir popup de agendamento | --- |
-| `botaoEmocoes` | Ir para o processo Gestão das emoções | --- |
-
----
-
-### 6.2. Telas do Processo 1: Cadastro e Gestão da Agenda (Psicólogo)
+### 6.1. Telas do Processo 1: Cadastro e Gestão da Agenda (Psicólogo)
 
 _Descrição das telas relativas ao processo de cadastro e gestão da agenda do psicólogo, permitindo a organização eficiente da disponibilidade._
 
-#### 6.2.1. Cadastro da Agenda
+#### 6.1.1. Cadastro da Agenda
 
 _Nesta tela, o psicólogo pode definir seus horários de atendimento, marcando blocos como disponíveis ou indisponíveis, além de configurar horários de expediente padrão e realizar ajustes pontuais._
 
@@ -35,7 +22,7 @@ _Nesta tela, o psicólogo pode definir seus horários de atendimento, marcando b
 | `salvar` | Horário é atualizado | default |
 | `cancelar` | Processo é cancelado | cancel |
 
-#### 6.2.2. Visualizar Agenda Atualizada
+#### 6.1.2. Visualizar Agenda Atualizada
 
 _Após as alterações, o psicólogo visualiza sua agenda com as definições aplicadas, refletindo sua disponibilidade atualizada._
 
@@ -48,11 +35,11 @@ _Após as alterações, o psicólogo visualiza sua agenda com as definições ap
 
 ---
 
-### 6.3. Telas do Processo 2: Agendamento de Paciente (Paciente)
+### 6.2. Telas do Processo 2: Agendamento de Paciente (Paciente)
 
 _Descrição das telas relativas ao processo de agendamento de um horário por parte do paciente, desde a visualização da agenda até a confirmação._
 
-#### 6.3.1. Visualizar Agenda (Paciente)
+#### 6.2.1. Visualizar Agenda (Paciente)
 
 _O paciente tem acesso à agenda do psicólogo, podendo identificar os horários disponíveis para agendamento._
 
@@ -63,7 +50,7 @@ _O paciente tem acesso à agenda do psicólogo, podendo identificar os horários
 | `agendarConsulta` | Abrir popup de agendamento | --- |
 | `botaoEmocoes` | Ir para o processo Gestão das emoções | --- |
 
-#### 6.3.2. Tela de Confirmação de Agendamento
+#### 6.2.2. Tela de Confirmação de Agendamento
 
 _Ao selecionar um horário, o paciente é direcionado para uma tela de confirmação antes de finalizar o agendamento._
 
@@ -89,11 +76,11 @@ _Após a confirmação ou cancelamento, a agenda é atualizada para refletir o s
 
 ---
 
-### 6.4. Telas do Processo 3: Cadastro e Gestão do Paciente (Psicólogo)
+### 6.3. Telas do Processo 3: Cadastro e Gestão do Paciente (Psicólogo)
 
 _Este processo centraliza a organização e atualização dos dados dos pacientes, desde o cadastro inicial até a consulta de históricos e estatísticas._
 
-#### 6.4.1. Cadastro de Paciente
+#### 6.3.1. Cadastro de Paciente
 
 _Tela para registrar informações detalhadas do paciente, como dados pessoais, endereço e informações complementares._
 
@@ -105,7 +92,7 @@ _Tela para registrar informações detalhadas do paciente, como dados pessoais, 
 | --- | --- | --- |
 | `Salvar` | Confirma o cadastro e armazena os dados | default |
 
-#### 6.4.2. Pesquisa de Perfil do Paciente
+#### 6.3.2. Pesquisa de Perfil do Paciente
 
 _Interface para localizar pacientes de forma rápida e eficiente, utilizando diversos critérios de pesquisa._
 
@@ -117,7 +104,7 @@ _Interface para localizar pacientes de forma rápida e eficiente, utilizando div
 | --- | --- | --- |
 | `Mais Recentes` | Filtra e organiza os pacientes do cadastro mais recente para o mais antigo | Filtro |
 
-#### 6.4.3. Arquivamento de Paciente
+#### 6.3.3. Arquivamento de Paciente
 
 _Permite mover pacientes para um status de "arquivado", facilitando a organização da lista de pacientes ativos._
 
@@ -127,7 +114,7 @@ _Permite mover pacientes para um status de "arquivado", facilitando a organizaç
 | --- | --- | --- |
 | `Arquivar` | Move os pacientes selecionados para a página "Pacientes Arquivados" | Lista de Arquivados |
 
-#### 6.4.4. Atualização de Dados do Paciente
+#### 6.3.4. Atualização de Dados do Paciente
 
 _Tela para editar informações de pacientes já cadastrados, garantindo que os dados estejam sempre atualizados._
 
@@ -139,7 +126,7 @@ _Tela para editar informações de pacientes já cadastrados, garantindo que os 
 | --- | --- | --- |
 | `Salvar` | Confirma a alteração e armazena os dados | default |
 
-#### 6.4.5. Consulta ao Histórico Clínico
+#### 6.3.5. Consulta ao Histórico Clínico
 
 _Visão detalhada do histórico de interações com o paciente, incluindo consultas, estatísticas de emoções e calendário de emoções._
 
@@ -157,11 +144,11 @@ _Visão detalhada do histórico de interações com o paciente, incluindo consul
 
 ---
 
-### 6.5. Telas do Processo 4: Registro de Anotações da Consulta (Psicólogo)
+### 6.4. Telas do Processo 4: Registro de Anotações da Consulta (Psicólogo)
 
 _Descrição da tela para o registro de anotações das consultas, permitindo aos profissionais inserirem informações importantes sobre os atendimentos realizados._
 
-#### 6.5.1. Tela de Registro de Sessão
+#### 6.4.1. Tela de Registro de Sessão
 
 _A tela principal para inserir anotações de uma consulta, onde o psicólogo pode visualizar anotações existentes e adicionar novas._
 
@@ -175,11 +162,11 @@ _A tela principal para inserir anotações de uma consulta, onde o psicólogo po
 
 ---
 
-### 6.6. Telas do Processo 5: Gestão do Registro de Anotações da Consulta (Psicólogo)
+### 6.5. Telas do Processo 5: Gestão do Registro de Anotações da Consulta (Psicólogo)
 
 _Permite aos profissionais consultar e gerenciar o histórico de anotações das consultas realizadas, facilitando o acompanhamento do paciente._
 
-#### 6.6.1. Tela de Gestão de Registros
+#### 6.5.1. Tela de Gestão de Registros
 
 _Interface para pesquisar e exibir os registros de anotações das consultas, garantindo a organização eficiente das informações._
 
@@ -195,11 +182,11 @@ _Interface para pesquisar e exibir os registros de anotações das consultas, ga
 
 ---
 
-### 6.7. Telas do Processo 6: Gestão das Emoções e Calendário
+### 6.6. Telas do Processo 6: Gestão das Emoções e Calendário
 
 _Este módulo oferece funcionalidades para pacientes registrarem suas emoções e para psicólogos visualizarem e analisarem esses registros._
 
-#### 6.7.1. Calendário de Emoções do Paciente (Psicólogo)
+#### 6.6.1. Calendário de Emoções do Paciente (Psicólogo)
 
 _Permite ao psicólogo visualizar o calendário de emoções do paciente, identificando padrões e momentos de maior impacto emocional para um acompanhamento mais preciso._
 
@@ -215,7 +202,7 @@ _Permite ao psicólogo visualizar o calendário de emoções do paciente, identi
 | `Agenda` | Envia para a tela de agenda | Navegação |
 | `Pacientes` | Envia para a tela de pacientes | Navegação |
 
-#### 6.7.2. Emoção do Paciente (Visualização pelo Psicólogo)
+#### 6.6.2. Emoção do Paciente (Visualização pelo Psicólogo)
 
 _Quando uma emoção é selecionada no calendário, esta tela exibe os detalhes da emoção registrada pelo paciente, oferecendo insights valiosos._
 
@@ -225,7 +212,7 @@ _Quando uma emoção é selecionada no calendário, esta tela exibe os detalhes 
 | --- | --- | --- |
 | `Fechar` | Cancela a visualização da emoção | cancel |
 
-#### 6.7.3. Estatísticas de Emoções do Paciente (Psicólogo)
+#### 6.6.3. Estatísticas de Emoções do Paciente (Psicólogo)
 
 _Exibe gráficos e estatísticas baseados nos registros de emoções do paciente, oferecendo uma análise visual do progresso emocional ao longo do tempo._
 
@@ -241,7 +228,7 @@ _Exibe gráficos e estatísticas baseados nos registros de emoções do paciente
 | `Agenda` | Envia para a tela de agenda | Navegação |
 | `Pacientes` | Envia para a tela de pacientes | Navegação |
 
-#### 6.7.4. Calendário de Emoções (Paciente)
+#### 6.6.4. Calendário de Emoções (Paciente)
 
 _Página dedicada ao paciente para registrar suas emoções diariamente e visualizá-las de forma organizada em um formato de calendário._
 
@@ -255,7 +242,7 @@ _Página dedicada ao paciente para registrar suas emoções diariamente e visual
 | `Seleção emoção` | Envia para a tela de edição de emoção | Navegação |
 | `Seleção dia` | Envia para a tela de cadastro de emoção | Navegação |
 
-#### 6.7.5. Cadastro de Emoção (Paciente)
+#### 6.6.5. Cadastro de Emoção (Paciente)
 
 _Tela para o paciente registrar uma nova emoção, incluindo detalhes como sentimento, data, horário e uma breve descrição._
 
@@ -266,7 +253,7 @@ _Tela para o paciente registrar uma nova emoção, incluindo detalhes como senti
 | `Salvar` | Adiciona a emoção no banco | default |
 | `Cancelar` | Cancela a gestão da emoção | cancel |
 
-#### 6.7.6. Edição de Emoção (Paciente)
+#### 6.6.6. Edição de Emoção (Paciente)
 
 _Permite ao paciente modificar ou excluir uma emoção previamente registrada, mantendo seu histórico emocional sempre atualizado._
 

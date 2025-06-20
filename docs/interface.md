@@ -54,7 +54,7 @@ _O paciente tem acesso à agenda do psicólogo, podendo identificar os horários
 
 _Ao selecionar um horário, o paciente é direcionado para uma tela de confirmação antes de finalizar o agendamento._
 
-![Tela de agendamento de consulta](images/Wireframe-Agendar-Paciente.png)
+![Tela de agendamento de consulta](images/interfaces/agendarConsulta.png)
 
 **Comandos**
 
@@ -221,7 +221,7 @@ _Exibe gráficos e estatísticas baseados nos registros de emoções do paciente
 
 _Página dedicada ao paciente para registrar suas emoções diariamente e visualizá-las de forma organizada em um formato de calendário._
 
-![Calendário de emoções (paciente)](images/processo6/paciente_Calendario_Emocoes.png)
+![Calendário de emoções (paciente)](images/interfaces/ifcalendarioEmocoesPaciente.png)
 
 | **Comandos** | **Destino** | **Tipo** |
 | --- | --- | --- |
@@ -235,7 +235,7 @@ _Página dedicada ao paciente para registrar suas emoções diariamente e visual
 
 _Tela para o paciente registrar uma nova emoção, incluindo detalhes como sentimento, data, horário e uma breve descrição._
 
-![Adicionar emoção (paciente)](images/processo6/paciente_Adicionar_emocao.png)
+![Adicionar emoção (paciente)](images/interfaces/editarExcluiremocao.png)
 
 | **Comandos** | **Destino** | **Tipo** |
 | --- | --- | --- |
@@ -246,7 +246,7 @@ _Tela para o paciente registrar uma nova emoção, incluindo detalhes como senti
 
 _Permite ao paciente modificar ou excluir uma emoção previamente registrada, mantendo seu histórico emocional sempre atualizado._
 
-![Deletar emoção (paciente)](images/processo6/paciente_Deletar_Emoção.png)
+![Deletar emoção (paciente)](images/interfaces/editarExcluiremocao.png)
 
 | **Comandos** | **Destino** | **Tipo** |
 | --- | --- | --- |

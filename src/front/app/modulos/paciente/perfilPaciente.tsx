@@ -16,6 +16,7 @@ import { useNavigate, useParams } from "react-router";
 import axios from "axios";
 import ExitIcon from "../../../public/assets/ExitIcon.png"
 import {Camera, CircleCheck, Lock, Pen, User} from "lucide-react";
+import {useUltimaConsulta} from "~/utils/ultimaConsulta";
 //import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
 
 interface Endereco {
@@ -70,6 +71,8 @@ export default function perfilPaciente() {
         },
         notas: "",
     });
+
+    const ultimaConsulta = useUltimaConsulta(id);
 
     useEffect(() => {
         console.log("Paciente atualizado no estado:", JSON.stringify(paciente, null, 2));

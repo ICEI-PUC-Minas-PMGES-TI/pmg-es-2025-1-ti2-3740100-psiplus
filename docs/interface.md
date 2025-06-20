@@ -43,7 +43,7 @@ _Descrição das telas relativas ao processo de agendamento de um horário por p
 
 _O paciente tem acesso à agenda do psicólogo, podendo identificar os horários disponíveis para agendamento._
 
-![Tela de visualização da agenda pelo paciente](images/PrincipalPsicólogo.png)
+![Tela de visualização da agenda pelo paciente](images/Wireframe-Calendario-Paciente.png)
 
 | **Comandos** | **Destino** | **Tipo** |
 | --- | --- | --- |

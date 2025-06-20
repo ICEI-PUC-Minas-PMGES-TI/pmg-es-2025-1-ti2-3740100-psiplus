@@ -4,11 +4,13 @@ import InputPadrao from "~/componentes/InputPadrao";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import PerfilUser from "../../../public/assets/PerfilUser.jpg";
 import { IoIosArrowDown } from "react-icons/io";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import axios from "axios";
 import ExitIcon from "../../../public/assets/ExitIcon.png";
 import { Camera, CircleCheck, Lock, Pen, User } from "lucide-react";
+import {useUltimaConsulta} from "~/utils/ultimaConsulta";
+import {format, parseISO} from "date-fns";
 // import { toast } from "react-toastify";
 
 interface Endereco {
@@ -38,12 +40,13 @@ interface Paciente {
 }
 
 export default function PerfilPaciente() {
-  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [modoEdicao, setModoEdicao] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-
+  const [pacienteId, setPacienteId] = useState(null);
+  const ultimaConsulta = useUltimaConsulta(pacienteId);
+  const [psicologoId, setPsicologoId] = useState(null);
   const [paciente, setPaciente] = useState<Paciente>({
     usuario: {
       id: undefined,
@@ -66,33 +69,25 @@ export default function PerfilPaciente() {
     notas: "",
   });
 
-useEffect(() => {
-  let patientId = id;
-  if (!patientId) {
-    const sessao = sessionStorage.getItem("sessaoPaciente");
-    if (sessao) {
-      try {
-        patientId = JSON.parse(sessao).usuarioId;
-      } catch {
-        patientId = null;
-      }
+  useEffect(() => {
+    const sessao = JSON.parse(sessionStorage.getItem("sessaoPaciente") || "{}");
+    if (sessao?.usuarioId) {
+      setPacienteId(sessao.usuarioId);
+      carregarPaciente(sessao.usuarioId)
+
+
+      // Troque aqui para o endpoint com-psicologo
+      fetch(`http://localhost:8080/pacientes/${sessao.usuarioId}/com-psicologo`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.psicologoId) {
+              setPsicologoId(data.psicologoId);
+            } else {
+              setPsicologoId(null);
+            }
+          });
     }
-  }
-
-  if (!patientId) {
-    setErrorMessage("Você precisa estar logado. Redirecionando para login...");
-    setTimeout(() => navigate("/login"), 3000);
-    return;
-  }
-
-  carregarPaciente(patientId);
-}, [id, navigate]);
-
-function formatarDataParaISO(dataBr: string): string {
-  if (!dataBr) return "";
-  const [dia, mes, ano] = dataBr.split("/");
-  return `${ano}-${mes}-${dia}`;
-}
+  }, []);
 
   function carregarPaciente(pacienteId: string) {
     setIsLoading(true);
@@ -133,17 +128,6 @@ function formatarDataParaISO(dataBr: string): string {
   }
 
   const salvarEdicao = () => {
-    let patientId = id;
-    if (!patientId) {
-      const sessao = sessionStorage.getItem("sessaoPaciente");
-      if (sessao) {
-        try {
-          patientId = JSON.parse(sessao).usuarioId;
-        } catch {
-          patientId = null;
-        }
-      }
-    }
 
     if (!paciente.usuario.email.match(/^[A-Za-z0-9+_.-]+@(.+)$/)) {
       setErrorMessage("Por favor, insira um e-mail válido.");
@@ -153,7 +137,10 @@ function formatarDataParaISO(dataBr: string): string {
     setIsLoading(true);
     const pacienteAtualizado = {
       usuario: {
-        id: paciente.usuario.id,
+        usuarioId: paciente.usuario.id,
+        cpfCnpj: paciente.usuario.cpfCnpj,
+        nome: paciente.usuario.nome,
+        dataNascimento: formatarDataParaISO(paciente.usuario.dataNascimento || ""),
         email: paciente.usuario.email,
         sexo: paciente.usuario.sexo,
         telefone: removerMascaraTelefone(paciente.usuario.telefone || ""),
@@ -161,17 +148,17 @@ function formatarDataParaISO(dataBr: string): string {
           ...paciente.usuario.endereco,
           id: paciente.usuario.endereco?.id,
         },
+        senha: "",
       },
       notas: paciente.notas || "",
     };
 
     axios
-        .put(`http://localhost:8080/pacientes/${patientId}`, pacienteAtualizado)
+        .put(`http://localhost:8080/pacientes/${pacienteId}`, pacienteAtualizado)
         .then(() => {
-          carregarPaciente(patientId!);
+          carregarPaciente(pacienteId);
           setModoEdicao(false);
           setErrorMessage(null);
-          alert("Perfil atualizado com sucesso!");
         })
         .catch((err) => {
           console.error("Erro ao salvar paciente:", err);
@@ -185,19 +172,6 @@ function formatarDataParaISO(dataBr: string): string {
     setModoEdicao((prev) => !prev);
     setErrorMessage(null);
   };
-
-  const cancelarEdicao = () => {
-    let patientId = id;
-if (!patientId) {
-  const sessao = sessionStorage.getItem("sessaoPaciente");
-  if (sessao) {
-    try {
-      patientId = JSON.parse(sessao).usuarioId;
-    } catch {
-      patientId = null;
-    }
-  }}
-}
 
   const formatarTelefone = (valor: string) => {
     const apenasNumeros = valor.replace(/\D/g, "");
@@ -215,6 +189,11 @@ if (!patientId) {
   const formatarDataParaBrasileira = (dataISO: string) => {
     const [ano, mes, dia] = dataISO.split("-");
     return `${dia}/${mes}/${ano}`;
+  };
+
+  const formatarDataParaISO = (data: string) => {
+    const [dia, mes, ano] = data.split('/');
+    return `${ano}-${mes}-${dia}`;
   };
 
   const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -253,27 +232,27 @@ if (!patientId) {
     }));
   };
 
+  const cancelarEdicao = () => {
+    carregarPaciente(pacienteId);
+    setModoEdicao(false);
+  };
+
   function leave() {
     sessionStorage.removeItem("sessaoPsicologo");
     sessionStorage.removeItem("sessaoPaciente");
     sessionStorage.removeItem("sessionData");
-    navigate("/login");
+    navigate("/paciente/login");
   }
 
   return (
     <Main>
       <div className="flex min-h-screen bg-white">
-        <MenuLateralPaciente telaAtiva="emocoes" />
+        <MenuLateralPaciente telaAtiva="perfil" />
         <div className="w-px bg-gray-300"></div>
         <div className="m-5 w-4/5">
           {errorMessage && (
             <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">
               {errorMessage}
-            </div>
-          )}
-          {isLoading && (
-            <div className="mb-4 p-4 bg-blue-100 text-blue-700 rounded-lg">
-              Carregando...
             </div>
           )}
           <div className="flex">
@@ -306,11 +285,15 @@ if (!patientId) {
                   {paciente?.usuario?.nome || ""}
                 </h2>
                 <p className="text-sm text-[#5A607F]">{paciente?.usuario?.email || ""}</p>
-                <p className="text-sm text-gray-400">Última consulta - 12/02/2025</p>
+                <p className="text-xs text-gray-400">
+                  {ultimaConsulta
+                      ? `Última consulta - ${format(parseISO(ultimaConsulta.data), "dd/MM/yyyy")}`
+                      : "Nenhuma consulta encontrada"}
+                </p>
               </div>
 
               <div className="mt-6 flex flex-col gap-3">
-                <button className="cursor-pointer flex items-center gap-3 px-4 py-2 rounded-lg bg-white shadow-md w-full">
+                <button className="flex items-center gap-3 px-4 py-2 rounded-lg bg-white shadow-md w-full">
                   <div className="bg-[#0088A3] rounded-md p-1">
                     <User style={{ color: "white" }} />
                   </div>
@@ -373,7 +356,7 @@ if (!patientId) {
                     name="nome"
                     value={paciente?.usuario?.nome ?? ""}
                     onChange={handleInputChange}
-                    classNameInput="!px-5 !py-2 rounded-lg !text-[#858EBD] !border-[#DAE0F2] !bg-[#F3F4F9]"
+                    classNameInput="!px-5 !pl-10 !py-2 rounded-lg !text-[#858EBD] !border-[#DAE0F2] !bg-[#F3F4F9]"
                     icon={<Lock style={{ color: "#BBC6D9" }} />}
                     disabled={true}
                   />

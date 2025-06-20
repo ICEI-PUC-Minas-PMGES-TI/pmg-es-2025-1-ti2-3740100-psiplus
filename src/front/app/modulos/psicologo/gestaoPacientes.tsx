@@ -149,8 +149,6 @@ export default function GestaoPacientes() {
             notas: paciente.notas || "",
         };
 
-        console.log(pacienteAtualizado)
-
         axios
             .put(`http://localhost:8080/pacientes/${id}`, pacienteAtualizado)
             .then(() => {

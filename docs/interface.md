@@ -54,7 +54,7 @@ _O paciente tem acesso à agenda do psicólogo, podendo identificar os horários
 
 _Ao selecionar um horário, o paciente é direcionado para uma tela de confirmação antes de finalizar o agendamento._
 
-![Tela de agendamento de consulta](images/BotaoAgendarConsulta.png)
+![Tela de agendamento de consulta](images/Wireframe-Agendar-Paciente.png)
 
 **Comandos**
 
@@ -62,17 +62,6 @@ _Ao selecionar um horário, o paciente é direcionado para uma tela de confirma�
 | --- | --- | --- |
 | `confirmar` | Horário é reservado para o paciente | default |
 | `cancelar` | Processo é cancelado | cancel |
-
-#### 6.3.3. Visualizar Agenda Atualizada
-
-_Após a confirmação ou cancelamento, a agenda é atualizada para refletir o status do agendamento._
-
-**Comandos**
-
-| **Comandos** | **Destino** | **Tipo** |
-| --- | --- | --- |
-| `agendarConsulta` | Abrir popup de agendamento | --- |
-| `botaoEmocoes` | Ir para o processo Gestão das emoções | --- |
 
 ---
 
@@ -263,4 +252,4 @@ _Permite ao paciente modificar ou excluir uma emoção previamente registrada, m
 | --- | --- | --- |
 | `Editar Emoção` | Salva os novos dados da emoção no banco | default |
 | `Deletar Emoção` | Remove os dados da emoção do banco | remover |
-|
+

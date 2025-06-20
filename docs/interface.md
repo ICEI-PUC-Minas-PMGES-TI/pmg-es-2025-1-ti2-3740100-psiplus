@@ -73,7 +73,7 @@ _Este processo centraliza a organização e atualização dos dados dos paciente
 
 _Tela para registrar informações detalhadas do paciente, como dados pessoais, endereço e informações complementares._
 
-![Tela de cadastro de paciente](images/Wireframe-Cadastro-de-Paciente-3.jpg)
+![Tela de cadastro de paciente](images/interfaces/ifcadastropaciente.png)
 
 **Comandos**
 
@@ -120,7 +120,7 @@ _Tela para editar informações de pacientes já cadastrados, garantindo que os 
 _Visão detalhada do histórico de interações com o paciente, incluindo consultas, estatísticas de emoções e calendário de emoções._
 
 ![Tela de histórico de consultas](images/interfaces/ifgestaoRegistros.png)
-![Tela de estatísticas das emoções (psicólogo)](images/Wireframe-Estatisiticas-das-Emocoes-Psicologo.jpg)
+![Tela de estatísticas das emoções (psicólogo)](images/interfaces/ifIndicadorEmocoes.png)
 ![Tela de calendário de emoções (psicólogo)](images/interfaces/ifcalendarioEmocoes.png)
 
 **Comandos**
@@ -195,7 +195,7 @@ _Permite ao psicólogo visualizar o calendário de emoções do paciente, identi
 
 _Quando uma emoção é selecionada no calendário, esta tela exibe os detalhes da emoção registrada pelo paciente, oferecendo insights valiosos._
 
-![Leitura de calendário das emoções (psicólogo)](images/processo6/psicologo_Leitura_de_calendario_das_emocoes.png)
+![Leitura de calendário das emoções (psicólogo)](images/interfaces/ifverCalendarioEmocao.png)
 
 | **Comandos** | **Destino** | **Tipo** |
 | --- | --- | --- |
@@ -205,7 +205,7 @@ _Quando uma emoção é selecionada no calendário, esta tela exibe os detalhes 
 
 _Exibe gráficos e estatísticas baseados nos registros de emoções do paciente, oferecendo uma análise visual do progresso emocional ao longo do tempo._
 
-![Estatísticas das emoções (psicólogo)](images/processo6/psicologo_Estatísiticas_das_Emocoes.png)
+![Estatísticas das emoções (psicólogo)](images/interfaces/ifIndicadorEmocoes.png)
 
 | **Comandos** | **Destino** | **Tipo** |
 | --- | --- | --- |

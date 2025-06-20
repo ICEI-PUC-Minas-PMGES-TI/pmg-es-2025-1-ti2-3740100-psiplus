@@ -218,7 +218,15 @@ _A sessão a seguir apresenta a descrição do produto de software desenvolvido.
 
 ## 🏁 7. Conclusão
 
-_Apresente aqui a conclusão do seu trabalho. Deve ser apresentada aqui uma discussão dos resultados obtidos no trabalho, local em que se verifica as observações pessoais de cada aluno. Essa seção poderá também apresentar sugestões de novas linhas de estudo._
+**Ana Luiza de Freitas Rodrigues:**
+
+**Carlos Eduardo Sousa Santos:**
+
+**Júlia de Souza Ventura:** Desenvolver o PsiPlus foi uma experiência muito importante para nosso crescimento acadêmico e profissional. Durante o projeto, enfrentamos desafios como a criação de um sistema que fosse ao mesmo tempo funcional, seguro e fácil de usar para psicólogos e pacientes. Tivemos que aprender a organizar melhor as tarefas, trabalhar em equipe e buscar soluções rápidas para os problemas que foram surgindo. Além da parte técnica, também desenvolvemos habilidades de comunicação e planejamento, já que foi necessário pensar no sistema de forma completa: desde o design das telas até o funcionamento do banco de dados e das funcionalidades de cadastro, agendamento e registro emocional.O resultado final foi muito satisfatório, com um sistema que atende aos objetivos propostos. Para o futuro, pensamos em melhorias como envio de lembretes automáticos, integração com videochamadas e até a análise de padrões emocionais dos pacientes, o que deixaria o PsiPlus ainda mais completo.
+
+**Kayke Emanoel de Souza Santos:** Desenvolver o PSI+ foi uma experiência colaborativa valiosa, unindo organização, comunicação e divisão de responsabilidades. As tecnologias utilizadas no projeto, como Spring Boot e React com TypeScript, contribuíram fortemente para nossa evolução técnica, aplicando boas práticas de desenvolvimento como MVC e consumo de APIs REST. O trabalho em grupo fortaleceu a integração entre as tecnologias e a construção de uma solução sólida. Aprendemos muito com os desafios enfrentados ao longo do projeto.
+
+**Rafael Caldeira Brant:**
 
 # 📚 REFERÊNCIAS
 

@@ -298,7 +298,7 @@ export function AgendaPaciente() {
 
   const consultasDoMes = React.useMemo(() => {
     return agendaEventos
-      .filter((evento) => !evento.tipo) // Only include consultations (not "disponivel")
+      .filter((evento) => evento.tipo == "consulta")
       .filter((evento) => isSameMonth(evento.start, mesLateral));
   }, [agendaEventos, mesLateral]);
 

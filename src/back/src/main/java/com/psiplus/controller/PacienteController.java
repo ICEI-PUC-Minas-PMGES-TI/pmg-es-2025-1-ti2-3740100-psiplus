@@ -5,6 +5,7 @@ import java.util.Map;
 import back.src.main.java.com.psiplus.DTO.dadosCadastroDTO;
 import com.psiplus.DTO.PacienteComPsicologoDTO;
 import com.psiplus.DTO.PacienteDTO;
+import com.psiplus.DTO.dadosCadastroDTO;
 import com.psiplus.DTO.RedefinicaoSenhaDTO;
 import com.psiplus.model.Paciente;
 import com.psiplus.model.LoginRequest;
@@ -13,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.http.HttpStatus;
 
 import java.net.URI;
 import java.util.List;
@@ -65,6 +69,62 @@ public class PacienteController {
         return ResponseEntity.noContent().build();
     }
 
+@PutMapping("/{id}/perfil")
+  public ResponseEntity<?> atualizarPerfil(@PathVariable Long id, @RequestBody Paciente pacienteAtualizado) {
+    if (id == null || id <= 0) {
+      Map<String, String> erro = new HashMap<>();
+      erro.put("erro", "ID do paciente inválido.");
+      return ResponseEntity.badRequest().body(erro);
+    }
+
+    Paciente existente = service.buscarPorId(id);
+    if (existente == null) {
+      Map<String, String> erro = new HashMap<>();
+      erro.put("erro", "Paciente não encontrado com o ID: " + id);
+      return ResponseEntity.notFound().build();
+    }
+
+    // Garantir que nome, cpfCnpj e dataNascimento não sejam alterados
+    if (existente.getUsuario() != null && pacienteAtualizado.getUsuario() != null) {
+      pacienteAtualizado.getUsuario().setNome(existente.getUsuario().getNome());
+      pacienteAtualizado.getUsuario().setCpfCnpj(existente.getUsuario().getCpfCnpj());
+      pacienteAtualizado.getUsuario().setDataNascimento(existente.getUsuario().getDataNascimento());
+      pacienteAtualizado.getUsuario().setUsuarioId(existente.getUsuario().getUsuarioId());
+      
+      if (existente.getUsuario().getEndereco() != null && pacienteAtualizado.getUsuario().getEndereco() != null) {
+        pacienteAtualizado.getUsuario().getEndereco().setId(existente.getUsuario().getEndereco().getId());
+      }
+    }
+
+    pacienteAtualizado.setPacienteId(id);
+    pacienteAtualizado.setHistoricoClinico(existente.getHistoricoClinico());
+    pacienteAtualizado.setSenhaRedefinida(existente.isSenhaRedefinida());
+    pacienteAtualizado.setArquivado(existente.getArquivado());
+    pacienteAtualizado.setPsicologo(existente.getPsicologo());
+
+    try {
+      Paciente salvo = service.salvar(pacienteAtualizado);
+      return ResponseEntity.ok(salvo);
+    } catch (RuntimeException e) {
+      Map<String, String> erro = new HashMap<>();
+      erro.put("erro", e.getMessage());
+      return ResponseEntity.badRequest().body(erro);
+    }
+  }
+
+  // Global exception handler for NumberFormatException
+  @RestControllerAdvice
+  public class GlobalExceptionHandler {
+    @ExceptionHandler(NumberFormatException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleNumberFormatException(NumberFormatException ex) {
+      Map<String, String> erro = new HashMap<>();
+      erro.put("erro", "ID inválido: deve ser um número válido.");
+      return erro;
+    }
+  }
+
+
     @PutMapping("/{id}")
     public ResponseEntity<Paciente> atualizar(@PathVariable Long id, @RequestBody Paciente pacienteAtualizado) {
         Paciente existente = service.buscarPorId(id);
@@ -89,6 +149,7 @@ public class PacienteController {
 
     @GetMapping("/dadosCadastro")
     public List<dadosCadastroDTO> listarDadosCadastro(){ return service.listarDadosCadastro();}
+
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {

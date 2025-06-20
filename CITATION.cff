@@ -1,6 +1,6 @@
 cff-version: 1.0.1
 message: Please cite this software using these metadata.
-title: 
+title: PsiPlus
 authors:
   - family-names: de Souza Ventura
     given-names: Júlia
@@ -12,14 +12,18 @@ authors:
     given-names: Kayke Emanoel 
   - family-names: Rocha Caldeira Brant
     given-names: Rafael 
+  - name-suffix: Professor
+    affiliation: PUC Minas
+    family-names: de Quadra Maia Filho
+    given-names: Danilo 
   - name-suffix: Professora
     affiliation: PUC Minas
-    family-names: Alonso Veloso
-    given-names: Eveline 
+    family-names: Ribeiro de Souza
+    given-names: Joana Gabriela 
   - name-suffix: Professora
     affiliation: PUC Minas
-    family-names: Baroni De Carvalho
-    given-names: Juliana Amaral 
+    family-names: Soares de Andrade
+    given-names: Michelle Hanne
 keywords:
   - 
   - 

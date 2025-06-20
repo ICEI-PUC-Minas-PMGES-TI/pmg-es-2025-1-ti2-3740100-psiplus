@@ -19,7 +19,7 @@ _Nesta tela, o psicólogo pode definir seus horários de atendimento, marcando b
 
 | **Comandos** | **Destino** | **Tipo** |
 | --- | --- | --- |
-| `salvar` | Horário é atualizado | default |
+| `confirmar` | Horário é atualizado | default |
 | `cancelar` | Processo é cancelado | cancel |
 
 #### 6.1.2. Visualizar Agenda Atualizada

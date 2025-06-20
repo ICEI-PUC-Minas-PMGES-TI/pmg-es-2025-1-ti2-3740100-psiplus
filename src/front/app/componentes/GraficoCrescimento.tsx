@@ -1,54 +1,94 @@
 import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
     Tooltip,
     Legend,
-} from 'chart.js';
-import { Line } from 'react-chartjs-2';
+    ResponsiveContainer,
+    CartesianGrid,
+    Cell
+} from 'recharts';
+import { useEffect, useState } from 'react';
 
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend
-);
+const GraficoCrescimento = () => {
+    const [datasCadastro, setDatasCadastro] = useState([]);
 
-const options = {
-    responsive: true,
-    plugins: {
-        legend: {
-            position: 'top' as const,
-        },
-    },
-};
+    useEffect(() => {
+        fetch("http://localhost:8080/pacientes/dadosCadastro")
+            .then((res) => res.json())
+            .then((data) => {
+                const datas = data.map((paciente) => paciente.dataCadastro);
+                console.log("Datas recebidas:", datas);
+                setDatasCadastro(datas);
+            })
+            .catch((err) => console.error("Erro ao buscar pacientes:", err));
+    }, []);
 
-const labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'];
+    const anoAtual = new Date().getFullYear();
+    const mesAtual = new Date().getMonth();
 
-const data = {
-    labels,
-    datasets: [
-        {
-            label: 'Percentual de Novos Cadastros',
-            data: [], // valores fictícios
-            borderColor: '#36A2EB',
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            fill: true,
-            tension: 0.4,
-        },
-    ],
-};
+    const meses = [
+        "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+        "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+    ];
 
-export default function GraficoCrescimento() {
+    const data = meses.map((mes, index) => {
+        const quantidade = datasCadastro.filter((data) => {
+            const dataFormatada = new Date(data);
+            return (
+                dataFormatada.getMonth() === index &&
+                dataFormatada.getFullYear() === anoAtual
+            );
+        }).length;
+
+        return {
+            nome: mes,
+            quantidade: quantidade,
+            cor: index === mesAtual ? '#FF5733' : '#0088A3'
+        };
+    });
+
     return (
-        <div className="max-w-[600px] mx-auto p-4 bg-white ">
-            <Line options={options} data={data} />
+        <div style={{ width: '100%', height: 300 }}>
+            <ResponsiveContainer>
+                <BarChart
+                    data={data}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 50 }}
+                >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis
+                        dataKey="nome"
+                        interval={0}
+                        type="category"
+                    />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend
+                        formatter={() => (
+                            <span style={{ color: '#000', fontWeight: 'semi-bold' }}>
+                                Cadastros realizados
+                            </span>
+                        )}
+                    />
+                    <Bar
+                        dataKey="quantidade"
+                        barSize={15}
+                        fill="#0088A3"
+                    >
+                        {
+                            data.map((entry, index) => (
+                                <Cell
+                                    key={`cell-${index}`}
+                                    fill={entry.cor}
+                                />
+                            ))
+                        }
+                    </Bar>
+                </BarChart>
+            </ResponsiveContainer>
         </div>
     );
-}
+};
+
+export default GraficoCrescimento;

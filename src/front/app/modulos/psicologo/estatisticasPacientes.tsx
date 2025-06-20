@@ -76,7 +76,7 @@ export default function EstatisticasPacientes(){
                     <h1 className="pt-4 font-semibold text-[#161736] mx-2 text-[25px]">ESTATÍSTICAS</h1>
                     <div className="mt-10 bg-white rounded-xl shadow-md mx-5 p-4 relative">
                         <h1 className="pt-4 font-semibold text-[#161736] mx-2 text-[25px]">Novos cadastros - Mês </h1>
-                        <h2 className="pt-4 text-[#161736] mx-2 text-[20px]"> {totalDoMes} novos usuários. </h2>
+                        <h2 className="pt-4 text-[#161736] mx-2 text-[20px]"> {totalDoMes} novo(s) usuário(s). </h2>
                         <h1 className="pt-4 font-semibold ml-25 text-[#161736] mx-2 text-[65px]"> {percentualMes}% </h1>
                         <GraficoCrescimento />
                     </div>

@@ -4,7 +4,7 @@ import InputPadrao from "~/componentes/InputPadrao";
 import BotaoPadrao from "~/componentes/BotaoPadrao";
 import PerfilUser from "../../../public/assets/PerfilUser.jpg";
 import { IoIosArrowDown } from "react-icons/io";
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, useRef} from "react";
 import { useNavigate, useParams } from "react-router";
 import axios from "axios";
 import ExitIcon from "../../../public/assets/ExitIcon.png";
@@ -68,6 +68,59 @@ export default function PerfilPaciente() {
     },
     notas: "",
   });
+  const [modalAberto, setModalAberto] = useState(false);
+  const [fotoPreview, setFotoPreview] = useState<string | null>(null);
+  const [fotoSelecionada, setFotoSelecionada] = useState<File | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  function handleAbrirModal(e: React.ChangeEvent<HTMLInputElement>) {
+    const arquivo = e.target.files?.[0];
+    if (!arquivo) return;
+
+    setFotoSelecionada(arquivo);
+    setFotoPreview(URL.createObjectURL(arquivo));
+    setModalAberto(true);
+  }
+
+  function handleBotaoClick() {
+    inputRef.current?.click();
+  }
+
+  function handleCancelar() {
+    setModalAberto(false);
+    setFotoSelecionada(null);
+    setFotoPreview(null);
+  }
+
+  function handleConfirmar() {
+    if (fotoSelecionada) {
+      handleSalvarFoto();
+      setModalAberto(false);
+      setFotoSelecionada(null);
+      setFotoPreview(null);
+    }
+  }
+
+  function handleSalvarFoto() {
+    if (!fotoSelecionada || !paciente.usuario.id) return;
+
+    const leitor = new FileReader();
+    leitor.onloadend = () => {
+      const base64 = leitor.result?.toString();
+      if (base64) {
+        axios.put(`http://localhost:8080/usuarios/${paciente.usuario.id}/foto`, {
+          fotoPerfil: base64,
+        })
+            .then(() => {
+              setModalAberto(false);
+              carregarPaciente(pacienteId);
+            })
+            .catch(() => alert("Erro ao enviar a foto"));
+      }
+    };
+
+    leitor.readAsDataURL(fotoSelecionada);
+  }
 
   useEffect(() => {
     const sessao = JSON.parse(sessionStorage.getItem("sessaoPaciente") || "{}");
@@ -103,6 +156,7 @@ export default function PerfilPaciente() {
             cpfCnpj: data.usuario?.cpfCnpj || "",
             email: data.usuario?.email || "",
             sexo: data.usuario?.sexo || "",
+            fotoPerfil: data.usuario?.fotoPerfil || undefined,
             telefone: formatarTelefone(data.usuario?.telefone || ""),
             dataNascimento: data.usuario?.dataNascimento
               ? formatarDataParaBrasileira(data.usuario.dataNascimento)
@@ -273,13 +327,48 @@ export default function PerfilPaciente() {
               <div className="flex flex-col items-center text-center">
                 <div className="relative">
                   <img
-                    src={PerfilUser}
-                    alt="Foto do Paciente"
-                    className="rounded-full w-24 h-24 object-cover"
+                      src={fotoPreview || paciente.usuario.fotoPerfil || PerfilUser}
+                      alt="Foto do Paciente"
+                      className="rounded-full w-24 h-24 object-cover"
                   />
-                  <button className="absolute bottom-0 right-0 bg-white p-1 rounded-full shadow">
+                  <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      ref={inputRef}
+                      onChange={handleAbrirModal}
+                  />
+                  <button
+                      type="button"
+                      onClick={handleBotaoClick}
+                      className="absolute bottom-0 right-0 bg-white p-1 rounded-full shadow cursor-pointer"
+                      aria-label="Alterar foto de perfil"
+                  >
                     <Camera style={{ color: "#858EBD", fontSize: 20 }} />
                   </button>
+
+                  {modalAberto && (
+                      <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+                        <div className="bg-white p-4 rounded-lg max-w-sm w-full">
+                          <h2 className="font-bold mb-4">Confirme sua nova foto</h2>
+                          <img src={fotoPreview ?? undefined} alt="Preview" className="w-full rounded mb-4" />
+                          <div className="flex justify-end gap-2">
+                            <button
+                                className="cursor-pointer bg-gray-300 px-4 py-2 rounded"
+                                onClick={handleCancelar}
+                            >
+                              Cancelar
+                            </button>
+                            <button
+                                className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded"
+                                onClick={handleConfirmar}
+                            >
+                              Confirmar
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                  )}
                 </div>
                 <h2 className="mt-2 font-semibold text-lg text-[#3A3F63]">
                   {paciente?.usuario?.nome || ""}

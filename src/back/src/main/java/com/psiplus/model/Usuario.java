@@ -31,6 +31,10 @@ public class Usuario {
 
     private String sexo;
 
+    @Lob
+    @Column(name = "foto_perfil", columnDefinition = "TEXT") // pode ser TEXT ou LONGTEXT no MySQL
+    private String fotoPerfil;
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "endereco_id", referencedColumnName = "endereco_id")
     private Endereco endereco;
@@ -83,6 +87,13 @@ public class Usuario {
     }
     public void setSexo(String sexo) {
         this.sexo = sexo;
+    }
+    public String getFotoPerfil() {
+        return fotoPerfil;
+    }
+
+    public void setFotoPerfil(String fotoPerfil) {
+        this.fotoPerfil = fotoPerfil;
     }
     public Endereco getEndereco() {
         return endereco;

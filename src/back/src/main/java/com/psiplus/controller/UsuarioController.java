@@ -1,6 +1,7 @@
 package com.psiplus.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.psiplus.model.Usuario;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 public class UsuarioController {
@@ -62,6 +64,28 @@ public class UsuarioController {
 
         Usuario usuarioAtualizado = usuarioService.salvarUsuario(usuario);
         return ResponseEntity.ok(usuarioAtualizado);
+    }
+
+    @PutMapping("/usuarios/{id}/foto")
+    public ResponseEntity<?> atualizarFotoPerfilBase64(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        try {
+            String base64 = body.get("fotoPerfil");
+
+            if (base64 == null || base64.isBlank()) {
+                return ResponseEntity.badRequest().body("Base64 da imagem está vazio ou inválido.");
+            }
+
+            Usuario usuario = usuarioService.buscarUsuarioPorId(id)
+                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+            usuario.setFotoPerfil(base64);
+            usuarioService.salvarUsuario(usuario);
+
+            return ResponseEntity.ok().body(Map.of("mensagem", "Foto de perfil atualizada com sucesso!"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("erro", "Erro ao atualizar foto de perfil: " + e.getMessage()));
+        }
     }
 
 }

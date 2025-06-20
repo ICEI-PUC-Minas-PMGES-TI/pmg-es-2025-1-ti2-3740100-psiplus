@@ -76,9 +76,7 @@ export default function CalendarioEmocoes() {
         if (!paciente.usuario.nome) return;  // espera paciente carregado
 
         axios.get(`http://localhost:8080/api/emocoes/paciente/${id}`).then(res => {
-            console.log('Resposta bruta da API:', res.data);
             const eventosTransformados = res.data.map((e: any) => {
-                console.log('Evento recebido:', e);
                 // parse datas
                 const [ano, mes, dia] = e.data.split('-').map(Number);
                 const [hora, minuto] = e.hora.split(':').map(Number);

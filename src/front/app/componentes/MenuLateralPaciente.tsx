@@ -13,6 +13,7 @@ type MenuLateralPacienteProps = {
 
 export default function MenuLateralPaciente({ telaAtiva }: MenuLateralPacienteProps) {
   const [nome, setNome] = useState("Carregando...");
+  const [fotoPerfil, setFotoPerfil] = useState(undefined);
   const [pacienteId, setPacienteId] = useState<number | null>(null);
   const navigate = useNavigate();
 
@@ -29,6 +30,7 @@ export default function MenuLateralPaciente({ telaAtiva }: MenuLateralPacientePr
         const usuario = res.data.usuario || {};
         const nomeDoUsuario = usuario.nome || "Nome não encontrado";
         const emailDoUsuario = usuario.email || "Email não encontrado";
+        setFotoPerfil(usuario.fotoPerfil)
 
         const sessionData = { nome: nomeDoUsuario, email: emailDoUsuario };
         sessionStorage.setItem("sessionData", JSON.stringify(sessionData));
@@ -59,7 +61,7 @@ const handleAgendarConsulta = () => {
       </div>
 
       <div className="flex pt-[10px] mt-[10px]">
-        <img className="w-[36px] h-[36px] rounded-full" src={PerfilUser} />
+        <img className="w-[36px] h-[36px] rounded-full" src={fotoPerfil || PerfilUser} />
         <div className="text-[14px] pl-[5px]">
           <h1>{nome}</h1>
           <h1 className="text-[#BBC6D9]">Paciente</h1>

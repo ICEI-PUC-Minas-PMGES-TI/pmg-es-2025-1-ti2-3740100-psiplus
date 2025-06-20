@@ -56,15 +56,10 @@ export default function InfoPaciente({ abaAtiva }: InfoPacienteProps) {
         <div className={`flex flex-col items-center ${menuAberto ? "text-left" : "text-center"}`}>
           <div className="relative">
             <img
-                src={PerfilUser}
+                src={paciente.usuario.fotoPerfil || PerfilUser}
                 alt="Foto do Paciente"
                 className={`rounded-full object-cover transition-all duration-300 ${menuAberto ? "w-24 h-24" : "w-10 h-10"}`}
             />
-            {menuAberto && (
-                <button className="absolute bottom-0 right-0 bg-white p-1 rounded-full shadow">
-                  <Camera color="#858EBD" size={20} />
-                </button>
-            )}
           </div>
 
           {menuAberto && (

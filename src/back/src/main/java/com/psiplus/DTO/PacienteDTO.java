@@ -14,6 +14,7 @@ public class PacienteDTO {
     private String telefone;
     private String nascimento;
     private Boolean arquivado;
+    private String fotoPerfil;
 
     public PacienteDTO(Paciente paciente) {
         this.pacienteId = paciente.getPacienteId();
@@ -22,6 +23,7 @@ public class PacienteDTO {
         this.nome = usuario.getNome();
         this.cpf = usuario.getCpfCnpj();
         this.email = usuario.getEmail();
+        this.fotoPerfil = usuario.getFotoPerfil();
         this.telefone = usuario.getTelefone();
         this.nascimento = usuario.getDataNascimento() != null
                 ? usuario.getDataNascimento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
@@ -50,4 +52,12 @@ public class PacienteDTO {
 
     public Boolean getArquivado() { return arquivado; }
     public void setArquivado(Boolean arquivado) { this.arquivado = arquivado; }
+
+    public String getFotoPerfil() {
+        return fotoPerfil;
+    }
+
+    public void setFotoPerfil(String fotoPerfil) {
+        this.fotoPerfil = fotoPerfil;
+    }
 }

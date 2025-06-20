@@ -29,8 +29,6 @@ export default function PainelLateralVisualizarEmocao({ evento, onClose }: Paine
     const dataFormatada = format(dataHora, "dd/MM/yyyy", { locale: ptBR });
     const horaFormatada = format(dataHora, "HH:mm", { locale: ptBR });
 
-    console.log('Evento recebido:', evento);
-
     return (
         <div className="fixed top-0 right-0 w-full max-w-md h-screen bg-white shadow-lg z-50 flex flex-col transition-transform duration-300 transform translate-x-0">
         {/* Botão fechar - canto superior direito */}

@@ -78,7 +78,6 @@ export function CalendarioEmocoesPaciente (){
             console.log("Resposta bruta da API:", res.data);
 
             const eventosTransformados = res.data.map((e: any) => {
-                console.log("Evento recebido:", e);
 
                 const [ano, mes, dia] = e.data.split("-").map(Number);
                 const [hora, minuto] = e.hora.split(":").map(Number);

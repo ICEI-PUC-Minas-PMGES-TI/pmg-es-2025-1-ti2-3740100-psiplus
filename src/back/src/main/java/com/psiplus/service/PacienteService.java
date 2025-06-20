@@ -41,6 +41,9 @@ public class PacienteService {
 
     @Autowired 
     private PsicologoRepository psicologoRepository;
+    public Psicologo buscarPsicologoPorId(Long id) {
+    return psicologoRepository.findById(id).orElse(null);
+    }
 
     @Autowired
     private EmailService emailService;
@@ -162,6 +165,26 @@ public class PacienteService {
         return true;
     }
 
+        @Transactional
+    public void arquivarPacientes(List<Long> ids) {
+        System.out.println(">>> Chamando método arquivarPacientes para IDs: " + ids);
+        List<Paciente> pacientes = repository.findAllById(ids);
+        for (Paciente p : pacientes) {
+            p.setArquivado(true); // Atualiza o campo arquivado para true
+        }
+        repository.saveAll(pacientes);
+    }
+
+    @Transactional
+    public void desarquivarPacientes(List<Long> ids) {
+        List<Paciente> pacientes = repository.findAllById(ids);
+        for (Paciente p : pacientes) {
+            p.setArquivado(false); // Marca como não arquivado
+        }
+        repository.saveAll(pacientes);
+    }
+
+
     public boolean redefinirSenha(String email, String senhaAntiga, String novaSenha, String confirmarSenha) {
         if (!novaSenha.equals(confirmarSenha)) {
             return false; // Senhas novas não coincidem
@@ -187,24 +210,4 @@ public class PacienteService {
 
         return true;
     }
-
-    @Transactional
-    public void arquivarPacientes(List<Long> ids) {
-        System.out.println(">>> Chamando método arquivarPacientes para IDs: " + ids);
-        List<Paciente> pacientes = repository.findAllById(ids);
-        for (Paciente p : pacientes) {
-            p.setArquivado(true); // Atualiza o campo arquivado para true
-        }
-        repository.saveAll(pacientes);
-    }
-
-    @Transactional
-    public void desarquivarPacientes(List<Long> ids) {
-        List<Paciente> pacientes = repository.findAllById(ids);
-        for (Paciente p : pacientes) {
-            p.setArquivado(false); // Marca como não arquivado
-        }
-        repository.saveAll(pacientes);
-    }
-
 }

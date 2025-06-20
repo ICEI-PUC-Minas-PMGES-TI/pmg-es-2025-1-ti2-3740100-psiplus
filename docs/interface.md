@@ -47,21 +47,21 @@ _O paciente tem acesso à agenda do psicólogo, podendo identificar os horários
 
 | **Comandos** | **Destino** | **Tipo** |
 | --- | --- | --- |
-| `agendarConsulta` | Abrir popup de agendamento | --- |
-| `botaoEmocoes` | Ir para o processo Gestão das emoções | --- |
+| `Agendar Consulta` | Exibe a página de agendamento de consulta | Navegação |
+| `Emoções` | Ir para o processo Gestão das emoções | Navegação |
+| `Meu Perfil` | Ir para a página de exibição Dados Pessoais | Navegação |
 
 #### 6.2.2. Tela de Confirmação de Agendamento
 
 _Ao selecionar um horário, o paciente é direcionado para uma tela de confirmação antes de finalizar o agendamento._
 
-![Tela de agendamento de consulta](images/Wireframe-Agendar-Paciente.png)
+![Tela de agendamento de consulta](images/interfaces/agendarConsulta.png)
 
 **Comandos**
 
 | **Comandos** | **Destino** | **Tipo** |
 | --- | --- | --- |
-| `confirmar` | Horário é reservado para o paciente | default |
-| `cancelar` | Processo é cancelado | cancel |
+| `Agendar consulta` | Horário é reservado para o paciente | default |
 
 ---
 
@@ -91,7 +91,12 @@ _Interface para localizar pacientes de forma rápida e eficiente, utilizando div
 
 | **Comandos** | **Destino** | **Tipo** |
 | --- | --- | --- |
+| `Pesquisar Paciente` | Filtra os pacientes através do campo de pesquisa | Filtro |
 | `Mais Recentes` | Filtra e organiza os pacientes do cadastro mais recente para o mais antigo | Filtro |
+| `Ordem Alfabética` | Filtra e organiza os pacientes do cadastro em ordem alfabética | Filtro |
+| `Arquivar` | Move os pacientes selecionados para a página "Pacientes Arquivados" | Lista de Arquivados |
+| `Anterior` | Navegação para a próxima página de listagem | Navegação |
+| `Próxima` | Navegação para a página de listagem anterior | Navegação |
 
 #### 6.3.3. Arquivamento de Paciente
 
@@ -113,7 +118,9 @@ _Tela para editar informações de pacientes já cadastrados, garantindo que os 
 
 | **Comandos** | **Destino** | **Tipo** |
 | --- | --- | --- |
+| `Editar` | Editar os dados do paciente | default |
 | `Salvar` | Confirma a alteração e armazena os dados | default |
+| `Cancelar` | Cancelar a alteração dos dados | default |
 
 #### 6.3.5. Consulta ao Histórico Clínico
 
@@ -127,6 +134,7 @@ _Visão detalhada do histórico de interações com o paciente, incluindo consul
 
 | **Comandos** | **Destino** | **Tipo** |
 | --- | --- | --- |
+| `Informações Pessoais` | Exibe as informaçoes de cadastro do paciente | Navegação |
 | `Histórico de consultas` | Exibe o histórico de consultas do paciente | Navegação |
 | `Estatísticas das Emoções` | Exibe as estatísticas das emoções do paciente | Navegação |
 | `Calendário de Emoções` | Exibe o calendário de emoções do paciente | Navegação |
@@ -148,6 +156,10 @@ _A tela principal para inserir anotações de uma consulta, onde o psicólogo po
 | **Comandos** | **Destino** | **Tipo** |
 | --- | --- | --- |
 | `inserirAnotacoes` | Permite inserir novas anotações | - |
+| `Salvar` | Confirma e armazena as anotações | default |
+| `dataConsulta` | Armazena a data do registro  | localDate |
+| `horaConsulta` | Armazena o horário do registro | localTime |
+| `Notas` | Armazena as notas do registro | text |
 
 ---
 
@@ -183,6 +195,7 @@ _Permite ao psicólogo visualizar o calendário de emoções do paciente, identi
 
 | **Comandos** | **Destino** | **Tipo** |
 | --- | --- | --- |
+| `Informações Pessoais` | Exibe as informaçoes de cadastro do paciente | Navegação |
 | `Histórico de consultas` | Exibe o histórico de consultas do paciente | Navegação |
 | `Estatísticas das Emoções` | Exibe as estatísticas das emoções do paciente | Navegação |
 | `Calendário de Emoções` | Exibe o calendário de emoções do paciente | Navegação |
@@ -209,6 +222,7 @@ _Exibe gráficos e estatísticas baseados nos registros de emoções do paciente
 
 | **Comandos** | **Destino** | **Tipo** |
 | --- | --- | --- |
+| `Informações Pessoais` | Exibe as informaçoes de cadastro do paciente | Navegação |
 | `Histórico de consultas` | Exibe o histórico de consultas do paciente | Navegação |
 | `Estatísticas das Emoções` | Exibe as estatísticas das emoções do paciente | Navegação |
 | `Calendário de Emoções` | Exibe o calendário de emoções do paciente | Navegação |
@@ -221,12 +235,13 @@ _Exibe gráficos e estatísticas baseados nos registros de emoções do paciente
 
 _Página dedicada ao paciente para registrar suas emoções diariamente e visualizá-las de forma organizada em um formato de calendário._
 
-![Calendário de emoções (paciente)](images/processo6/paciente_Calendario_Emocoes.png)
+![Calendário de emoções (paciente)](images/interfaces/ifcalendarioEmocoesPaciente.png)
 
 | **Comandos** | **Destino** | **Tipo** |
 | --- | --- | --- |
 | `Agenda` | Envia para a tela de agenda | Navegação |
 | `Emoções` | Exibe o calendário de emoções do paciente | Navegação |
+| `Meu Perfil` | Exibe o perfil do paciente | Navegação |
 | `Agendar Consulta` | Envia para a tela de agendamento de consulta | Navegação |
 | `Seleção emoção` | Envia para a tela de edição de emoção | Navegação |
 | `Seleção dia` | Envia para a tela de cadastro de emoção | Navegação |
@@ -235,7 +250,7 @@ _Página dedicada ao paciente para registrar suas emoções diariamente e visual
 
 _Tela para o paciente registrar uma nova emoção, incluindo detalhes como sentimento, data, horário e uma breve descrição._
 
-![Adicionar emoção (paciente)](images/processo6/paciente_Adicionar_emocao.png)
+![Adicionar emoção (paciente)](images/interfaces/adicionarEmocoaPaciente.png)
 
 | **Comandos** | **Destino** | **Tipo** |
 | --- | --- | --- |
@@ -246,10 +261,10 @@ _Tela para o paciente registrar uma nova emoção, incluindo detalhes como senti
 
 _Permite ao paciente modificar ou excluir uma emoção previamente registrada, mantendo seu histórico emocional sempre atualizado._
 
-![Deletar emoção (paciente)](images/processo6/paciente_Deletar_Emoção.png)
+![Deletar emoção (paciente)](images/interfaces/editarExcluiremocao.png)
 
 | **Comandos** | **Destino** | **Tipo** |
 | --- | --- | --- |
 | `Editar Emoção` | Salva os novos dados da emoção no banco | default |
-| `Deletar Emoção` | Remove os dados da emoção do banco | remover |
+| `Excluir Emoção` | Remove os dados da emoção do banco | remover |
 

@@ -12,8 +12,8 @@ _Descrição das telas relativas ao processo de cadastro e gestão da agenda do 
 
 _Nesta tela, o psicólogo pode definir seus horários de atendimento, marcando blocos como disponíveis ou indisponíveis, além de configurar horários de expediente padrão e realizar ajustes pontuais._
 
-![Tela de cadastro da agenda 1](images/processo1/Wireframe-Editar-Calendario.jpg)
-![Tela de cadastro da agenda 2](images/processo1/Wireframe-Editar-Calendario-2.jpg)
+![Tela de cadastro da agenda 1](images/interfaces/ifcadastroAgenda.png)
+![Tela de cadastro da agenda 2](images/interfaces/ifcadastroDisponivel.png)
 
 **Comandos**
 
@@ -85,7 +85,7 @@ _Tela para registrar informações detalhadas do paciente, como dados pessoais, 
 
 _Interface para localizar pacientes de forma rápida e eficiente, utilizando diversos critérios de pesquisa._
 
-![Tela de listagem de pacientes](images/Wireframe-Listagem-de-Pacientes.jpg)
+![Tela de listagem de pacientes](images/interfaces/iflistagemPacientes.png)
 
 **Comandos**
 
@@ -107,7 +107,7 @@ _Permite mover pacientes para um status de "arquivado", facilitando a organizaç
 
 _Tela para editar informações de pacientes já cadastrados, garantindo que os dados estejam sempre atualizados._
 
-![Tela de edição de paciente](images/Wireframe-Editar-Paciente.jpg)
+![Tela de edição de paciente](images/interfaces/ifgestaoPaciente.png)
 
 **Comandos**
 
@@ -119,9 +119,9 @@ _Tela para editar informações de pacientes já cadastrados, garantindo que os 
 
 _Visão detalhada do histórico de interações com o paciente, incluindo consultas, estatísticas de emoções e calendário de emoções._
 
-![Tela de histórico de consultas](images/Wireframe-Historico-Consultas.jpg)
+![Tela de histórico de consultas](images/interfaces/ifgestaoRegistros.png)
 ![Tela de estatísticas das emoções (psicólogo)](images/Wireframe-Estatisiticas-das-Emocoes-Psicologo.jpg)
-![Tela de calendário de emoções (psicólogo)](images/Wireframe-Calendario-de-Emocoes-Psicologo.jpg)
+![Tela de calendário de emoções (psicólogo)](images/interfaces/ifcalendarioEmocoes.png)
 
 **Comandos**
 
@@ -141,7 +141,7 @@ _Descrição da tela para o registro de anotações das consultas, permitindo ao
 
 _A tela principal para inserir anotações de uma consulta, onde o psicólogo pode visualizar anotações existentes e adicionar novas._
 
-![Tela de registro de sessão](images/WireframeRegistrodeSessao.jpg)
+![Tela de registro de sessão](images/interfaces/ifregistroAnotacao.png)
 
 **Comandos**
 
@@ -159,7 +159,7 @@ _Permite aos profissionais consultar e gerenciar o histórico de anotações das
 
 _Interface para pesquisar e exibir os registros de anotações das consultas, garantindo a organização eficiente das informações._
 
-![Tela de gestão de registros](images/wireframe-1-gestaoRegistros.png)
+![Tela de gestão de registros](images/interfaces/ifgestaoRegistros.png)
 
 **Comandos**
 
@@ -179,7 +179,7 @@ _Este módulo oferece funcionalidades para pacientes registrarem suas emoções 
 
 _Permite ao psicólogo visualizar o calendário de emoções do paciente, identificando padrões e momentos de maior impacto emocional para um acompanhamento mais preciso._
 
-![Calendário de emoções do paciente (psicólogo)](images/processo6/psicologo_Calendário_de_emocoes.png)
+![Calendário de emoções do paciente (psicólogo)](images/interfaces/ifcalendarioEmocoes.png)
 
 | **Comandos** | **Destino** | **Tipo** |
 | --- | --- | --- |

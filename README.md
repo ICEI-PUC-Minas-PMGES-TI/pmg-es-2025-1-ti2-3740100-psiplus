@@ -6,7 +6,7 @@
 
 ### **Conectando emoções, organizando cuidados.**
 
-A gestão de práticas psicológicas enfrenta desafios como desorganização da agenda, dificuldades no acompanhamento das emoções dos pacientes e comunicação limitada entre sessões, o que afeta a qualidade do atendimento. Este trabalho visa criar um sistema digital que integre agendamento, comunicação e registro das emoções dos pacientes, facilitando a gestão para o psicólogo e melhorando a experiência para o paciente. A plataforma permitirá otimizar o tempo do profissional, tornando o processo mais eficiente e promovendo um atendimento mais organizado. A tecnologia será uma aliada, tornando os dados mais acessíveis e fáceis de gerenciar.
+A gestão de práticas psicológicas enfrenta desafios como desorganização da agenda, dificuldade no acompanhamento emocional dos pacientes e comunicação limitada entre sessões. Este trabalho propõe a criação de um sistema digital que integre agendamento, comunicação e registro emocional, facilitando o trabalho do psicólogo e melhorando a experiência do paciente. A plataforma tornará o atendimento mais eficiente, organizado e com dados mais acessíveis.
 
 ## 👥 Integrantes
 

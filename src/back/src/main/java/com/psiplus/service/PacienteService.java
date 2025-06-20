@@ -1,7 +1,7 @@
 package com.psiplus.service;
 
-import com.psiplus.DTO.dadosCadastroDTO;
 import com.psiplus.DTO.RedefinicaoSenhaDTO;
+import com.psiplus.DTO.dadosCadastroDTO;
 import com.psiplus.DTO.PacienteDTO;
 import com.psiplus.DTO.AnotacaoDTO;
 import com.psiplus.model.Paciente;
@@ -105,21 +105,14 @@ public class PacienteService {
                     throw new RuntimeException("E-mail já cadastrado!");
                 }
 
-                if (usuario.getSenha() == null || usuario.getSenha().isBlank()) {
-                usuario.setSenha(usuario.getCpfCnpj());
-
-                if (usuario.getSenha() != null && !usuario.getSenha().isBlank()) {
-                usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
-
-                            // **Salvar o endereço antes do usuário**
-                if (usuario.getEndereco() != null) {
-                    Endereco enderecoPersistido = enderecoRepository.save(usuario.getEndereco()); // <-- Correto!
-                    usuario.setEndereco(enderecoPersistido);
-                }
-
                 // Definir senha padrão apenas para novos pacientes
                 if (usuario.getSenha() == null || usuario.getSenha().isBlank()) {
                     usuario.setSenha(usuario.getCpfCnpj());
+                }
+
+                if (usuario.getEndereco() != null) {
+                    Endereco enderecoPersistido = enderecoRepository.save(usuario.getEndereco()); // <-- Correto!
+                    usuario.setEndereco(enderecoPersistido);
                 }
 
                 // Criptografar a senha antes de salvar
@@ -139,9 +132,7 @@ public class PacienteService {
         }
 
         Paciente salvo = repository.save(paciente);
-
-        String html = EmailTemplates.gerarBoasVindas(usuario.getNome(), usuario.getEmail(), usuario.getCpfCnpj());
-        emailService.enviarEmail(usuario.getEmail(), "Bem-vindo ao Psi+", html);
+        
 
         // Enviar e-mail apenas para novos pacientes
         if (paciente.getPacienteId() == null) {
@@ -156,12 +147,13 @@ public class PacienteService {
         repository.deleteById(id);
     }
 
-    public List<dadosCadastroDTO> listarDadosCadastro(){
+        public List<dadosCadastroDTO> listarDadosCadastro(){
         return repository.findAll()
                 .stream()
                 .map(dadosCadastroDTO::new)
                 .collect(Collectors.toList());
     }
+
 
     public List<PacienteDTO> listarResumo() {
         return repository.findAll()

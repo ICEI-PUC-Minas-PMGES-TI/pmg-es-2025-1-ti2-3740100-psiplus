@@ -63,17 +63,6 @@ _Ao selecionar um horário, o paciente é direcionado para uma tela de confirma�
 | `confirmar` | Horário é reservado para o paciente | default |
 | `cancelar` | Processo é cancelado | cancel |
 
-#### 6.3.3. Visualizar Agenda Atualizada
-
-_Após a confirmação ou cancelamento, a agenda é atualizada para refletir o status do agendamento._
-
-**Comandos**
-
-| **Comandos** | **Destino** | **Tipo** |
-| --- | --- | --- |
-| `agendarConsulta` | Abrir popup de agendamento | --- |
-| `botaoEmocoes` | Ir para o processo Gestão das emoções | --- |
-
 ---
 
 ### 6.3. Telas do Processo 3: Cadastro e Gestão do Paciente (Psicólogo)

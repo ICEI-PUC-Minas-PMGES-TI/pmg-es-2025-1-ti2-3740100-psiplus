@@ -134,16 +134,16 @@ function formatarDataParaISO(dataBr: string): string {
 
   const salvarEdicao = () => {
     let patientId = id;
-if (!patientId) {
-  const sessao = sessionStorage.getItem("sessaoPaciente");
-  if (sessao) {
-    try {
-      patientId = JSON.parse(sessao).usuarioId;
-    } catch {
-      patientId = null;
+    if (!patientId) {
+      const sessao = sessionStorage.getItem("sessaoPaciente");
+      if (sessao) {
+        try {
+          patientId = JSON.parse(sessao).usuarioId;
+        } catch {
+          patientId = null;
+        }
+      }
     }
-  }
-}
 
     if (!paciente.usuario.email.match(/^[A-Za-z0-9+_.-]+@(.+)$/)) {
       setErrorMessage("Por favor, insira um e-mail válido.");
@@ -151,39 +151,37 @@ if (!patientId) {
     }
 
     setIsLoading(true);
-const pacienteAtualizado = {
-  usuario: {
-    id: paciente.usuario.id,
-    nome: paciente.usuario.nome, // obrigatório!
-    cpfCnpj: paciente.usuario.cpfCnpj, // obrigatório!
-    dataNascimento: formatarDataParaISO(paciente.usuario.dataNascimento), // deve resultar em "2005-10-21"
-    email: paciente.usuario.email,
-    sexo: paciente.usuario.sexo,
-    telefone: removerMascaraTelefone(paciente.usuario.telefone || ""),
-    endereco: { ...paciente.usuario.endereco },
-  },
-  notas: paciente.notas || "",
-};
-    console.log("Enviando para o backend:", pacienteAtualizado);
+    const pacienteAtualizado = {
+      usuario: {
+        id: paciente.usuario.id,
+        email: paciente.usuario.email,
+        sexo: paciente.usuario.sexo,
+        telefone: removerMascaraTelefone(paciente.usuario.telefone || ""),
+        endereco: {
+          ...paciente.usuario.endereco,
+          id: paciente.usuario.endereco?.id,
+        },
+      },
+      notas: paciente.notas || "",
+    };
 
     axios
-      .put(`http://localhost:8080/pacientes/${patientId}/perfil`, pacienteAtualizado)
-      .then(() => {
-        carregarPaciente(patientId!);
-        setModoEdicao(false);
-        setErrorMessage(null);
-        alert("Perfil atualizado com sucesso!");
-        // toast.success("Perfil atualizado com sucesso!");
-      })
-      .catch((err) => {
-        console.error("Erro ao salvar paciente:", err);
-        const errorMsg = err.response?.data?.erro || "Erro ao salvar perfil. Tente novamente.";
-        setErrorMessage(errorMsg);
-      })
-      .finally(() => setIsLoading(false));
-  };
+        .put(`http://localhost:8080/pacientes/${patientId}`, pacienteAtualizado)
+        .then(() => {
+          carregarPaciente(patientId!);
+          setModoEdicao(false);
+          setErrorMessage(null);
+          alert("Perfil atualizado com sucesso!");
+        })
+        .catch((err) => {
+          console.error("Erro ao salvar paciente:", err);
+          const errorMsg = err.response?.data?.erro || "Erro ao salvar perfil. Tente novamente.";
+          setErrorMessage(errorMsg);
+        })
+        .finally(() => setIsLoading(false));
+  }
 
-  const alternarModoEdicao = () => {
+    const alternarModoEdicao = () => {
     setModoEdicao((prev) => !prev);
     setErrorMessage(null);
   };

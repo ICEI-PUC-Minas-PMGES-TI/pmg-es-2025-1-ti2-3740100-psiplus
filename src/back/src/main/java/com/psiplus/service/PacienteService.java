@@ -62,7 +62,6 @@ public class PacienteService {
 
     @Transactional
     public Paciente salvar(Paciente paciente) {
-        // Verificar se paciente tem psicologo setado
         if (paciente.getPsicologo() != null && paciente.getPsicologo().getPsicologoId() != null) {
             Psicologo psicologo = psicologoRepository.findById(paciente.getPsicologo().getPsicologoId())
                     .orElseThrow(() -> new RuntimeException("Psicólogo não encontrado"));
@@ -75,29 +74,20 @@ public class PacienteService {
 
         if (usuario != null) {
             if (paciente.getPacienteId() != null) {
-                // Atualização: buscar paciente existente
                 Paciente existente = buscarPorId(paciente.getPacienteId());
                 if (existente == null) {
                     throw new RuntimeException("Paciente não encontrado");
                 }
 
-                // Garantir que nome, cpfCnpj e dataNascimento não sejam alterados
                 if (existente.getUsuario() != null) {
-                    usuario.setNome(existente.getUsuario().getNome());
                     usuario.setCpfCnpj(existente.getUsuario().getCpfCnpj());
-                    usuario.setDataNascimento(existente.getUsuario().getDataNascimento());
                     usuario.setUsuarioId(existente.getUsuario().getUsuarioId());
-
-                    // Preservar a senha existente
                     usuario.setSenha(existente.getUsuario().getSenha());
-
-                    // Preservar o ID do endereço, se existir
                     if (usuario.getEndereco() != null && existente.getUsuario().getEndereco() != null) {
                         usuario.getEndereco().setId(existente.getUsuario().getEndereco().getId());
                     }
                 }
             } else {
-                // Criação: validar CPF e e-mail
                 if (usuarioRepository.existsByCpfCnpj(usuario.getCpfCnpj())) {
                     throw new RuntimeException("CPF já cadastrado!");
                 }
@@ -105,23 +95,20 @@ public class PacienteService {
                     throw new RuntimeException("E-mail já cadastrado!");
                 }
 
-                // Definir senha padrão apenas para novos pacientes
                 if (usuario.getSenha() == null || usuario.getSenha().isBlank()) {
                     usuario.setSenha(usuario.getCpfCnpj());
                 }
 
                 if (usuario.getEndereco() != null) {
-                    Endereco enderecoPersistido = enderecoRepository.save(usuario.getEndereco()); // <-- Correto!
+                    Endereco enderecoPersistido = enderecoRepository.save(usuario.getEndereco());
                     usuario.setEndereco(enderecoPersistido);
                 }
 
-                // Criptografar a senha antes de salvar
                 if (usuario.getSenha() != null && !usuario.getSenha().isBlank()) {
                     usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
                 }
             }
 
-            // Salvar o endereço antes do usuário
             if (usuario.getEndereco() != null) {
                 Endereco enderecoPersistido = enderecoRepository.save(usuario.getEndereco());
                 usuario.setEndereco(enderecoPersistido);
@@ -132,9 +119,7 @@ public class PacienteService {
         }
 
         Paciente salvo = repository.save(paciente);
-        
 
-        // Enviar e-mail apenas para novos pacientes
         if (paciente.getPacienteId() == null) {
             String html = EmailTemplates.gerarBoasVindas(usuario.getNome(), usuario.getEmail(), usuario.getCpfCnpj());
             emailService.enviarEmail(usuario.getEmail(), "Bem-vindo ao Psi+", html);
@@ -147,13 +132,12 @@ public class PacienteService {
         repository.deleteById(id);
     }
 
-        public List<dadosCadastroDTO> listarDadosCadastro(){
+    public List<dadosCadastroDTO> listarDadosCadastro(){
         return repository.findAll()
                 .stream()
                 .map(dadosCadastroDTO::new)
                 .collect(Collectors.toList());
     }
-
 
     public List<PacienteDTO> listarResumo() {
         return repository.findAll()

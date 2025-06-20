@@ -1,4 +1,4 @@
-package back.src.main.java.com.psiplus.DTO;
+package com.psiplus.DTO;
 
 import java.time.LocalDateTime;
 import com.psiplus.model.Paciente;

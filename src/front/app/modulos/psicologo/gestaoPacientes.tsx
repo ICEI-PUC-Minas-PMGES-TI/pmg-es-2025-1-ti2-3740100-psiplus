@@ -135,27 +135,32 @@ export default function GestaoPacientes() {
     };
 
     const salvarEdicao = () => {
+        if (!paciente?.usuario) return;
+
         const pacienteAtualizado = {
             ...paciente,
             usuario: {
                 ...paciente.usuario,
-                id: paciente.usuario.id,
+                usuarioId: paciente.usuario.id,
                 telefone: removerMascaraTelefone(paciente.usuario.telefone || ""),
                 dataNascimento: formatarDataParaISO(paciente.usuario.dataNascimento || ""),
-                senha: paciente.usuario.senha || "senha123",
+                senha: paciente.usuario.senha || "",
             },
-            notas: paciente.notas || ""
+            notas: paciente.notas || "",
         };
-        console.log("Enviando para o backend:", pacienteAtualizado);
+
+        console.log(pacienteAtualizado)
 
         axios
             .put(`http://localhost:8080/pacientes/${id}`, pacienteAtualizado)
             .then(() => {
-                carregarPaciente(id); // atualiza e aplica máscara novamente
+                carregarPaciente(id);
                 setModoEdicao(false);
             })
             .catch((err) => {
                 console.error("Erro ao salvar paciente:", err);
+                const msg = err.response?.data?.erro || "Erro ao atualizar paciente.";
+                alert(msg);
             });
     };
 

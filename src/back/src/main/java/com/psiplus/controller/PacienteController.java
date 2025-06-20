@@ -2,13 +2,16 @@ package com.psiplus.controller;
 import java.util.HashMap;
 import java.util.Map;
 
-import back.src.main.java.com.psiplus.DTO.dadosCadastroDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.psiplus.DTO.dadosCadastroDTO;
 import com.psiplus.DTO.PacienteComPsicologoDTO;
 import com.psiplus.DTO.PacienteDTO;
 import com.psiplus.DTO.dadosCadastroDTO;
 import com.psiplus.DTO.RedefinicaoSenhaDTO;
 import com.psiplus.model.Paciente;
 import com.psiplus.model.LoginRequest;
+import com.psiplus.model.Usuario;
 import com.psiplus.service.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -69,51 +72,50 @@ public class PacienteController {
         return ResponseEntity.noContent().build();
     }
 
-@PutMapping("/{id}/perfil")
-  public ResponseEntity<?> atualizarPerfil(@PathVariable Long id, @RequestBody Paciente pacienteAtualizado) {
-    if (id == null || id <= 0) {
-      Map<String, String> erro = new HashMap<>();
-      erro.put("erro", "ID do paciente inválido.");
-      return ResponseEntity.badRequest().body(erro);
+    @PutMapping("/{id}")
+    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody Paciente pacienteAtualizado) {
+
+        if (id == null || id <= 0) {
+            return ResponseEntity.badRequest().body(Map.of("erro", "ID do paciente inválido."));
+        }
+
+        Paciente existente = service.buscarPorId(id);
+        if (existente == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("erro", "Paciente não encontrado com o ID: " + id));
+        }
+
+        // Proteções: impedir edição de campos sensíveis
+        if (existente.getUsuario() != null && pacienteAtualizado.getUsuario() != null) {
+            Usuario usuarioExistente = existente.getUsuario();
+            Usuario usuarioAtualizado = pacienteAtualizado.getUsuario();
+
+            usuarioAtualizado.setUsuarioId(usuarioExistente.getUsuarioId());
+            usuarioAtualizado.setCpfCnpj(usuarioExistente.getCpfCnpj());
+            usuarioAtualizado.setSenha(usuarioExistente.getSenha());
+
+            if (usuarioExistente.getEndereco() != null && usuarioAtualizado.getEndereco() != null) {
+                usuarioAtualizado.getEndereco().setId(usuarioExistente.getEndereco().getId());
+            }
+        }
+
+        pacienteAtualizado.setPacienteId(id);
+        pacienteAtualizado.setHistoricoClinico(existente.getHistoricoClinico());
+        pacienteAtualizado.setSenhaRedefinida(existente.isSenhaRedefinida());
+        pacienteAtualizado.setArquivado(existente.getArquivado());
+        pacienteAtualizado.setPsicologo(existente.getPsicologo());
+
+        try {
+            Paciente salvo = service.salvar(pacienteAtualizado);
+            if (salvo == null) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("erro", "Falha ao salvar paciente"));
+            }
+            return ResponseEntity.ok(salvo);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("erro", e.getMessage()));
+        }
     }
 
-    Paciente existente = service.buscarPorId(id);
-    if (existente == null) {
-      Map<String, String> erro = new HashMap<>();
-      erro.put("erro", "Paciente não encontrado com o ID: " + id);
-      return ResponseEntity.notFound().build();
-    }
-
-    // Garantir que nome, cpfCnpj e dataNascimento não sejam alterados
-    if (existente.getUsuario() != null && pacienteAtualizado.getUsuario() != null) {
-      pacienteAtualizado.getUsuario().setNome(existente.getUsuario().getNome());
-      pacienteAtualizado.getUsuario().setCpfCnpj(existente.getUsuario().getCpfCnpj());
-      pacienteAtualizado.getUsuario().setDataNascimento(existente.getUsuario().getDataNascimento());
-      pacienteAtualizado.getUsuario().setUsuarioId(existente.getUsuario().getUsuarioId());
-      
-      if (existente.getUsuario().getEndereco() != null && pacienteAtualizado.getUsuario().getEndereco() != null) {
-        pacienteAtualizado.getUsuario().getEndereco().setId(existente.getUsuario().getEndereco().getId());
-      }
-    }
-
-    pacienteAtualizado.setPacienteId(id);
-    pacienteAtualizado.setHistoricoClinico(existente.getHistoricoClinico());
-    pacienteAtualizado.setSenhaRedefinida(existente.isSenhaRedefinida());
-    pacienteAtualizado.setArquivado(existente.getArquivado());
-    pacienteAtualizado.setPsicologo(existente.getPsicologo());
-
-    try {
-      Paciente salvo = service.salvar(pacienteAtualizado);
-      return ResponseEntity.ok(salvo);
-    } catch (RuntimeException e) {
-      Map<String, String> erro = new HashMap<>();
-      erro.put("erro", e.getMessage());
-      return ResponseEntity.badRequest().body(erro);
-    }
-  }
-
-  // Global exception handler for NumberFormatException
-  @RestControllerAdvice
+    @RestControllerAdvice
   public class GlobalExceptionHandler {
     @ExceptionHandler(NumberFormatException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -123,24 +125,6 @@ public class PacienteController {
       return erro;
     }
   }
-
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Paciente> atualizar(@PathVariable Long id, @RequestBody Paciente pacienteAtualizado) {
-        Paciente existente = service.buscarPorId(id);
-        if (existente == null) {
-            return ResponseEntity.notFound().build();
-        }
-        if (existente.getUsuario() != null) {
-            pacienteAtualizado.getUsuario().setUsuarioId(existente.getUsuario().getUsuarioId());
-            if (existente.getUsuario().getEndereco() != null) {
-                pacienteAtualizado.getUsuario().getEndereco().setId(existente.getUsuario().getEndereco().getId());
-            }
-        }
-        pacienteAtualizado.setPacienteId(id);
-        Paciente salvo = service.salvar(pacienteAtualizado);
-        return ResponseEntity.ok(salvo);
-    }
 
     @GetMapping("/resumo")
     public List<PacienteDTO> listarResumo() {

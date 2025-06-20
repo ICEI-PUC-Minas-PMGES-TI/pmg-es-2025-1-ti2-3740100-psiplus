@@ -62,4 +62,30 @@ public class CalendarioEmocaoController {
                                                             @PathVariable String data) {
         return calendarioEmocaoService.listarPorPacienteEData(pacienteId, LocalDate.parse(data));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> atualizarEmocao(@PathVariable Long id, @RequestBody CalendarioEmocaoDTO dto) {
+        try {
+            CalendarioEmocaoDTO atualizado = calendarioEmocaoService.atualizarEmocao(id, dto);
+            return ResponseEntity.ok(atualizado);
+        } catch (EntidadeNaoEncontradaException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao atualizar: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletarEmocao(@PathVariable Long id) {
+        try {
+            calendarioEmocaoService.deletarEmocao(id);
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } catch (EntidadeNaoEncontradaException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao deletar: " + e.getMessage());
+        }
+    }
+
+
 }

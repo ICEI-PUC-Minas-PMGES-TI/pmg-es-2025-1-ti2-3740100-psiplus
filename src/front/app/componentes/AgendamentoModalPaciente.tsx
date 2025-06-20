@@ -114,7 +114,7 @@ export default function AgendamentoModalPaciente({
         <div className="flex justify-end">
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-black font-bold pb-5"
+            className="cursor-pointer text-gray-500 hover:text-black font-bold pb-5"
           >
             X Cancelar
           </button>

@@ -126,4 +126,43 @@ public class CalendarioEmocaoService {
         return calendarioEmocaoRepository.contarPorPeriodo(pacienteId, dataInicio, dataFim);
     }
 
+    public CalendarioEmocaoDTO atualizarEmocao(Long id, CalendarioEmocaoDTO dto) {
+        CalendarioEmocao existente = calendarioEmocaoRepository.findById(id)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Emoção não encontrada"));
+
+        Paciente paciente = pacienteRepository.findById(dto.getPacienteId())
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Paciente não encontrado"));
+
+        TipoEmocao tipoEmocao = tipoEmocaoRepository.findById(dto.getTipoEmocaoId())
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Tipo de emoção não encontrado"));
+
+        boolean jaExiste = calendarioEmocaoRepository
+                .findByPaciente_PacienteIdAndDataBetween(paciente.getPacienteId(), dto.getData(), dto.getData())
+                .stream()
+                .anyMatch(e ->
+                        !e.getId().equals(id) &&
+                                e.getHora().equals(dto.getHora())
+                );
+
+        if (jaExiste) {
+            throw new EmocaoDuplicadaException("Já existe uma emoção nesse horário para esse paciente.");
+        }
+
+        existente.setPaciente(paciente);
+        existente.setTipoEmocao(tipoEmocao);
+        existente.setData(dto.getData());
+        existente.setHora(dto.getHora());
+        existente.setSentimento(dto.getSentimento());
+        existente.setNotas(dto.getNotas());
+
+        CalendarioEmocao salvo = calendarioEmocaoRepository.save(existente);
+        return toDTO(salvo);
+    }
+
+    public void deletarEmocao(Long id) {
+        CalendarioEmocao emocao = calendarioEmocaoRepository.findById(id)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Emoção não encontrada"));
+        calendarioEmocaoRepository.delete(emocao);
+    }
+
 }

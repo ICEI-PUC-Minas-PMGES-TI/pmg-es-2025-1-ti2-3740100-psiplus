@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import axios from "axios";
 import { Smile, Frown, Angry, Meh, Edit2 } from 'lucide-react';
+import PainelLateralCriarEmocao from "~/componentes/PainelLateralCriarEmocao";
 import PainelLateralEditarEmocao from "~/componentes/PainelLateralEditarEmocao";
 
 //Imports da agenda
@@ -20,8 +21,6 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { eachDayOfInterval, startOfMonth, endOfMonth, isSameDay, isSameMonth, isToday } from "date-fns";
 import type { View } from "react-big-calendar";
 import {ChevronLeft, ChevronRight} from "lucide-react";
-import PainelLateralEmocao from "~/componentes/PainelLateralEmocao";
-import Popup from "~/componentes/Popup";
 
 interface Usuario {
     id?: number;
@@ -401,7 +400,7 @@ export function CalendarioEmocoesPaciente (){
                         </div>
                     </div>
                     {mostrar && (
-                        <PainelLateralEditarEmocao
+                        <PainelLateralCriarEmocao
                             evento={eventoCriado}
                             pacienteId={pacienteId}
                             atualizarEventos={carregar}
@@ -410,8 +409,10 @@ export function CalendarioEmocoesPaciente (){
                         />
                     )}
                     {eventoSelecionado && (
-                        <PainelLateralEmocao
+                        <PainelLateralEditarEmocao
                             evento={eventoSelecionado}
+                            atualizarEventos={carregar}
+                            pacienteId={pacienteId}
                             onClose={() => setEventoSelecionado(null)}
                         />
                     )}

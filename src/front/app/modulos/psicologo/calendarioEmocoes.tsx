@@ -5,7 +5,7 @@ import BotaoPadrao from "~/componentes/BotaoPadrao";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import axios from "axios";
-import PainelLateralEmocao from "~/componentes/PainelLateralEmocao";
+import PainelLateralVisualizarEmocao from "~/componentes/PainelLateralVisualizarEmocao";
 
 import { User, Clock, BarChart2, Menu, Smile, Frown, Angry, Meh } from "lucide-react";
 
@@ -341,7 +341,7 @@ export default function CalendarioEmocoes() {
                             </div>
                         </div>
                         {eventoSelecionado && (
-                            <PainelLateralEmocao
+                            <PainelLateralVisualizarEmocao
                                 evento={eventoSelecionado}
                                 onClose={() => setEventoSelecionado(null)}
                             />

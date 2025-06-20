@@ -17,12 +17,12 @@ interface EventoEmocao {
     notas: string;
 }
 
-interface PainelLateralEmocaoProps {
+interface PainelLateralVisualizarEmocaoProps {
     evento: EventoEmocao | null;
     onClose?: () => void;
 }
 
-export default function PainelLateralEmocao({ evento, onClose }: PainelLateralEmocaoProps) {
+export default function PainelLateralVisualizarEmocao({ evento, onClose }: PainelLateralVisualizarEmocaoProps) {
     if (!evento) return null;
 
     const dataHora = new Date(`${evento.data}T${evento.hora}`);
@@ -32,8 +32,8 @@ export default function PainelLateralEmocao({ evento, onClose }: PainelLateralEm
     console.log('Evento recebido:', evento);
 
     return (
-        <div className="fixed top-0 right-0 w-full max-w-md h-screen bg-white shadow-lg z-50 flex flex-col">
-            {/* Botão fechar - canto superior direito */}
+        <div className="fixed top-0 right-0 w-full max-w-md h-screen bg-white shadow-lg z-50 flex flex-col transition-transform duration-300 transform translate-x-0">
+        {/* Botão fechar - canto superior direito */}
             <div className="flex justify-end p-4">
                 <button onClick={onClose}>
                     <X className="text-[#7D8FB3] cursor-pointer hover:text-black transition-colors duration-200" />

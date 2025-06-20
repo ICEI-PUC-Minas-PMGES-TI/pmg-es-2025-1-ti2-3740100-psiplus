@@ -18,7 +18,6 @@ function CancelarConsultaButton({ consultaId, onConsultaCancelada }) {
             setLoading(false);
             setMostrarPopup(false);
             if (onConsultaCancelada) onConsultaCancelada();
-            alert("Consulta cancelada com sucesso!");
         } catch (error) {
             setLoading(false);
             setErro("Erro ao cancelar a consulta. Tente novamente.");

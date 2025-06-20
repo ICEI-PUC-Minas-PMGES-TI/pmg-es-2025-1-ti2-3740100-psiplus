@@ -110,6 +110,7 @@ export function AgendaPaciente() {
           end: consulta.end,
           backgroundColor: "#FECACA",
           borderColor: "#DC2626",
+          tipo: "consulta"
         }));
 
         setConsultas(eventosConsultas);
@@ -171,6 +172,7 @@ export function AgendaPaciente() {
           end: consulta.end,
           backgroundColor: "#FECACA",
           borderColor: "#DC2626",
+          tipo: "consulta"
         }));
 
         setConsultas(eventosConsultas);
@@ -368,10 +370,10 @@ export function AgendaPaciente() {
     } else {
       alert("Não foi possível identificar o psicólogo para agendamento.");
     }
+  } else if (event.tipo === "consulta") {
+      navigate("/paciente/editarConsulta/" + event.id)
   }
 };
-
-
 
   const diasDoMes = eachDayOfInterval({
     start: startOfWeek(startOfMonth(mesLateral), { weekStartsOn: 0 }),

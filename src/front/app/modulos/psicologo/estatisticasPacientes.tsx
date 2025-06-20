@@ -73,16 +73,32 @@ export default function EstatisticasPacientes(){
                         />
                     </div>
                     <hr className="border-t-2 border-[#DFE5F1] my-2"/>
-                    <h1 className="pt-4 font-semibold text-[#161736] mx-2 text-[25px]">ESTATÍSTICAS</h1>
+                    <h1 className="pt-4 px-3 font-semibold text-[#161736] mx-2 text-[30px]">ESTATÍSTICAS</h1>
                     <div className="mt-10 bg-white rounded-xl shadow-md mx-5 p-4 relative">
                         <h1 className="pt-4 font-semibold text-[#161736] mx-2 text-[25px]">Novos cadastros - Mês </h1>
                         <h2 className="pt-4 text-[#161736] mx-2 text-[20px]"> {totalDoMes} novo(s) usuário(s). </h2>
                         <h1 className="pt-4 font-semibold ml-25 text-[#161736] mx-2 text-[65px]"> {percentualMes}% </h1>
                         <GraficoCrescimento />
                     </div>
+
                     <div className="mt-10 bg-white rounded-xl shadow-md mx-5 p-4 relative">
-                        <h1 className="pt-4 font-semibold text-[#161736] mx-2 text-[20px]">Atendimentos Efetivados</h1>
+                        <h1 className="pt-4 font-semibold text-[#161736] mx-2 text-[25px]">Atendimentos Efetivados</h1>
+
+                        <div className="flex justify-between items-center mt-15 px-2">
+                            {/* Coluna 1: Atendimentos Agendados */}
+                            <div className="flex flex-col items-center w-1/2 border-r border-gray-300 pr-4">
+                                <span className="pt-4 font-semibold text-[#161736] mx-2 text-[65px]">120</span>
+                                <span className="text-gray-500 mt-2">Atendimentos Agendados</span>
+                            </div>
+
+                            {/* Coluna 2: Atendimentos Realizados */}
+                            <div className="flex flex-col items-center w-1/2 pl-4">
+                                <span className="pt-4 font-semibold mx-2 text-[65px] text-[#16a34a]">95</span>
+                                <span className="text-gray-500 mt-2">Atendimentos Realizados</span>
+                            </div>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </Main>

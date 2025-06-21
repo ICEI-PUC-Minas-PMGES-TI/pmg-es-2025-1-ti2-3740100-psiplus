@@ -1,7 +1,7 @@
 # PsiPlus
 
 <p align="center">
-   <img src="docs/images/logo.png" alt="Logo PsiPlus" width="500">
+   <img src="docs/images/Component 4.png" alt="Logo PsiPlus" width="500">
 </p>
 
 ### **Conectando emoções, organizando cuidados.**

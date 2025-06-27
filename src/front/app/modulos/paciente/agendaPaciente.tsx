@@ -389,16 +389,21 @@ export function AgendaPaciente() {
 
   return (
     <Main>
-      <div className="flex min-h-screen bg-white">
-        <MenuLateralPaciente telaAtiva="agenda" />
-        <div className="w-px bg-gray-300"></div>
+      <div className="flex flex-col md:flex-row min-h-screen bg-white">
+        {/* Menu lateral: ocupa topo em mobile, lateral em desktop */}
+        <div className="w-full md:w-auto">
+          <MenuLateralPaciente telaAtiva="agenda" />
+        </div>
+        {/* Divisor vertical só em desktop */}
+        <div className="hidden md:block w-px bg-gray-300"></div>
 
-        <div className="flex-1 p-5 overflow-visible">
-          <div className="flex items-center justify-between mt-5 mb-4">
+        {/* Conteúdo principal */}
+        <div className="flex-1 p-2 md:p-5 overflow-visible">
+          <div className="flex flex-col md:flex-row items-center justify-between mt-5 mb-4 gap-2">
             <h1 className="text-[20px] font-semibold text-[#161736] ml-1">Minha Agenda</h1>
           </div>
 
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col md:flex-row items-center justify-between mb-4 gap-2">
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-[#8C9BB0] ml-2">
                 {formatarIntervaloSemana(dataBase)}
@@ -420,7 +425,8 @@ export function AgendaPaciente() {
             </div>
           </div>
 
-          <div className="rounded-xl bg-[#FAFAFC] pb-7 pl-5 pr-6">
+          {/* Calendário: rolagem horizontal em mobile */}
+          <div className="rounded-xl bg-[#FAFAFC] pb-7 pl-1 pr-1 md:pl-5 md:pr-6 overflow-x-auto">
             {visualizacao === "day" && (
               <button
                 onClick={() => {
@@ -433,43 +439,46 @@ export function AgendaPaciente() {
               </button>
             )}
 
-            <Calendar
-              onSelectEvent={handleSelectEvent}
-              localizer={localizer}
-              culture="pt-BR"
-              step={60}
-              timeslots={1}
-              min={new Date(0, 0, 0, 0, 0)}
-              max={new Date(0, 0, 0, 23, 0)}
-              startAccessor="start"
-              endAccessor="end"
-              defaultView={Views.WEEK}
-              views={["week", "day", "agenda"]}
-              style={{ height: "78vh" }}
-              components={{
-                toolbar: CustomToolbar,
-                header: CustomHeader,
-                event: EventoCalendario,
-              }}
-              events={agendaEventos}
-              eventPropGetter={estiloEvento}
-              messages={{
-                week: "Semana",
-                day: "Dia",
-                agenda: "Agenda",
-                today: "Hoje",
-                previous: "Anterior",
-                next: "Próxima",
-              }}
-              date={dataBase}
-              onNavigate={(novaData) => setDataBase(novaData)}
-              view={visualizacao}
-              onView={(view) => setVisualizacao(view)}
-            />
+            <div className="min-w-[340px] md:min-w-0">
+              <Calendar
+                onSelectEvent={handleSelectEvent}
+                localizer={localizer}
+                culture="pt-BR"
+                step={60}
+                timeslots={1}
+                min={new Date(0, 0, 0, 0, 0)}
+                max={new Date(0, 0, 0, 23, 0)}
+                startAccessor="start"
+                endAccessor="end"
+                defaultView={Views.WEEK}
+                views={["week", "day", "agenda"]}
+                style={{ height: "65vh", minWidth: 320 }}
+                components={{
+                  toolbar: CustomToolbar,
+                  header: CustomHeader,
+                  event: EventoCalendario,
+                }}
+                events={agendaEventos}
+                eventPropGetter={estiloEvento}
+                messages={{
+                  week: "Semana",
+                  day: "Dia",
+                  agenda: "Agenda",
+                  today: "Hoje",
+                  previous: "Anterior",
+                  next: "Próxima",
+                }}
+                date={dataBase}
+                onNavigate={(novaData) => setDataBase(novaData)}
+                view={visualizacao}
+                onView={(view) => setVisualizacao(view)}
+              />
+            </div>
           </div>
         </div>
 
-        <div className="w-[300px] border-l border-gray-200 bg-white shadow px-4 py-6 relative flex flex-col">
+        {/* Barra lateral direita: fixa em desktop, vira bloco em mobile */}
+        <div className="w-full md:w-[300px] border-t md:border-t-0 md:border-l border-gray-200 bg-white shadow px-4 py-6 relative flex flex-col">
           <div className="flex">
             <BotaoPadrao
               texto="Sair"
@@ -481,7 +490,7 @@ export function AgendaPaciente() {
             />
           </div>
 
-          <div className="mt-15">
+          <div className="mt-8">
             <div className="flex items-center justify-between text-lg font-semibold text-[#7D8DA6] mb-4 px-1">
               <span>
                 {(() => {

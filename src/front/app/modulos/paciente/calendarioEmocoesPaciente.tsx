@@ -295,129 +295,130 @@ export function CalendarioEmocoesPaciente (){
     };
 
     return (
-<Main>
-  <div className="flex flex-col md:flex-row min-h-screen bg-white">
-    {/* Menu lateral */}
-    <MenuLateralPaciente telaAtiva={"emoçoes"} />
-    <div className="hidden md:block w-px bg-gray-300"></div>
+    <Main>
+        <div className="flex h-screen bg-white ">
+            {/* Lado esquerdo com menu do psicólogo*/}
+            <MenuLateralPaciente telaAtiva={"emoçoes"}/>
+            <div className="w-px bg-gray-300"></div>
 
-    <div className="flex-1 m-2 md:m-5">
-      <div className="flex">
-        <BotaoPadrao
-          color="bg-white"
-          className="ml-auto hover:text-black transition-colors duration-200 font-medium cursor-pointer"
-          texto="Sair"
-          textoColor="text-gray-600"
-          icone={<img className=" w-[26px] " src={ExitIcon} alt="Sair" />}
-          handleClick={leave}
-        />
-      </div>
-      <hr className="border-t-2 border-[#DFE5F1] my-2"/>
-      <h1 className="pt-4 font-semibold text-black mx-2 text-[20px]">Minhas Emoções</h1>
+            <div className="m-5 w-4/5">
+                <div className="flex">
+                    <BotaoPadrao
+                        color="bg-white"
+                        className="ml-auto hover:text-black transition-colors duration-200 font-medium cursor-pointer"
+                        texto="Sair"
+                        textoColor="text-gray-600"
+                        icone={<img className=" w-[26px] " src={ExitIcon} alt="Sair" />}
+                        handleClick={leave}
+                    />
+                </div>
+                <hr className="border-t-2 border-[#DFE5F1] my-2"/>
+                <h1 className="pt-4 font-semibold text-black mx-2 text-[20px]">Minhas Emoções</h1>
 
-      <div className="mx-1 mt-4 flex flex-col lg:flex-row gap-7">
-        {/* Conteúdo principal do calendário */}
-        <div className="flex-1 min-w-0">
-          {/* Cabeçalho com intervalo da semana + setas */}
-          <div className="flex flex-col sm:flex-row items-center justify-between mb-4 mt-4 gap-2">
-            <div className="flex items-center gap-2 ml-2">
-              <span className="text-sm font-medium text-[#8C9BB0]">
-                {formatarIntervaloSemana(dataBase)}
-              </span>
-              <button
-                onClick={semanaAnterior}
-                className="p-2 bg-[#F3F4F8] rounded-md cursor-pointer hover:brightness-95"
-              >
-                <ChevronLeft size={20} className="text-[#858585]" />
-              </button>
-              <button
-                onClick={proximaSemana}
-                className="p-2 bg-[#F3F4F8] rounded-md cursor-pointer hover:brightness-95"
-              >
-                <ChevronRight size={20} className="text-[#858585]" />
-              </button>
+                <div className="mx-1 mt-4 flex gap-7">
+
+                    {/* Conteúdo principal do calendário */}
+                    <div className="flex-1">
+
+                        {/* Cabeçalho com intervalo da semana + setas */}
+                        <div className="flex items-center justify-between mb-4 mt-4">
+                            <div className="flex items-center gap-2 ml-2">
+                                  <span className="text-sm font-medium text-[#8C9BB0]">
+                                    {formatarIntervaloSemana(dataBase)}
+                                  </span>
+
+                                <button
+                                    onClick={semanaAnterior}
+                                    className="p-2 bg-[#F3F4F8] rounded-md cursor-pointer hover:brightness-95"
+                                >
+                                    <ChevronLeft size={20} className="text-[#858585]" />
+                                </button>
+                                <button
+                                    onClick={proximaSemana}
+                                    className="p-2 bg-[#F3F4F8] rounded-md cursor-pointer hover:brightness-95"
+                                >
+                                    <ChevronRight size={20} className="text-[#858585]" />
+                                </button>
+                            </div>
+                            <button className="bg-[#ADD9E2] text-[#0088A3] cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1 hover:brightness-95"
+                                    onClick={() => {setMostrar(true); setEventoSelecionado(null)}}>
+                                <Edit2 color="#0088A3" size={18} />
+                                Adicionar emoção
+
+                            </button>
+                        </div>
+
+                        {/* Grade da agenda */}
+                        <div className="rounded-xl bg-[#FAFAFC] pb-7 pl-5 pr-6">
+                            {visualizacao === "day" && (
+                                <button
+                                    onClick={() => {
+                                        setVisualizacao("week");
+                                        setDataBase(new Date());
+                                    }}
+                                    className="mt-3 text-sm text-[#0088A3] hover:font-medium cursor-pointer transition"
+                                >
+                                    ← Voltar para a semana
+                                </button>
+                            )}
+                            <Calendar
+                                localizer={localizer}
+                                culture="pt-BR"
+                                events={eventos}
+                                step={60}
+                                timeslots={1}
+                                min={new Date(0, 0, 0, 0, 0)}
+                                max={new Date(0, 0, 0, 23, 0)}
+                                startAccessor="start"
+                                endAccessor="end"
+                                defaultView={Views.WEEK}
+                                views={["week", "day", "agenda"]}
+                                style={{ height: "70vh" }}
+                                components={{
+                                    toolbar: CustomToolbar,
+                                    header: CustomHeader,
+                                    event: MeuEvento,
+                                }}
+                                messages={{
+                                    week: "Semana",
+                                    day: "Dia",
+                                    agenda: "Agenda",
+                                    today: "Hoje",
+                                    previous: "Anterior",
+                                    next: "Próxima",
+                                }}
+                                date={dataBase}
+                                onNavigate={(novaData) => setDataBase(novaData)}
+                                view={visualizacao}
+                                onView={(view) => setVisualizacao(view)}
+                                onSelectEvent={aoSelecionarEvento}
+                                onSelectSlot={aoSelecionarSlot}
+                                selectable={true}
+                                eventPropGetter={estiloEvento}
+                            />
+                        </div>
+                    </div>
+                    {mostrar && (
+                        <PainelLateralCriarEmocao
+                            evento={eventoCriado}
+                            pacienteId={pacienteId}
+                            atualizarEventos={carregar}
+                            onClose={() => setMostrar(false)
+                        }
+                        />
+                    )}
+                    {eventoSelecionado && (
+                        <PainelLateralEditarEmocao
+                            evento={eventoSelecionado}
+                            atualizarEventos={carregar}
+                            pacienteId={pacienteId}
+                            onClose={() => setEventoSelecionado(null)}
+                        />
+                    )}
+
+                </div>
             </div>
-            <button className="bg-[#ADD9E2] text-[#0088A3] cursor-pointer px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1 hover:brightness-95"
-              onClick={() => { setMostrar(true); setEventoSelecionado(null) }}>
-              <Edit2 color="#0088A3" size={18} />
-              Adicionar emoção
-            </button>
-          </div>
-
-          {/* Grade da agenda */}
-          <div className="rounded-xl bg-[#FAFAFC] pb-7 pl-1 pr-1 md:pl-5 md:pr-6 overflow-x-auto">
-            {visualizacao === "day" && (
-              <button
-                onClick={() => {
-                  setVisualizacao("week");
-                  setDataBase(new Date());
-                }}
-                className="mt-3 text-sm text-[#0088A3] hover:font-medium cursor-pointer transition"
-              >
-                ← Voltar para a semana
-              </button>
-            )}
-            <Calendar
-              localizer={localizer}
-              culture="pt-BR"
-              events={eventos}
-              step={60}
-              timeslots={1}
-              min={new Date(0, 0, 0, 0, 0)}
-              max={new Date(0, 0, 0, 23, 0)}
-              startAccessor="start"
-              endAccessor="end"
-              defaultView={Views.WEEK}
-              views={["week", "day", "agenda"]}
-              style={{ height: "70vh", minWidth: 320 }}
-              components={{
-                toolbar: CustomToolbar,
-                header: CustomHeader,
-                event: MeuEvento,
-              }}
-              messages={{
-                week: "Semana",
-                day: "Dia",
-                agenda: "Agenda",
-                today: "Hoje",
-                previous: "Anterior",
-                next: "Próxima",
-              }}
-              date={dataBase}
-              onNavigate={(novaData) => setDataBase(novaData)}
-              view={visualizacao}
-              onView={(view) => setVisualizacao(view)}
-              onSelectEvent={aoSelecionarEvento}
-              onSelectSlot={aoSelecionarSlot}
-              selectable={true}
-              eventPropGetter={estiloEvento}
-            />
-          </div>
         </div>
-        {/* Painéis laterais: ocupam toda a largura em mobile */}
-        {mostrar && (
-          <div className="w-full lg:w-[350px]">
-            <PainelLateralCriarEmocao
-              evento={eventoCriado}
-              pacienteId={pacienteId}
-              atualizarEventos={carregar}
-              onClose={() => setMostrar(false)}
-            />
-          </div>
-        )}
-        {eventoSelecionado && (
-          <div className="w-full lg:w-[350px]">
-            <PainelLateralEditarEmocao
-              evento={eventoSelecionado}
-              atualizarEventos={carregar}
-              pacienteId={pacienteId}
-              onClose={() => setEventoSelecionado(null)}
-            />
-          </div>
-        )}
-      </div>
-    </div>
-  </div>
-</Main>
+    </Main>
     );
 }

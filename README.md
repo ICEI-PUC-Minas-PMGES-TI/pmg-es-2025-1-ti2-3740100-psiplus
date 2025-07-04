@@ -44,7 +44,7 @@ A gestão de práticas psicológicas enfrenta desafios como desorganização da 
    - Configure as credenciais de acesso e anote a string de conexão.
 
 3. **Configurar o back-end (Spring Boot)**  
-   - No diretório do back-end, configure o arquivo `application.properties` ou `application.yml` com a string de conexão do Azure SQL Database e outras variáveis necessárias.  
+   - No diretório do back-end, configure o arquivo `application.properties` com a string de conexão do Azure SQL Database e outras variáveis necessárias.  
    - Instale as dependências e execute a aplicação:  
    ```bash
    mvn clean install
